@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  IMAGE: ghcr.io/${{ github.repository_owner }}/optibot
+  IMAGE: ghcr.io/${{ github.repository_owner }}/audibot
 
 jobs:
   # ─── 1. Build & push l'image Docker sur GHCR ───────────────────────────────
@@ -72,7 +72,7 @@ jobs:
             # Authentification GHCR sur le serveur
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USER }}" --password-stdin
 
-            cd /app/optibot
+            cd /app/audibot
 
             # Récupère la dernière version du docker-compose
             git pull origin main

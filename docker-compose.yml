@@ -1,8 +1,8 @@
 services:
   app:
-    image: ghcr.io/vvorreit/optibot:latest   # image pré-compilée via CI/CD
+    image: ghcr.io/vvorreit/audibot:latest   # image pré-compilée via CI/CD
     build: .                                   # utilisé uniquement en local (docker compose build)
-    container_name: optibot-app
+    container_name: audibot-app
     restart: always
     ports:
       - "3000:3000"
@@ -42,7 +42,7 @@ services:
 
   db:
     image: postgres:16-alpine
-    container_name: optibot-db
+    container_name: audibot-db
     restart: always
     environment:
       POSTGRES_USER: optibot_user
@@ -55,7 +55,7 @@ services:
 
   mailserver:
     image: ghcr.io/docker-mailserver/docker-mailserver:latest
-    container_name: optibot-mailserver
+    container_name: audibot-mailserver
     hostname: ${MAIL_HOSTNAME}          # ex: mail.tondomaine.fr
     domainname: ${MAIL_DOMAIN}          # ex: tondomaine.fr
     ports:
