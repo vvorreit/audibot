@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "AudiBot Multi-Site",
+  "version": "1.0",
+  "description": "Auto-saisie pour Auditdata et sites de mutuelles (Almerys, Viamedis, Ameli Pro).",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "audibot-extension@vvorreit.fr"
+    }
+  },
+  "permissions": [
+    "clipboardRead",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.auditdata.com/*",
+    "https://app.auditdata.com/*",
+    "https://*.almerys.com/*",
+    "https://*.viamedis.net/*",
+    "https://amelipro.ameli.fr/*",
+    "https://*.ameli.fr/*",
+    "https://*.ism-tp.fr/*",
+    "https://*.actil.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.auditdata.com/*",
+        "https://app.auditdata.com/*",
+        "https://*.almerys.com/*",
+        "https://*.viamedis.net/*",
+        "https://amelipro.ameli.fr/*",
+        "https://*.ameli.fr/*",
+        "https://*.ism-tp.fr/*",
+        "https://*.actil.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ]
+    }
+  ]
+}

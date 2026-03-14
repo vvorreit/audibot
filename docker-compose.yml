@@ -1,0 +1,91 @@
+services:
+  app:
+    image: ghcr.io/vvorreit/optibot:latest   # image pré-compilée via CI/CD
+    build: .                                   # utilisé uniquement en local (docker compose build)
+    container_name: optibot-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://optibot_user:optibot_password@db:5432/optibot_prod
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+      - NODE_ENV=production
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      # SMTP — pointe vers le service mailserver interne
+      - SMTP_HOST=mailserver
+      - SMTP_PORT=587
+      - SMTP_SECURE=false
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      # LBO credentials (server-side uniquement)
+      - LBO_LOGIN=${LBO_LOGIN}
+      - LBO_PASSWORD=${LBO_PASSWORD}
+      # Stripe
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_PRICE_SOLO=${STRIPE_PRICE_SOLO}
+      - STRIPE_PRICE_DUO=${STRIPE_PRICE_DUO}
+      - STRIPE_PRICE_SOLO_AMOUNT=${STRIPE_PRICE_SOLO_AMOUNT}
+      - STRIPE_PRICE_DUO_AMOUNT=${STRIPE_PRICE_DUO_AMOUNT}
+      # Limites
+      - NEXT_PUBLIC_FREE_LIMIT=${NEXT_PUBLIC_FREE_LIMIT}
+    depends_on:
+      - db
+      - mailserver
+    networks:
+      - optibot-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: optibot-db
+    restart: always
+    environment:
+      POSTGRES_USER: optibot_user
+      POSTGRES_PASSWORD: optibot_password
+      POSTGRES_DB: optibot_prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - optibot-network
+
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: optibot-mailserver
+    hostname: ${MAIL_HOSTNAME}          # ex: mail.tondomaine.fr
+    domainname: ${MAIL_DOMAIN}          # ex: tondomaine.fr
+    ports:
+      - "25:25"                          # Réception SMTP (MX entrant)
+      - "587:587"                        # Soumission SMTP (envoi authentifié)
+    volumes:
+      - ./mail-data:/var/mail
+      - ./mail-state:/var/mail-state
+      - ./mail-config:/tmp/docker-mailserver
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - SMTP_ONLY=1                      # Send-only, pas d'IMAP/POP3
+      - ENABLE_DKIM=1
+      - DKIM_SELECTOR=mail
+      - POSTFIX_INET_PROTOCOLS=ipv4
+      - ONE_DIR=1
+      - ENABLE_AMAVIS=0
+      - ENABLE_SPAMASSASSIN=0
+      - ENABLE_CLAMAV=0
+      - PERMIT_DOCKER=connected-networks # Autorise les conteneurs du même réseau
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: unless-stopped
+    networks:
+      - optibot-network
+
+volumes:
+  postgres_data:
+
+networks:
+  optibot-network:
+    driver: bridge
