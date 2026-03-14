@@ -13,7 +13,7 @@ export default function AppFooter() {
             O
           </div>
           <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
-            © {year} OptiBot
+            © {year} AudiBot
           </span>
         </div>
 

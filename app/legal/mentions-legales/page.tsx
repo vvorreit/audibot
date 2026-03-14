@@ -19,8 +19,8 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Éditeur du site</h2>
             <p className="text-slate-600">
-              Le site <strong>OptiBot.fr</strong> est édité par : <br />
-              <span className="font-bold">OptiBot SAS</span> (en cours de création)<br />
+              Le site <strong>AudiBot.fr</strong> est édité par : <br />
+              <span className="font-bold">AudiBot SAS</span> (en cours de création)<br />
               Siège social : [Votre Adresse], Lyon, France<br />
               Directeur de la publication : Vincent VORREITER
             </p>
@@ -40,7 +40,7 @@ export default function MentionsLegalesPage() {
             <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Contact</h2>
             <p className="text-slate-600">
               Pour toute question, vous pouvez nous contacter à l'adresse suivante : <br />
-              <strong>contact@optibot.fr</strong>
+              <strong>contact@audibot.fr</strong>
             </p>
           </section>
         </div>

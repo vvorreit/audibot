@@ -19,8 +19,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Principe de "Privacy-by-Design"</h2>
             <p className="text-slate-600 leading-relaxed">
-              OptiBot a été conçu pour respecter scrupuleusement le secret médical et la vie privée de vos patients. 
-              <strong> Contrairement à d'autres solutions, OptiBot ne stocke, ne voit et ne transmet aucune donnée de santé identifiable sur ses serveurs.</strong>
+              AudiBot a été conçu pour respecter scrupuleusement le secret médical et la vie privée de vos patients. 
+              <strong> Contrairement à d'autres solutions, AudiBot ne stocke, ne voit et ne transmet aucune donnée de santé identifiable sur ses serveurs.</strong>
             </p>
           </section>
 
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">4. Droits des utilisateurs</h2>
             <p className="text-slate-600 leading-relaxed">
-              Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données de compte. Pour toute demande, contactez-nous à : <span className="font-bold">contact@optibot.fr</span>.
+              Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données de compte. Pour toute demande, contactez-nous à : <span className="font-bold">contact@audibot.fr</span>.
             </p>
           </section>
         </div>

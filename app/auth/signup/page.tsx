@@ -41,7 +41,7 @@ export default function SignUpPage() {
               <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200">
                 O
               </div>
-              <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
+              <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
             </Link>
           </div>
           <div className="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
@@ -77,13 +77,13 @@ export default function SignUpPage() {
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200 group-hover:scale-105 transition-transform">
               O
             </div>
-            <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
+            <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
           </Link>
         </div>
 
         <div className="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
           <h1 className="text-3xl font-black text-slate-900 mb-2">Créer un compte</h1>
-          <p className="text-slate-500 font-medium mb-8">Rejoignez OptiBot en quelques secondes.</p>
+          <p className="text-slate-500 font-medium mb-8">Rejoignez AudiBot en quelques secondes.</p>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-semibold">

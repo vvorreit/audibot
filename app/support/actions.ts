@@ -41,7 +41,7 @@ export async function sendSupportEmail(formData: FormData) {
       <div style="background:#0f172a;padding:24px 32px;border-radius:16px 16px 0 0">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:36px;height:36px;background:#2563eb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:18px">O</div>
-          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">OptiBot Support</span>
+          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">AudiBot Support</span>
         </div>
       </div>
       <div style="background:white;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 16px 16px">
@@ -62,7 +62,7 @@ export async function sendSupportEmail(formData: FormData) {
   try {
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
-      to: "contact@optibot.fr",
+      to: "contact@audibot.fr",
       replyTo: email,
       subject: `[${typeLabel}] ${subject || name}`,
       html,

@@ -192,7 +192,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-4xl font-black tracking-tight">Administration</h1>
-              <p className="text-slate-500 font-medium">Suivi de l'activité globale d'OptiBot.</p>
+              <p className="text-slate-500 font-medium">Suivi de l'activité globale d'AudiBot.</p>
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/auth/signin" })}

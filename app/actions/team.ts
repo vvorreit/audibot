@@ -105,7 +105,7 @@ export async function inviteMember(email: string) {
       await getTransporter().sendMail({
         from: process.env.SMTP_FROM,
         to: email,
-        subject: `Rejoignez l'équipe ${user.team?.name} sur OptiBot`,
+        subject: `Rejoignez l'équipe ${user.team?.name} sur AudiBot`,
         html: `
           <h1>Invitation d'équipe</h1>
           <p><strong>${user.name || user.email}</strong> vous a invité à rejoindre l'équipe <strong>${user.team?.name}</strong>.</p>

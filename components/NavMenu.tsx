@@ -64,7 +64,7 @@ export default function NavMenu() {
           <div className="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-200 group-hover:scale-105 transition-transform">
             O
           </div>
-          <span className="text-lg font-black tracking-tight text-slate-900">OptiBot</span>
+          <span className="text-lg font-black tracking-tight text-slate-900">AudiBot</span>
         </Link>
 
         {/* Nav links — desktop */}

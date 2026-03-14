@@ -145,6 +145,7 @@ export async function createCheckoutSession(plan: "SOLO" | "DUO") {
     payment_method_types: ["card"],
     line_items: [{ price: priceId, quantity: 1 }],
     tax_id_collection: { enabled: true },
+    automatic_tax: { enabled: true },
     customer_update: { name: "auto", address: "auto" },
     success_url: `${process.env.NEXTAUTH_URL}/dashboard?success=true`,
     cancel_url: `${process.env.NEXTAUTH_URL}/dashboard?canceled=true`,

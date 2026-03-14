@@ -68,7 +68,7 @@ function BookmarkletInstallButton() {
     <div className="bg-white border-2 border-dashed border-blue-200 rounded-2xl p-6 text-center space-y-3">
       <p className="text-sm font-bold text-blue-900">1. Installation (Une seule fois)</p>
       <p className="text-xs text-blue-600">
-        Créez un favori nommé "OptiBot" et collez ce code comme URL :
+        Créez un favori nommé "AudiBot" et collez ce code comme URL :
       </p>
       <button
         onClick={async () => {
