@@ -7,7 +7,7 @@ import { getTransporter, smtpConfigured } from "@/lib/mailer";
 import { randomBytes } from "crypto";
 
 // Nombre de postes maximum par plan d'équipe
-export function getTeamSeatsLimit(plan: string): number {
+function getTeamSeatsLimit(plan: string): number {
   switch (plan) {
     case "TEAM_5": return 5;
     case "TEAM_3": return 3;
