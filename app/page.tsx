@@ -61,6 +61,7 @@ function LandingContent() {
             <a href="#comment-ca-marche" className="hover:text-indigo-600 transition-colors">La Solution</a>
             <a href="#avantages" className="hover:text-indigo-600 transition-colors">Avantages</a>
             <a href="#tarifs" className="hover:text-indigo-600 transition-colors">Tarifs</a>
+            <Link href="/blog" className="hover:text-indigo-600 transition-colors">Blog</Link>
           </div>
           <div className="flex items-center gap-4">
             {status === "authenticated" ? (
