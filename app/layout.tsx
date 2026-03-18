@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import CookieBanner from "@/components/CookieBanner";
+import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +31,11 @@ export default async function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <CookieBanner />
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <ConditionalAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }

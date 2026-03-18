@@ -1,15 +1,19 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import DropZone from "@/components/DropZone";
 import MutuelleForm from "@/components/MutuelleForm";
 import OrdonnanceForm from "@/components/OrdonnanceForm";
 import { processDocument } from "@/lib/ocr";
-import { parseMutuelle, parseOrdonnance, MutuelleData, OrdonnanceData, Personne } from "@/lib/parsers";
+import { parseMutuelle, parseOrdonnance, scoreMutuelle, scoreOrdonnance, MutuelleData, OrdonnanceData, Personne } from "@/lib/parsers";
+import { computeScore, OcrScoreResult } from "@/lib/ocrScore";
+import OcrScoreBadge from "@/components/OcrScoreBadge";
 import { STATIC_BOOKMARKLET } from "@/lib/autofill";
-import { getUserDashboardData, incrementClientCountInDB, createCheckoutSession, createPortalSession, generateAutofillPayload, upgradePlan } from "./actions";
-import { Copy, FileText, ShieldCheck } from "lucide-react";
+import { getUserDashboardData, incrementClientCountInDB, createCheckoutSession, createPortalSession, generateAutofillPayload, upgradePlan, logOcrScan } from "./actions";
+import { Copy, FileText, ShieldCheck, Timer, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
+import { updateOnboardingStep } from "@/app/actions/onboarding";
 
 
 const EMPTY_MUTUELLE: MutuelleData = {
@@ -96,17 +100,34 @@ export default function Dashboard() {
   const [isStripeLoading, setIsStripeLoading] = useState<string | null>(null);
   const [rawText, setRawText] = useState<{ mutuelle: string; ordonnance: string }>({ mutuelle: "", ordonnance: "" });
   const [showRaw, setShowRaw] = useState<DocType | null>(null);
-  
+  const [ocrScores, setOcrScores] = useState<{ mutuelle: OcrScoreResult | null; ordonnance: OcrScoreResult | null }>({ mutuelle: null, ordonnance: null });
+
   const [userData, setUserData] = useState<{
     clientCount: number;
     isPro: boolean;
     plan: string;
     role: string;
     syncToken: string | null;
+    createdAt: string | Date;
+    onboardingStep: number;
+    monthlyScanCount: number;
+    monthlyScanResetAt: string | Date | null;
   } | null>(null);
 
-  const FREE_LIMIT = Number(process.env.NEXT_PUBLIC_FREE_LIMIT ?? 10);
-  const isLimitReached = !userData?.isPro && (userData?.clientCount ?? 0) >= FREE_LIMIT;
+  const lastCopyTimestamp = useRef(0);
+
+  const TRIAL_DAYS = 14;
+  const trialDaysLeft = userData?.createdAt
+    ? Math.max(0, TRIAL_DAYS - Math.floor((Date.now() - new Date(userData.createdAt).getTime()) / 86_400_000))
+    : TRIAL_DAYS;
+  const isLimitReached = !userData?.isPro && trialDaysLeft <= 0;
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    if (!userData?.createdAt) return;
+    const accountAgeDays = Math.floor((Date.now() - new Date(userData.createdAt).getTime()) / 86_400_000);
+    setShowOnboarding(accountAgeDays < 14 && (userData?.onboardingStep ?? 0) < 4);
+  }, [userData?.createdAt, userData?.onboardingStep]);
 
   const refreshData = useCallback(async () => {
     const data = await getUserDashboardData();
@@ -117,10 +138,17 @@ export default function Dashboard() {
     refreshData();
   }, [refreshData]);
 
-  const handleCheckout = async (plan: "SOLO" | "DUO") => {
+  const ESSENTIEL_SCAN_LIMIT = 50;
+  const isEssentiel = userData?.plan === "ESSENTIEL";
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const monthlyScanCount = userData?.monthlyScanResetAt && new Date(userData.monthlyScanResetAt) >= monthStart
+    ? userData.monthlyScanCount : 0;
+  const essentielLimitReached = isEssentiel && monthlyScanCount >= ESSENTIEL_SCAN_LIMIT;
+
+  const handleCheckout = async (plan: "ESSENTIEL" | "PRO" | "EQUIPE", billing: "monthly" | "annual" = "monthly") => {
     setIsStripeLoading(plan);
     try {
-      const { url } = await createCheckoutSession(plan);
+      const { url } = await createCheckoutSession(plan, billing);
       if (url) window.location.href = url;
     } catch (err: any) {
       alert(err?.message || "Erreur lors du paiement. Réessayez.");
@@ -156,24 +184,67 @@ export default function Dashboard() {
 
   const handleFile = useCallback(async (file: File, type: DocType) => {
     if (isLimitReached) {
-      alert("Limite atteinte ! Passez à la version PRO pour continuer.");
+      alert("Période d'essai terminée. Passez à un plan payant pour continuer.");
+      return;
+    }
+    if (essentielLimitReached) {
+      alert("Limite de 50 scans/mois atteinte. Passez au plan Pro pour un usage illimité.");
       return;
     }
     setDocState((prev) => ({ ...prev, [type]: { loading: true, progress: 0, fileName: file.name } }));
     try {
-      const text = await processDocument(file, (progress) => {
+      const result = await processDocument(file, (progress) => {
         setDocState((prev) => ({ ...prev, [type]: { ...prev[type], progress } }));
       });
-      setRawText((prev) => ({ ...prev, [type]: text }));
-      if (type === "mutuelle") setMutuelle(parseMutuelle(text));
-      else setOrdonnance(parseOrdonnance(text));
-    } catch (err) {
-      console.error(err);
-      alert("Erreur lors de l'analyse.");
+      setRawText((prev) => ({ ...prev, [type]: result.text }));
+      if (type === "mutuelle") {
+        const parsed = parseMutuelle(result.text);
+        setMutuelle(parsed);
+        const score = computeScore(result.confidence, scoreMutuelle(parsed));
+        setOcrScores((prev) => ({ ...prev, mutuelle: score }));
+        logOcrScan({ type, success: score.globalScore >= 50, ocrConfidence: score.ocrConfidence, dataScore: score.dataScore, globalScore: score.globalScore, level: score.level, fileName: file.name });
+      } else {
+        const parsed = parseOrdonnance(result.text);
+        setOrdonnance(parsed);
+        const score = computeScore(result.confidence, scoreOrdonnance(parsed));
+        setOcrScores((prev) => ({ ...prev, ordonnance: score }));
+        logOcrScan({ type, success: score.globalScore >= 50, ocrConfidence: score.ocrConfidence, dataScore: score.dataScore, globalScore: score.globalScore, level: score.level, fileName: file.name });
+      }
+    } catch (err: any) {
+      console.error("OCR error:", err);
+      alert(`Erreur lors de l'analyse : ${err?.message || err}`);
     } finally {
       setDocState((prev) => ({ ...prev, [type]: { ...prev[type], loading: false, progress: 100 } }));
     }
-  }, [isLimitReached]);
+  }, [isLimitReached, essentielLimitReached]);
+
+  const [cooldownActive, setCooldownActive] = useState(false);
+  const [feedbackModal, setFeedbackModal] = useState<{ open: boolean; type: DocType | null; text: string; sending: boolean; sent: boolean }>({ open: false, type: null, text: "", sending: false, sent: false });
+
+  const handleOcrFeedback = (type: DocType) => {
+    setFeedbackModal({ open: true, type, text: "", sending: false, sent: false });
+  };
+
+  const submitOcrFeedback = async () => {
+    if (!feedbackModal.type || !feedbackModal.text.trim()) return;
+    setFeedbackModal((prev) => ({ ...prev, sending: true }));
+    try {
+      await fetch("/api/feedback/ocr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: feedbackModal.type,
+          rawText: rawText[feedbackModal.type],
+          message: feedbackModal.text,
+          fileName: docState[feedbackModal.type].fileName,
+        }),
+      });
+      setFeedbackModal((prev) => ({ ...prev, sent: true, sending: false }));
+      setTimeout(() => setFeedbackModal({ open: false, type: null, text: "", sending: false, sent: false }), 2000);
+    } catch {
+      setFeedbackModal((prev) => ({ ...prev, sending: false }));
+    }
+  };
 
   const copyData = async () => {
     if (isLimitReached) return;
@@ -184,8 +255,30 @@ export default function Dashboard() {
         syncToken: userData?.syncToken ?? undefined,
       });
       await navigator.clipboard.writeText(payload);
+
+      // Envoi direct à l'extension via bridge.js
+      const parsed = JSON.parse(payload);
+      window.postMessage({ type: 'AUDIBOT_DATA', payload: parsed }, '*');
+
+      window.dispatchEvent(new Event("audibot_data_copied"));
+
+      // Onboarding step 3 (copié)
+      if ((userData?.onboardingStep ?? 0) < 3) {
+        updateOnboardingStep(3);
+      }
+
       setIsDataCopied(true);
-      await incrementLimit();
+
+      // Déduplication : cooldown 10s sur le compteur
+      const now = Date.now();
+      if (now - lastCopyTimestamp.current >= 10000) {
+        lastCopyTimestamp.current = now;
+        await incrementLimit();
+        setCooldownActive(false);
+      } else {
+        setCooldownActive(true);
+      }
+
       setTimeout(() => setIsDataCopied(false), 3000);
     } catch (err) {
       console.error("Erreur lors de la copie ou de l'incrémentation:", err);
@@ -197,6 +290,8 @@ export default function Dashboard() {
   return (
     <main className="bg-slate-50 text-slate-900 pb-10">
       <div className="max-w-6xl mx-auto px-4 py-8">
+
+        {showOnboarding && <OnboardingChecklist clientCount={userData?.clientCount} onboardingStep={userData?.onboardingStep ?? 0} />}
 
         {/* Header & Status */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 items-stretch">
@@ -210,17 +305,18 @@ export default function Dashboard() {
           <div className="bg-white p-6 rounded-[32px] shadow-sm border border-slate-100 flex flex-col justify-center">
             <div className="flex justify-between items-end mb-3">
                <div>
-                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Votre Usage</p>
-                  <p className="text-2xl font-black">
-                    {userData?.clientCount || 0}
-                    {!userData?.isPro && <span className="text-slate-300 mx-1">/</span>}
-                    {!userData?.isPro && <span>{FREE_LIMIT}</span>}
-                    <span className="text-sm text-slate-400 font-bold ml-1">scans</span>
+                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">
+                    {userData?.isPro ? "Votre Plan" : "Essai Gratuit"}
                   </p>
+                  {!userData?.isPro && (
+                    <p className={`text-2xl font-black ${isLimitReached ? "text-red-500" : "text-slate-900"}`}>
+                      {isLimitReached ? "Expiré" : `${trialDaysLeft}j restant${trialDaysLeft > 1 ? "s" : ""}`}
+                    </p>
+                  )}
                </div>
                {userData?.isPro && (
-                 <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full uppercase tracking-tighter mb-1">
-                   {userData.plan === "DUO" ? "DUO" : "SOLO"}
+                 <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black rounded-full uppercase tracking-tighter mb-1">
+                   {userData.plan === "EQUIPE" ? "ÉQUIPE" : userData.plan === "PRO" ? "PRO" : "ESSENTIEL"}
                  </span>
                )}
             </div>
@@ -228,25 +324,25 @@ export default function Dashboard() {
               <>
                 <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className={`h-full transition-all duration-700 ${isLimitReached ? 'bg-red-500' : 'bg-blue-600'}`}
-                    style={{ width: `${((userData?.clientCount || 0) / FREE_LIMIT) * 100}%` }}
+                    className={`h-full transition-all duration-700 ${isLimitReached ? 'bg-red-500' : 'bg-indigo-600'}`}
+                    style={{ width: `${((TRIAL_DAYS - trialDaysLeft) / TRIAL_DAYS) * 100}%` }}
                   ></div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-slate-100 space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Passer au PRO</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Passer au payant</p>
                   <button
-                    onClick={() => handleCheckout("SOLO")}
+                    onClick={() => handleCheckout("ESSENTIEL")}
                     disabled={isStripeLoading !== null}
-                    className="w-full px-3 py-2 rounded-xl bg-blue-600 text-white text-[11px] font-black hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="w-full px-3 py-2 rounded-xl bg-indigo-600 text-white text-[11px] font-black hover:bg-indigo-700 transition-colors disabled:opacity-50"
                   >
-                    {isStripeLoading === "SOLO" ? "Chargement..." : "Solo — 32,90€/mois"}
+                    {isStripeLoading === "ESSENTIEL" ? "Chargement..." : "Essentiel — 39,90€ HT/mois"}
                   </button>
                   <button
-                    onClick={() => handleCheckout("DUO")}
+                    onClick={() => handleCheckout("PRO")}
                     disabled={isStripeLoading !== null}
                     className="w-full px-3 py-2 rounded-xl bg-slate-100 text-slate-700 text-[11px] font-black hover:bg-slate-200 transition-colors disabled:opacity-50"
                   >
-                    {isStripeLoading === "DUO" ? "Chargement..." : "Duo — 49,90€/mois"}
+                    {isStripeLoading === "PRO" ? "Chargement..." : "Pro — 69,90€ HT/mois"}
                   </button>
                 </div>
               </>
@@ -254,49 +350,76 @@ export default function Dashboard() {
             {userData?.isPro && (
               <div className="mt-4 pt-4 border-t border-slate-50 space-y-3">
                 <div className="flex justify-between items-center">
-                  <p className="text-[10px] font-bold text-green-500 uppercase tracking-tight">Utilisation illimitée activée</p>
+                  <p className="text-[10px] font-bold text-green-500 uppercase tracking-tight">
+                    {isEssentiel ? `${monthlyScanCount}/50 scans ce mois` : "Utilisation illimitée activée"}
+                  </p>
                   <button
                     onClick={async () => {
                       const { url } = await createPortalSession();
                       if (url) window.location.href = url;
                     }}
-                    className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors"
+                    className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors"
                   >
                     <FileText className="w-3 h-3" />
                     Factures
                   </button>
                 </div>
-                {userData.plan === "SOLO" && (
-                  <button
-                    onClick={async () => {
-                      setIsStripeLoading("DUO");
-                      try {
-                        await upgradePlan("DUO");
-                        await refreshData();
-                      } catch (err: any) {
-                        alert(err?.message || "Erreur lors de la montée en gamme.");
-                      } finally {
-                        setIsStripeLoading(null);
-                      }
-                    }}
-                    disabled={isStripeLoading !== null}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-100 text-slate-700 text-[11px] font-black hover:bg-slate-200 transition-colors disabled:opacity-50"
-                  >
-                    {isStripeLoading === "DUO" ? "Chargement..." : "Passer au Duo — 49,90€/mois"}
-                  </button>
+                {isEssentiel && (
+                  <div className="space-y-2">
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full transition-all duration-700 rounded-full ${essentielLimitReached ? 'bg-red-500' : 'bg-indigo-600'}`} style={{ width: `${Math.min(100, (monthlyScanCount / ESSENTIEL_SCAN_LIMIT) * 100)}%` }} />
+                    </div>
+                    <button
+                      onClick={async () => {
+                        setIsStripeLoading("PRO");
+                        try {
+                          await upgradePlan("PRO");
+                          await refreshData();
+                        } catch (err: any) {
+                          alert(err?.message || "Erreur lors de la montée en gamme.");
+                        } finally {
+                          setIsStripeLoading(null);
+                        }
+                      }}
+                      disabled={isStripeLoading !== null}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-100 text-slate-700 text-[11px] font-black hover:bg-slate-200 transition-colors disabled:opacity-50"
+                    >
+                      {isStripeLoading === "PRO" ? "Chargement..." : "Passer au Pro — 69,90€ HT/mois"}
+                    </button>
+                  </div>
                 )}
               </div>
             )}
           </div>
         </div>
 
+        {/* Temps économisé */}
+        {userData && userData.clientCount > 0 && (
+          <div className="mb-10">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5">
+              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+                <Timer className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Temps économisé avec AudiBot</p>
+                <p className="text-2xl font-black text-green-600">
+                  {userData.clientCount * 7 >= 60
+                    ? `${Math.floor((userData.clientCount * 7) / 60)}h${String((userData.clientCount * 7) % 60).padStart(2, "0")} économisées`
+                    : `${userData.clientCount * 7} min économisées`}
+                </p>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">{userData.clientCount} saisie{userData.clientCount > 1 ? "s" : ""} × 7 min</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Main Area */}
           <div className="lg:col-span-2 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {(["mutuelle", "ordonnance"] as DocType[]).map((type) => (
-                <div key={type} className={isLimitReached ? "opacity-40 grayscale pointer-events-none" : ""}>
+                <div key={type} className={isLimitReached || essentielLimitReached ? "opacity-40 grayscale pointer-events-none" : ""}>
                   <DropZone
                     label={type === "mutuelle" ? "Carte Mutuelle" : "Prescription ORL"}
                     icon={type === "mutuelle" ? "💳" : "🦻"}
@@ -322,19 +445,43 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               <div className="space-y-6">
-                {hasMutuelle && <MutuelleForm data={mutuelle} onChange={setMutuelle} />}
+                {hasMutuelle && (
+                  <>
+                    {ocrScores.mutuelle && <OcrScoreBadge score={ocrScores.mutuelle} />}
+                    <MutuelleForm data={mutuelle} onChange={setMutuelle} />
+                    <button
+                      onClick={() => handleOcrFeedback("mutuelle")}
+                      className="text-xs text-slate-400 hover:text-red-500 transition-colors mt-2 flex items-center gap-1"
+                    >
+                      <AlertCircle className="w-3 h-3" />
+                      Données incorrectes ?
+                    </button>
+                  </>
+                )}
               </div>
               <div className="space-y-6">
-                {hasOrdonnance && <OrdonnanceForm data={ordonnance} onChange={setOrdonnance} />}
+                {hasOrdonnance && (
+                  <>
+                    {ocrScores.ordonnance && <OcrScoreBadge score={ocrScores.ordonnance} />}
+                    <OrdonnanceForm data={ordonnance} onChange={setOrdonnance} />
+                    <button
+                      onClick={() => handleOcrFeedback("ordonnance")}
+                      className="text-xs text-slate-400 hover:text-red-500 transition-colors mt-2 flex items-center gap-1"
+                    >
+                      <AlertCircle className="w-3 h-3" />
+                      Données incorrectes ?
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Debug : Texte Brut */}
             {(rawText.mutuelle || rawText.ordonnance) && (
               <div className="mt-4">
-                <button 
+                <button
                   onClick={() => setShowRaw(showRaw ? null : (rawText.mutuelle ? "mutuelle" : "ordonnance"))}
-                  className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors"
+                  className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors"
                 >
                   {showRaw ? "✕ Masquer le texte brut" : "👁 Voir le texte brut extrait"}
                 </button>
@@ -350,30 +497,30 @@ export default function Dashboard() {
           {/* Sidebar Area (Validation & Installation) */}
           <div className="space-y-6">
             <BookmarkletInstallButton />
-            
+
             {canValidate && (
-              <div className="p-8 rounded-[32px] shadow-xl space-y-6 bg-blue-600 shadow-blue-200">
+              <div className="p-8 rounded-[32px] shadow-xl space-y-6 bg-indigo-600 shadow-indigo-200">
                 <div className="text-left space-y-2">
                   <h2 className="text-xl font-bold text-white leading-tight">
                     Prêt pour le remplissage !
                   </h2>
-                  <p className="text-blue-100 text-[10px] font-medium leading-relaxed">
+                  <p className="text-indigo-100 text-[10px] font-medium leading-relaxed">
                     Cliquez ci-dessous pour copier les données et les utiliser avec l'extension.
                   </p>
                 </div>
                 <div className="relative">
-                  <button 
-                    onClick={copyData} 
+                  <button
+                    onClick={copyData}
                     className={`w-full flex items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${
-                      isDataCopied 
-                      ? "bg-green-500 border-green-400 text-white shadow-lg shadow-green-900/20 scale-105" 
+                      isDataCopied
+                      ? "bg-green-500 border-green-400 text-white shadow-lg shadow-green-900/20 scale-105"
                       : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                     }`}
                   >
                     {isDataCopied ? <ShieldCheck className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                    <span className="font-bold">{isDataCopied ? "Copié !" : "Copier"}</span>
+                    <span className="font-bold">{isDataCopied ? (cooldownActive ? "Copié (compteur non incrémenté)" : "Copié !") : "Copier"}</span>
                   </button>
-                  
+
                   {isDataCopied && (
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-green-600 text-[10px] font-black py-2 px-4 rounded-full shadow-xl whitespace-nowrap animate-bounce">
                       ✓ PRÊT À COLLER
@@ -387,6 +534,46 @@ export default function Dashboard() {
         </div>
 
       </div>
+
+      {/* Modal Feedback OCR */}
+      {feedbackModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4 space-y-4">
+            {feedbackModal.sent ? (
+              <p className="text-center text-green-600 font-semibold py-4">
+                Merci, votre retour nous aide à améliorer la lecture.
+              </p>
+            ) : (
+              <>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Signaler une erreur ({feedbackModal.type === "mutuelle" ? "Mutuelle" : "Prescription ORL"})
+                </h3>
+                <textarea
+                  value={feedbackModal.text}
+                  onChange={(e) => setFeedbackModal((prev) => ({ ...prev, text: e.target.value }))}
+                  placeholder="Ex: le nom est mal lu, le NSS est tronqué..."
+                  className="w-full h-28 border border-slate-200 rounded-xl p-3 text-sm text-slate-700 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setFeedbackModal({ open: false, type: null, text: "", sending: false, sent: false })}
+                    className="px-4 py-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={submitOcrFeedback}
+                    disabled={feedbackModal.sending || !feedbackModal.text.trim()}
+                    className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                  >
+                    {feedbackModal.sending ? "Envoi..." : "Envoyer"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

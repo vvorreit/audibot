@@ -62,14 +62,24 @@ model User {
   passwordChangedAt DateTime?
 
   // --- Plan ---
-  plan          String    @default("FREE") // FREE, SOLO, DUO
+  plan          String    @default("FREE") // FREE, ESSENTIEL, PRO, EQUIPE
+
+  // --- Scan limit (ESSENTIEL = 50/mois) ---
+  monthlyScanCount   Int       @default(0)
+  monthlyScanResetAt DateTime?
 
   // --- Stripe (Personal) ---
   stripeCustomerId       String?   @unique
   stripeSubscriptionId   String?   @unique
 
+  onboardingStep Int      @default(0) // 0=inscrit, 1=extension, 2=premier doc, 3=copié, 4=rempli
+
   createdAt     DateTime  @default(now())
   lastActiveAt  DateTime  @default(now())
+
+  injectionLogs InjectionLog[]
+  ocrFeedbacks  OcrFeedback[]
+  ocrScanLogs   OcrScanLog[]
 
   @@index([teamId])
   @@index([role])
@@ -117,4 +127,57 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model InjectionLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  site        String
+  success     Boolean
+  fieldsCount Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model OcrFeedback {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  rawText   String   @db.Text
+  fileName  String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model OcrScanLog {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          String
+  success       Boolean
+  ocrConfidence Float
+  dataScore     Float
+  globalScore   Float
+  level         String
+  fileName      String?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+  @@index([userId])
+}
+
+model RateLimit {
+  key       String   @id
+  count     Int      @default(1)
+  resetAt   DateTime
+
+  @@map("rate_limits")
 }

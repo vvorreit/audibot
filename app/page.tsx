@@ -3,12 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { 
-  CheckCircle, ArrowRight, 
-  Layers, ChevronDown, ChevronUp, 
+import {
+  CheckCircle, ArrowRight,
+  Layers, ChevronDown, ChevronUp,
   Timer, MousePointerClick, FileText,
   Lock, ZapOff, Bot, Ear, Activity, Headphones
 } from "lucide-react";
+import ROICalculator from "@/components/ROICalculator";
 
 function FAQItem({ question, answer }: { question: string, answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,10 +36,11 @@ function LandingContent() {
   const [isAnnual, setIsAnnual] = useState(false);
 
   const price = (monthly: number) => {
-    if (!isAnnual) return { label: `${monthly.toFixed(2).replace(".", ",")}€`, suffix: "/mois HT" };
+    if (!isAnnual) return { label: `${monthly.toFixed(2).replace(".", ",")}€`, suffix: "/mois HT", oldPrice: "", savings: "", annual: "" };
     const annual = (monthly * 12 * 0.85).toFixed(2).replace(".", ",");
     const perMonth = (monthly * 0.85).toFixed(2).replace(".", ",");
-    return { label: `${perMonth}€`, suffix: "/mois HT", annual: `${annual}€/an HT` };
+    const saved = (monthly * 12 * 0.15).toFixed(2).replace(".", ",");
+    return { label: `${perMonth}€`, suffix: "/mois HT", oldPrice: `${monthly.toFixed(2).replace(".", ",")}€`, savings: `${saved}€`, annual: `${annual}€/an HT` };
   };
 
   if (status === "loading") {
@@ -237,6 +239,18 @@ function LandingContent() {
         </div>
       </section>
 
+      {/* ROI Calculator Section */}
+      <section className="py-24 bg-white px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-4">Calculateur</h2>
+            <h3 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Calculez votre économie</h3>
+            <p className="text-slate-500 font-medium mt-4 italic">En moyenne, nos utilisateurs économisent 15 000€ de temps par an.</p>
+          </div>
+          <ROICalculator />
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="tarifs" className="py-24 bg-slate-50 px-6 border-y border-slate-100">
         <div className="max-w-7xl mx-auto">
@@ -261,117 +275,110 @@ function LandingContent() {
             </span>
           </div>
 
+          {/* Ancrage valeur */}
+          <div className="text-center mb-12">
+            <p className="text-slate-500 font-medium text-sm">La saisie manuelle vous coûte <span className="font-black text-red-500">15 000€/an</span> en temps perdu. AudiBot commence à <span className="font-black text-green-600">{isAnnual ? "33,92" : "39,90"}€/mois</span>.</p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch text-slate-900">
-            
+
+            {/* ESSENTIEL */}
             <div className="p-10 rounded-[40px] border border-slate-100 bg-white flex flex-col group hover:shadow-2xl transition-all duration-500">
-              <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Pack Solo <br/><span className="text-indigo-600">Mutuelle</span></h3>
-              <p className="text-slate-500 text-sm mb-8 font-medium italic">Spécialiste du Tiers-Payant audioprothèse.</p>
+              <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Essentiel</h3>
+              <p className="text-slate-500 text-sm mb-8 font-medium italic">OCR + Mutuelle + ERP en un seul plan.</p>
               <div className="mb-8">
-                <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(32.90).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(32.90).suffix}</span></div>
-                {isAnnual && <div className="text-xs text-green-600 font-bold mt-1">{price(32.90).annual}</div>}
+                {isAnnual && <div className="text-sm text-slate-400 font-bold line-through mb-1">{price(39.90).oldPrice}/mois</div>}
+                <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(39.90).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(39.90).suffix}</span></div>
+                {isAnnual && (
+                  <div className="mt-2 space-y-1">
+                    <div className="text-xs text-slate-500 font-bold">{price(39.90).annual}</div>
+                    <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-black text-green-600">Économisez {price(39.90).savings}/an</div>
+                  </div>
+                )}
               </div>
               <ul className="space-y-4 mb-10 flex-grow">
-                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Saisie Mutuelles Illimitée</li>
-                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Almerys, Viamedis & +</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> OCR intelligent (mutuelle + prescription ORL)</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Autofill ERP + Mutuelles (top 15)</li>
                 <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Extension Chrome Pro</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> 50 scans/mois</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Support email (48h)</li>
               </ul>
               <Link href="/dashboard" className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-indigo-600 transition-all text-center uppercase tracking-widest text-xs">
                 Commencer l'essai
               </Link>
             </div>
 
+            {/* PRO — Recommandé */}
             <div className="p-12 rounded-[50px] border-4 border-indigo-600 bg-white shadow-[0_50px_80px_-20px_rgba(99,102,241,0.25)] flex flex-col relative scale-105 z-10">
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.2em] px-8 py-3 rounded-full shadow-xl">Recommandé</div>
-              <h3 className="text-3xl font-black mb-2 uppercase tracking-tight">Pack Duo <br/><span className="text-indigo-600">Complet</span></h3>
-              <p className="text-slate-500 text-sm mb-8 font-medium italic">Saisie complète dossier audioprothèse.</p>
+              <h3 className="text-3xl font-black mb-2 uppercase tracking-tight">Pro</h3>
+              <p className="text-slate-500 text-sm mb-8 font-medium italic">Saisie illimitée + suivi tiers payant complet.</p>
               <div className="mb-8">
-                <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(49.90).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(49.90).suffix}</span></div>
-                {isAnnual && <div className="text-xs text-green-600 font-bold mt-1">{price(49.90).annual}</div>}
+                {isAnnual && <div className="text-sm text-slate-400 font-bold line-through mb-1">{price(69.90).oldPrice}/mois</div>}
+                <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(69.90).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(69.90).suffix}</span></div>
+                {isAnnual && (
+                  <div className="mt-2 space-y-1">
+                    <div className="text-xs text-slate-500 font-bold">{price(69.90).annual}</div>
+                    <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-black text-green-600">Économisez {price(69.90).savings}/an</div>
+                  </div>
+                )}
               </div>
               <ul className="space-y-4 mb-10 flex-grow">
-                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> <strong>Saisie ERP Inclus (Auditdata)</strong></li>
-                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Toutes Mutuelles + Ameli Pro</li>
-                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Support Prioritaire</li>
-                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Multi-postes inclus</li>
+                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Tout le plan Essentiel +</li>
+                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> <strong>Scans illimités</strong></li>
+                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Toutes mutuelles (illimité)</li>
+                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Suivi & tracking tiers payant</li>
+                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Alertes rejets & relances</li>
+                <li className="flex items-center gap-3 text-sm font-black text-slate-800"><CheckCircle className="w-5 h-5 text-indigo-600" /> Support prioritaire (&lt; 4h)</li>
               </ul>
-              <Link href="/dashboard" className="w-full py-5 bg-indigo-600 text-white font-black rounded-[24px] hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3 text-lg uppercase tracking-widest text-sm">
-                Essayer le Pack Duo
+              <Link href="/dashboard" className="w-full py-5 bg-indigo-600 text-white font-black rounded-[24px] hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3 uppercase tracking-widest text-sm">
+                Essayer le Plan Pro
               </Link>
             </div>
 
-            <div className="p-10 rounded-[40px] border border-slate-100 bg-white flex flex-col group hover:shadow-2xl transition-all duration-500">
-              <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Pack Solo <br/><span className="text-violet-600">ERP / Auditdata</span></h3>
-              <p className="text-slate-500 text-sm mb-8 font-medium italic">Spécialiste de la fiche patient audio.</p>
+            {/* ÉQUIPE */}
+            <div className="p-10 rounded-[40px] border-2 border-indigo-200 bg-white flex flex-col group hover:shadow-2xl transition-all duration-500 relative">
+              <div className="inline-flex items-center gap-2 mb-4">
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-full uppercase tracking-widest">5 postes</span>
+              </div>
+              <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Équipe</h3>
+              <p className="text-slate-500 text-sm mb-8 font-medium italic">Tout le plan Pro pour toute l'équipe.</p>
               <div className="mb-8">
-                <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(32.90).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(32.90).suffix}</span></div>
-                {isAnnual && <div className="text-xs text-green-600 font-bold mt-1">{price(32.90).annual}</div>}
+                {isAnnual && <div className="text-sm text-slate-400 font-bold line-through mb-1">{price(249.90).oldPrice}/mois</div>}
+                <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(249.90).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(249.90).suffix}</span></div>
+                <p className="text-slate-400 text-xs font-bold mt-1">soit {isAnnual ? "42,48" : "49,98"}€/poste/mois HT</p>
+                {isAnnual && (
+                  <div className="mt-2 space-y-1">
+                    <div className="text-xs text-slate-500 font-bold">{price(249.90).annual}</div>
+                    <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-black text-green-600">Économisez {price(249.90).savings}/an</div>
+                  </div>
+                )}
               </div>
               <ul className="space-y-4 mb-10 flex-grow">
-                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-violet-500" /> Saisie ERP Illimitée</li>
-                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-violet-500" /> Spécialisé Auditdata</li>
-                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-violet-500" /> Autofill Prescription ORL</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Tout le plan Pro x 5 postes</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Gestion d'équipe centralisée</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Onboarding personnalisé (1h visio)</li>
+                <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Support dédié</li>
               </ul>
-              <Link href="/dashboard" className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-violet-600 transition-all text-center uppercase tracking-widest text-xs">
-                Commencer l'essai
+              <Link href="/dashboard" className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all text-center uppercase tracking-widest text-xs shadow-xl shadow-indigo-100">
+                Essayer en équipe
               </Link>
             </div>
           </div>
 
-          {/* Team Plans */}
+          {/* Franchise */}
           <div className="mt-16">
-            <div className="text-center mb-10">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em]">Pour les équipes</span>
-              <h4 className="text-2xl font-black tracking-tight text-slate-900 mt-4">Un abonnement, toute l'équipe.</h4>
-              <p className="text-slate-500 font-medium text-sm mt-2">Partagez AudiBot entre plusieurs postes depuis un seul compte.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-
-              <div className="p-10 rounded-[40px] border border-indigo-100 bg-white flex flex-col group hover:shadow-2xl transition-all duration-500">
-                <div className="inline-flex items-center gap-2 mb-4">
-                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-full uppercase tracking-widest">3 postes</span>
-                </div>
-                <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Team <br/><span className="text-indigo-600">Trio</span></h3>
-                <p className="text-slate-500 text-sm mb-8 font-medium italic">Idéal pour un centre avec une petite équipe.</p>
-                <div className="mb-8">
-                  <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(99).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(99).suffix}</span></div>
-                  {isAnnual && <div className="text-xs text-green-600 font-bold mt-1">{price(99).annual}</div>}
-                  <p className="text-slate-400 text-xs font-bold mt-1">soit {isAnnual ? "28,05" : "33,00"}€/poste/mois</p>
-                </div>
-                <ul className="space-y-4 mb-10 flex-grow">
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> 3 postes inclus</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> ERP + Mutuelles</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Gestion d'équipe centralisée</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Support prioritaire</li>
-                </ul>
-                <Link href="/dashboard" className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all text-center uppercase tracking-widest text-xs">
-                  Essayer en équipe
-                </Link>
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[40px] p-10 md:p-14 max-w-3xl mx-auto text-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/10 blur-[100px]"></div>
+              <div className="relative z-10">
+                <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6 border border-white/10">10+ postes</span>
+                <h4 className="text-3xl font-black tracking-tight text-white mb-4">Vous gérez un réseau ?<br /><span className="text-indigo-400">On s'adapte à votre échelle.</span></h4>
+                <p className="text-slate-400 font-medium text-sm mb-10 max-w-lg mx-auto leading-relaxed">Onboarding sur mesure, interlocuteur dédié, déploiement multi-centres et intégration ERP prioritaire. Discutons de vos besoins.</p>
+                <a href="mailto:contact@audibot.fr" className="inline-flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all uppercase tracking-widest text-xs shadow-xl shadow-indigo-600/20 group">
+                  Parlons de votre projet
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </a>
               </div>
-
-              <div className="p-10 rounded-[40px] border-2 border-indigo-300 bg-white flex flex-col group hover:shadow-2xl transition-all duration-500 relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-lg">Meilleur rapport</div>
-                <div className="inline-flex items-center gap-2 mb-4">
-                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-full uppercase tracking-widest">5 postes</span>
-                </div>
-                <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Team <br/><span className="text-indigo-600">Pro</span></h3>
-                <p className="text-slate-500 text-sm mb-8 font-medium italic">Pour les réseaux ou centres multi-postes.</p>
-                <div className="mb-8">
-                  <div className="text-4xl sm:text-5xl font-black whitespace-nowrap">{price(149).label}<span className="text-base sm:text-lg text-slate-400 font-bold">{price(149).suffix}</span></div>
-                  {isAnnual && <div className="text-xs text-green-600 font-bold mt-1">{price(149).annual}</div>}
-                  <p className="text-slate-400 text-xs font-bold mt-1">soit {isAnnual ? "25,33" : "29,80"}€/poste/mois</p>
-                </div>
-                <ul className="space-y-4 mb-10 flex-grow">
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> 5 postes inclus</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> ERP + Mutuelles</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Gestion d'équipe centralisée</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Support prioritaire dédié</li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><CheckCircle className="w-5 h-5 text-indigo-600" /> Onboarding personnalisé</li>
-                </ul>
-                <Link href="/dashboard" className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all text-center uppercase tracking-widest text-xs shadow-xl shadow-indigo-100">
-                  Essayer en équipe
-                </Link>
-              </div>
-
             </div>
           </div>
 
@@ -399,8 +406,8 @@ function LandingContent() {
               answer="Oui. Le Bot est entraîné sur les formats de prescriptions ORL françaises. Il extrait l'audiogramme complet (250Hz à 4kHz, OD et OG), la classe d'appareillage (1 ou 2), le type d'appareil et les informations patient automatiquement." 
             />
             <FAQItem 
-              question="Peut-on tester avant de payer ?" 
-              answer="Absolument. Chaque nouvel inscrit bénéficie de 5 scans gratuits sans carte bancaire pour tester AudiBot en conditions réelles dans son centre." 
+              question="Peut-on tester avant de payer ?"
+              answer="Absolument. Chaque nouvel inscrit bénéficie de 14 jours d'essai gratuit sans carte bancaire pour tester AudiBot en conditions réelles dans son centre." 
             />
             <FAQItem 
               question="Ça fonctionne avec une simple photo de prescription ?" 

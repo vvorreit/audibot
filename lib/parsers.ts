@@ -186,8 +186,19 @@ export function parseMutuelle(text: string): MutuelleData {
     /(?:du|valable\s+du|p[eé]riode[^\n]{0,20}?du|p[eé]riode\s+de)\s+(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i
   );
   const finMatch = t.match(/(?:au|jusqu'au|validit[eé])\s+(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i);
-  const dateDebutValidite = debutMatch ? debutMatch[1] : "";
-  const dateFinValidite = finMatch ? finMatch[1] : "";
+  let dateDebutValidite = debutMatch ? debutMatch[1] : "";
+  let dateFinValidite = finMatch ? finMatch[1] : "";
+
+  // Fallback : pattern "DD/MM/YYYY au DD/MM/YYYY" (SOGAREP, GEREP sans "du" explicite)
+  if (!dateDebutValidite) {
+    const rangeDateMatch = t.match(
+      /(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})\s+au\s+(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i
+    );
+    if (rangeDateMatch) {
+      dateDebutValidite = rangeDateMatch[1];
+      if (!dateFinValidite) dateFinValidite = rangeDateMatch[2];
+    }
+  }
 
   // N° INSEE (format SP Santé / GEREP : "N° INSEE : 2 85 09 69 388 168 56")
   const inseeMatch = t.match(/n[°o\.]\s*insee\s*[:\s]+([\d\s]{13,22})/i);
@@ -218,6 +229,14 @@ export function parseMutuelle(text: string): MutuelleData {
     if (nss.length >= 13) addPersonne(m[1], nss, m[2], personnes, seen);
   }
 
+  // Format "TABLE-NSS" – Nom suivi de données sur la même ligne, date+rang+NSS ligne suivante
+  const fmtTableNSS =
+    /([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ][A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ -]{2,40})[^\n]+\n(\d{2}[\/\-]\d{2}[\/\-]\d{4})\s+\d{1,2}\s+([12][\d\s]{14,25})/g;
+  while ((m = fmtTableNSS.exec(t)) !== null) {
+    const nss = normalizeNSS(m[3]).slice(0, 15);
+    if (nss.length >= 13) addPersonne(m[1], nss, m[2], personnes, seen);
+  }
+
   // Format 2b – ACTIL/Alptis : "NOM PRENOM\nCODE_ALPHANUM...DATE RANG NSS(espaces)"
   // La ligne suivant le nom contient un code arbitraire avant la date de naissance
   // Espace littéral dans le nom pour ne pas traverser les sauts de ligne
@@ -226,6 +245,16 @@ export function parseMutuelle(text: string): MutuelleData {
   while ((m = fmt2b.exec(t)) !== null) {
     const nss = normalizeNSS(m[3]).slice(0, 15);
     if (nss.length >= 13) addPersonne(m[1], nss, m[2], personnes, seen);
+  }
+
+  // Format "TABLE-NoNSS" – Nom + données tiers-payant sur même ligne, date+rang ligne suivante
+  if (personnes.length === 0) {
+    const fmtTableNoNSS =
+      /([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ][A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ -]{2,40})[^\n]+\n(\d{2}[\/\-]\d{2}[\/\-]\d{4})\s+\d{1}/g;
+    while ((m = fmtTableNoNSS.exec(t)) !== null) {
+      const nss = personnes.length === 0 ? inseeNSS : "";
+      addPersonne(m[1], nss, m[2], personnes, seen);
+    }
   }
 
   // Format 3 – Personnes sans NSS individuel (GEREP bénéficiaires tableau) :
@@ -477,4 +506,56 @@ export function parseOrdonnance(text: string): OrdonnanceData {
     renouvellement,
     remarques,
   };
+}
+
+// ── Scoring ─────────────────────────────────────────────────────────────────
+
+const DATE_DDMMYYYY = /^\d{2}\/\d{2}\/\d{4}$/;
+
+export function scoreMutuelle(data: MutuelleData): number {
+  const fields = [
+    data.organisme,
+    data.numeroAMC,
+    data.numeroAdherent,
+    data.nom,
+    data.prenom,
+    data.numeroSecuriteSociale,
+    data.dateDebutValidite,
+    data.dateFinValidite,
+  ];
+  let score = fields.filter((f) => f.trim().length > 0).length * 12.5;
+
+  if (data.numeroSecuriteSociale.trim() && !/^\d{13}$/.test(data.numeroSecuriteSociale.replace(/\s/g, ""))) {
+    score -= 20;
+  }
+  if (data.dateDebutValidite.trim() && !DATE_DDMMYYYY.test(data.dateDebutValidite.trim())) {
+    score -= 10;
+  }
+  if (data.dateFinValidite.trim() && !DATE_DDMMYYYY.test(data.dateFinValidite.trim())) {
+    score -= 10;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+export function scoreOrdonnance(data: OrdonnanceData): number {
+  const fields = [
+    data.nomORL,
+    data.datePrescription,
+    data.nomPatient,
+    data.oreilleDroite.hz1000,
+    data.oreilleGauche.hz1000,
+    data.classeAppareillage,
+  ];
+  let score = fields.filter((f) => f.trim().length > 0).length * (100 / 6);
+
+  // Pénalités : valeurs audiométriques invalides (doivent être des nombres)
+  if (data.oreilleDroite.hz1000.trim() && isNaN(parseInt(data.oreilleDroite.hz1000))) {
+    score -= 15;
+  }
+  if (data.oreilleGauche.hz1000.trim() && isNaN(parseInt(data.oreilleGauche.hz1000))) {
+    score -= 15;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
 }

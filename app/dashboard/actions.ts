@@ -16,28 +16,28 @@ export async function getUserDashboardData() {
     const session = await getSession();
     if (!session?.user?.email) return null;
 
+    const selectFields = {
+      clientCount: true,
+      isPro: true,
+      plan: true,
+      syncToken: true,
+      role: true,
+      createdAt: true,
+      onboardingStep: true,
+      monthlyScanCount: true,
+      monthlyScanResetAt: true,
+    } as const;
+
     let user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: {
-        clientCount: true,
-        isPro: true,
-        plan: true,
-        syncToken: true,
-        role: true,
-      }
+      select: selectFields,
     });
 
     if (user && !user.syncToken) {
       user = await prisma.user.update({
         where: { email: session.user.email },
         data: { syncToken: randomBytes(16).toString("hex") },
-        select: {
-          clientCount: true,
-          isPro: true,
-          plan: true,
-          syncToken: true,
-          role: true,
-        }
+        select: selectFields,
       });
     }
 
@@ -62,16 +62,41 @@ export async function generateAutofillPayload(payload: AutofillPayload): Promise
   return generatePayloadString(payload);
 }
 
+const ESSENTIEL_SCAN_LIMIT = Number(process.env.ESSENTIEL_MONTHLY_SCAN_LIMIT ?? 50);
+
 export async function incrementClientCountInDB() {
   try {
     const session = await getSession();
     if (!session?.user?.email) throw new Error("Non autorisé");
 
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { plan: true, monthlyScanCount: true, monthlyScanResetAt: true }
+    });
+
+    if (!currentUser) throw new Error("Utilisateur introuvable");
+
+    // Reset compteur mensuel si nouveau mois
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    let monthlyScanCount = currentUser.monthlyScanCount;
+
+    if (!currentUser.monthlyScanResetAt || currentUser.monthlyScanResetAt < monthStart) {
+      monthlyScanCount = 0;
+    }
+
+    // Vérifier limite pour plan ESSENTIEL
+    if (currentUser.plan === "ESSENTIEL" && monthlyScanCount >= ESSENTIEL_SCAN_LIMIT) {
+      throw new Error(`Limite de ${ESSENTIEL_SCAN_LIMIT} scans/mois atteinte. Passez au plan Pro pour un usage illimité.`);
+    }
+
     const user = await prisma.user.update({
       where: { email: session.user.email },
       data: {
         clientCount: { increment: 1 },
-        lastActiveAt: new Date(),
+        monthlyScanCount: monthlyScanCount + 1,
+        monthlyScanResetAt: now,
+        lastActiveAt: now,
       }
     });
 
@@ -82,10 +107,56 @@ export async function incrementClientCountInDB() {
   }
 }
 
-export async function createCheckoutSession(plan: "SOLO" | "DUO") {
-  const priceId = plan === "SOLO"
-    ? process.env.STRIPE_PRICE_SOLO
-    : process.env.STRIPE_PRICE_DUO;
+export async function logOcrScan(data: {
+  type: string;
+  success: boolean;
+  ocrConfidence: number;
+  dataScore: number;
+  globalScore: number;
+  level: string;
+  fileName?: string;
+}) {
+  try {
+    const session = await getSession();
+    if (!session?.user?.email) return;
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+    if (!user) return;
+
+    await prisma.ocrScanLog.create({
+      data: {
+        userId: user.id,
+        type: data.type,
+        success: data.success,
+        ocrConfidence: data.ocrConfidence,
+        dataScore: data.dataScore,
+        globalScore: data.globalScore,
+        level: data.level,
+        fileName: data.fileName,
+      },
+    });
+  } catch (error) {
+    console.error("Erreur logOcrScan:", error);
+  }
+}
+
+export async function createCheckoutSession(plan: "ESSENTIEL" | "PRO" | "EQUIPE", billing: "monthly" | "annual" = "monthly") {
+  const priceMap: Record<string, Record<string, string | undefined>> = {
+    monthly: {
+      ESSENTIEL: process.env.STRIPE_PRICE_ESSENTIEL,
+      PRO: process.env.STRIPE_PRICE_PRO,
+      EQUIPE: process.env.STRIPE_PRICE_EQUIPE,
+    },
+    annual: {
+      ESSENTIEL: process.env.STRIPE_PRICE_ESSENTIEL_ANNUAL,
+      PRO: process.env.STRIPE_PRICE_PRO_ANNUAL,
+      EQUIPE: process.env.STRIPE_PRICE_EQUIPE_ANNUAL,
+    },
+  };
+  const priceId = priceMap[billing][plan];
 
   if (!priceId) throw new Error(`Plan Stripe non configuré : STRIPE_PRICE_${plan}`);
   const session = await getSession();
@@ -158,7 +229,7 @@ export async function createCheckoutSession(plan: "SOLO" | "DUO") {
   return { url: checkoutSession.url };
 }
 
-export async function upgradePlan(newPlan: "SOLO" | "DUO") {
+export async function upgradePlan(newPlan: "ESSENTIEL" | "PRO" | "EQUIPE", billing: "monthly" | "annual" = "monthly") {
   const session = await getSession();
   if (!session?.user?.email) throw new Error("Non autorisé");
 
@@ -170,9 +241,19 @@ export async function upgradePlan(newPlan: "SOLO" | "DUO") {
   if (!user?.stripeSubscriptionId) throw new Error("Aucun abonnement actif.");
   if (user.plan === newPlan) throw new Error("Vous êtes déjà sur ce plan.");
 
-  const newPriceId = newPlan === "DUO"
-    ? process.env.STRIPE_PRICE_DUO
-    : process.env.STRIPE_PRICE_SOLO;
+  const priceMap: Record<string, Record<string, string | undefined>> = {
+    monthly: {
+      ESSENTIEL: process.env.STRIPE_PRICE_ESSENTIEL,
+      PRO: process.env.STRIPE_PRICE_PRO,
+      EQUIPE: process.env.STRIPE_PRICE_EQUIPE,
+    },
+    annual: {
+      ESSENTIEL: process.env.STRIPE_PRICE_ESSENTIEL_ANNUAL,
+      PRO: process.env.STRIPE_PRICE_PRO_ANNUAL,
+      EQUIPE: process.env.STRIPE_PRICE_EQUIPE_ANNUAL,
+    },
+  };
+  const newPriceId = priceMap[billing][newPlan];
 
   if (!newPriceId) throw new Error(`Plan Stripe non configuré : STRIPE_PRICE_${newPlan}`);
 
