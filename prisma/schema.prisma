@@ -80,6 +80,8 @@ model User {
   injectionLogs InjectionLog[]
   ocrFeedbacks  OcrFeedback[]
   ocrScanLogs   OcrScanLog[]
+  dossiersTP    DossierTiersPayant[]
+  alertesExpiration AlerteExpiration[]
 
   @@index([teamId])
   @@index([role])
@@ -180,4 +182,168 @@ model RateLimit {
   resetAt   DateTime
 
   @@map("rate_limits")
+}
+
+// ========================
+// Tiers-Payant Module
+// ========================
+
+enum StatutDossierTP {
+  EN_ATTENTE
+  RECU
+  REJETE
+  EN_LITIGE
+}
+
+enum Mutuelle {
+  CPAM
+  ALMERYS
+  VIAMEDIS
+  ITELIS
+  KALIXIA
+  CARTE_BLANCHE
+  SANTECLAIR
+  SEVEANE
+  SP_SANTE
+  AUTRE
+}
+
+model DossierTiersPayant {
+  id              String          @id @default(cuid())
+  reference       String          @unique
+  mutuelle        Mutuelle
+  montant         Float
+  dateEnvoi       DateTime
+  numeroAdherent  String?
+  referenceInterne String?
+  statut          StatutDossierTP @default(EN_ATTENTE)
+
+  montantRecu     Float?
+  dateReception   DateTime?
+  motifRejet      String?
+  commentaire     String?         @db.Text
+
+  relanceCount      Int           @default(0)
+  derniereRelanceAt DateTime?
+  relanceDesactivee Boolean       @default(false)
+
+  lboDetailId     String?         @unique
+  mode            String?
+
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  historique      HistoriqueStatutTP[]
+  relances        RelanceLog[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([statut])
+  @@index([createdAt])
+}
+
+model HistoriqueStatutTP {
+  id              String          @id @default(cuid())
+  dossierId       String
+  dossier         DossierTiersPayant @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  ancienStatut    StatutDossierTP
+  nouveauStatut   StatutDossierTP
+  commentaire     String?         @db.Text
+  auteurId        String
+  auteurNom       String
+  createdAt       DateTime        @default(now())
+
+  @@index([dossierId])
+  @@index([createdAt])
+}
+
+model RegleRelance {
+  id              String    @id @default(cuid())
+  delaiJours      Int
+  action          String    @default("both") // email, dashboard, both
+  mutuelle        Mutuelle?
+  actif           Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([delaiJours, mutuelle])
+}
+
+model RelanceLog {
+  id              String    @id @default(cuid())
+  dossierId       String
+  dossier         DossierTiersPayant @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type            String    // email, dashboard, both
+  delaiJours      Int
+  statut          String    @default("envoyee") // prevue, envoyee, reportee, annulee
+  datePrevu       DateTime
+  dateExecution   DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([dossierId])
+  @@index([statut])
+  @@index([datePrevu])
+}
+
+model TemplateRelance {
+  id              String    @id @default(cuid())
+  nom             String
+  type            String    @default("amiable") // amiable, ferme, mise_en_demeure
+  objet           String
+  contenu         String    @db.Text
+  delaiJours      Int?
+  actif           Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AlerteExpiration {
+  id                String    @id @default(cuid())
+  dossierId         String?
+  clientNom         String
+  dateOrdonnance    DateTime
+  dateExpiration    DateTime
+  joursAvant        Int
+  traitee           Boolean   @default(false)
+  traiteePar        String?
+  traiteeAt         DateTime?
+  commentaire       String?   @db.Text
+  notifEmail        Boolean   @default(false)
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
+  @@index([traitee])
+  @@index([dateExpiration])
+}
+
+model MutuelleEmailConfig {
+  id              String    @id @default(cuid())
+  mutuelle        Mutuelle  @unique
+  emailDefaut     String
+  emailPerso      String?
+  actif           Boolean   @default(true)
+  updatedAt       DateTime  @updatedAt
+}
+
+model RejetAutoDetecte {
+  id              String    @id @default(cuid())
+  syncToken       String
+  portail         String    // ALMERYS, VIAMEDIS, ITELIS, KALIXIA
+  numeroDossier   String?
+  motif           String?
+  dateRejet       DateTime?
+  montant         Float?
+  dossierId       String?
+  matched         Boolean   @default(false)
+  traite          Boolean   @default(false)
+  rawData         String?   @db.Text
+  createdAt       DateTime  @default(now())
+
+  @@index([syncToken])
+  @@index([traite])
+  @@index([dossierId])
 }
