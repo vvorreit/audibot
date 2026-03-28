@@ -22,13 +22,13 @@ export default function CGVPage() {
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Vendeur</h2>
             <p className="text-slate-600">
               Les présentes Conditions Générales de Vente (CGV) régissent toute souscription d&apos;abonnement au service
-              OptiBot, édité par <strong>Vorreiter Activities</strong>, Société par Actions Simplifiée Unipersonnelle (SASU),
+              AudiBot, édité par <strong>Vorreiter Activities</strong>, Société par Actions Simplifiée Unipersonnelle (SASU),
               54 rue Marcel et Ida Demia, 01500 Ambérieu-en-Bugey — SIRET : 92252355000023 — TVA : FR30922523550
               (ci-après &laquo;&nbsp;le Vendeur&nbsp;&raquo;).
-              Contact&nbsp;: <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>.
+              Contact&nbsp;: <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>.
             </p>
             <p className="text-slate-600 mt-2">
-              Ces CGV s&apos;appliquent à tout professionnel (opticien, groupe optique, franchise) souscrivant un abonnement
+              Ces CGV s&apos;appliquent à tout professionnel (audioprothésiste, cabinet audio, franchise) souscrivant un abonnement
               payant, conformément à l&apos;article L441-1 du Code de commerce.
             </p>
           </section>
@@ -51,7 +51,7 @@ export default function CGVPage() {
                   <tr><td className="p-3 font-bold">Pro</td><td className="p-3">69,90&nbsp;€/mois</td><td className="p-3">59,42&nbsp;€/mois (712,98&nbsp;€/an)</td><td className="p-3">1 poste</td></tr>
                   <tr><td className="p-3 font-bold">Cabinet</td><td className="p-3">179,00&nbsp;€/mois</td><td className="p-3">152,15&nbsp;€/mois (1&nbsp;825,80&nbsp;€/an)</td><td className="p-3">3 postes</td></tr>
                   <tr><td className="p-3 font-bold">Réseau</td><td className="p-3">299,00&nbsp;€/mois + 30&nbsp;€/poste supp.</td><td className="p-3">254,15&nbsp;€/mois (3&nbsp;049,80&nbsp;€/an)</td><td className="p-3">5 postes inclus</td></tr>
-                  <tr><td className="p-3 font-bold">Franchise</td><td className="p-3" colSpan={2}>Sur devis annuel — contacter <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a></td><td className="p-3">Illimité</td></tr>
+                  <tr><td className="p-3 font-bold">Franchise</td><td className="p-3" colSpan={2}>Sur devis annuel — contacter <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a></td><td className="p-3">Illimité</td></tr>
                 </tbody>
               </table>
             </div>
@@ -66,7 +66,7 @@ export default function CGVPage() {
             <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Conditions de paiement</h2>
             <p className="text-slate-600">
               Le paiement est effectué par carte bancaire via Stripe (prestataire de paiement sécurisé PCI-DSS).
-              OptiBot ne stocke aucune donnée de carte bancaire.
+              AudiBot ne stocke aucune donnée de carte bancaire.
             </p>
             <ul className="list-disc pl-6 text-slate-600 space-y-2 mt-2">
               <li><strong>Abonnement mensuel</strong>&nbsp;: prélèvement automatique chaque mois à la date de souscription.</li>
@@ -84,11 +84,11 @@ export default function CGVPage() {
               de rétractation, dès lors que celui-ci a renoncé expressément à son droit.
             </p>
             <p className="text-slate-600 mt-2">
-              OptiBot étant un service B2B destiné aux professionnels opticiens, le droit de rétractation de 14 jours
+              AudiBot étant un service B2B destiné aux professionnels audioprothésistes, le droit de rétractation de 14 jours
               prévu pour les consommateurs ne s&apos;applique pas.
             </p>
             <p className="text-slate-600 mt-2">
-              Néanmoins, OptiBot propose une <strong>période d&apos;essai gratuite de 14 jours</strong> permettant d&apos;évaluer
+              Néanmoins, AudiBot propose une <strong>période d&apos;essai gratuite de 14 jours</strong> permettant d&apos;évaluer
               le service avant tout engagement financier.
             </p>
           </section>
@@ -103,12 +103,12 @@ export default function CGVPage() {
               Exceptions où un remboursement au prorata peut être accordé&nbsp;:
             </p>
             <ul className="list-disc pl-6 text-slate-600 space-y-2 mt-2">
-              <li>Interruption de service supérieure à 72h consécutives imputable à OptiBot.</li>
+              <li>Interruption de service supérieure à 72h consécutives imputable à AudiBot.</li>
               <li>Erreur de facturation de notre part (doublon, montant incorrect).</li>
-              <li>Décision commerciale à la discrétion d&apos;OptiBot.</li>
+              <li>Décision commerciale à la discrétion d&apos;AudiBot.</li>
             </ul>
             <p className="text-slate-600 mt-2">
-              Pour toute demande de remboursement&nbsp;: <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              Pour toute demande de remboursement&nbsp;: <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
               — nous nous engageons à répondre sous 5 jours ouvrés.
             </p>
           </section>
@@ -118,11 +118,11 @@ export default function CGVPage() {
             <p className="text-slate-600">
               <strong>Par le Client</strong>&nbsp;: La résiliation est possible à tout moment depuis l&apos;espace
               &laquo;&nbsp;Mon compte&nbsp;&raquo; &gt; Facturation &gt; Annuler l&apos;abonnement, ou par email à
-              <a href="mailto:contact@optibot.fr" className="text-blue-600 underline mx-1">contact@optibot.fr</a>.
+              <a href="mailto:contact@audibot.fr" className="text-blue-600 underline mx-1">contact@audibot.fr</a>.
               L&apos;accès reste actif jusqu&apos;à la fin de la période en cours déjà payée.
             </p>
             <p className="text-slate-600 mt-2">
-              <strong>Par OptiBot</strong>&nbsp;: OptiBot peut résilier immédiatement en cas de violation des CGU
+              <strong>Par AudiBot</strong>&nbsp;: AudiBot peut résilier immédiatement en cas de violation des CGU
               (usage abusif, tentative de contournement, partage de compte). En cas de résiliation pour cause
               légitime, les sommes non consommées peuvent être remboursées au prorata.
             </p>
@@ -136,21 +136,21 @@ export default function CGVPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">7. Niveau de service (SLA)</h2>
             <p className="text-slate-600">
-              OptiBot s&apos;engage à maintenir une disponibilité cible de <strong>99,5&nbsp;%</strong> du service sur une base mensuelle,
+              AudiBot s&apos;engage à maintenir une disponibilité cible de <strong>99,5&nbsp;%</strong> du service sur une base mensuelle,
               hors maintenances planifiées notifiées 48h à l&apos;avance. En cas de dépassement, un avoir peut être accordé
-              à la discrétion d&apos;OptiBot.
+              à la discrétion d&apos;AudiBot.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">8. Limitation de responsabilité</h2>
             <p className="text-slate-600">
-              OptiBot est un outil d&apos;assistance à la saisie. Il ne se substitue pas au jugement professionnel de l&apos;opticien.
-              OptiBot ne saurait être tenu responsable d&apos;erreurs de saisie résultant d&apos;une mauvaise qualité de document
+              AudiBot est un outil d&apos;assistance à la saisie. Il ne se substitue pas au jugement professionnel de l&apos;audioprothésiste.
+              AudiBot ne saurait être tenu responsable d&apos;erreurs de saisie résultant d&apos;une mauvaise qualité de document
               source, d&apos;une configuration incorrecte, ou d&apos;un usage non conforme à la documentation.
             </p>
             <p className="text-slate-600 mt-2">
-              La responsabilité d&apos;OptiBot est limitée au montant des abonnements effectivement payés par le Client
+              La responsabilité d&apos;AudiBot est limitée au montant des abonnements effectivement payés par le Client
               au cours des 12 derniers mois précédant le litige.
             </p>
           </section>
@@ -160,7 +160,7 @@ export default function CGVPage() {
             <p className="text-slate-600">
               Les présentes CGV sont soumises au droit français. En cas de litige, les parties s&apos;engagent à rechercher
               une solution amiable avant toute action judiciaire. À défaut d&apos;accord, le tribunal compétent sera celui
-              du siège social d&apos;OptiBot.
+              du siège social d&apos;AudiBot.
             </p>
           </section>
 
@@ -168,7 +168,7 @@ export default function CGVPage() {
             <h2 className="text-xl font-bold mb-4 border-b pb-2">10. Contact</h2>
             <p className="text-slate-600">
               Pour toute question relative à ces CGV&nbsp;:{" "}
-              <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
           </section>
 

@@ -46,8 +46,8 @@ const mutuelles: Portail[] = [
     recorder: "Disponible",
   },
   {
-    name: "TP Plus / Santeclair",
-    url: "optique-tpplus.ffl-promoteur.com",
+    name: "Santeclair",
+    url: "pro.santeclair.fr",
     favicon: getFaviconUrl("santeclair.fr"),
     recorder: "Disponible",
   },
@@ -246,76 +246,40 @@ const mutuelles: Portail[] = [
   },
 ];
 
-/* ── ERPs ── */
+/* ── Logiciels métiers audio ── */
 const erps: Portail[] = [
   {
-    name: "Cosium (CosiumShop)",
-    url: "cosium.com",
-    favicon: getFaviconUrl("cosium.com"),
+    name: "Audiosoft",
+    url: "audiosoft.fr",
+    favicon: getFaviconUrl("audiosoft.fr"),
     recorder: "Disponible",
   },
   {
-    name: "I-Optics (Cegid / Cristallin)",
-    url: "cegid.com",
-    favicon: getFaviconUrl("cegid.com"),
+    name: "Noah (HIMSA)",
+    url: "himsa.com",
+    favicon: getFaviconUrl("himsa.com"),
     recorder: "Disponible",
   },
   {
-    name: "PVO (Ginkoia)",
-    url: "ginkoia.com",
-    favicon: getFaviconUrl("ginkoia.com"),
+    name: "Sycle",
+    url: "sycle.net",
+    favicon: getFaviconUrl("sycle.net"),
     recorder: "Disponible",
   },
   {
-    name: "IDM Optic (Axess)",
-    url: "axess-groupe.fr",
-    favicon: getFaviconUrl("axess-groupe.fr"),
+    name: "Audinsoft",
+    url: "audinsoft.fr",
+    favicon: getFaviconUrl("audinsoft.fr"),
     recorder: "Disponible",
   },
   {
-    name: "MyEasyOptic",
-    url: "myeasyoptic.com",
-    favicon: getFaviconUrl("myeasyoptic.com"),
+    name: "Axiom (Propulso)",
+    url: "propulso.fr",
+    favicon: getFaviconUrl("propulso.fr"),
     recorder: "Disponible",
   },
   {
-    name: "WinOptics",
-    url: "winoptics.fr",
-    favicon: getFaviconUrl("winoptics.fr"),
-    recorder: "Disponible",
-  },
-  {
-    name: "Optimum (CIT)",
-    url: "livebyoptimum.com",
-    favicon: getFaviconUrl("livebyoptimum.com"),
-    recorder: "Disponible",
-  },
-  {
-    name: "Osmose (Amonis)",
-    url: "amonis.fr",
-    favicon: getFaviconUrl("amonis.fr"),
-    recorder: "Disponible",
-  },
-  {
-    name: "Acuitas 3 (Ocuco)",
-    url: "ocuco.com",
-    favicon: getFaviconUrl("ocuco.com"),
-    recorder: "Disponible",
-  },
-  {
-    name: "Archimed",
-    url: "archimed.fr",
-    favicon: getFaviconUrl("archimed.fr"),
-    recorder: "Disponible",
-  },
-  {
-    name: "Lyra Optique",
-    url: "lyra-optique.fr",
-    favicon: getFaviconUrl("lyra-optique.fr"),
-    recorder: "Enregistrez-le",
-  },
-  {
-    name: "Irium",
+    name: "Irium Audio",
     url: "irium-software.fr",
     favicon: getFaviconUrl("irium-software.fr"),
     recorder: "Enregistrez-le",
@@ -466,9 +430,9 @@ export default async function PortailsPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Image src="/icon.png" alt="OptiBot" width={28} height={28} className="rounded-lg" priority />
+              <Image src="/icon.png" alt="AudiBot" width={28} height={28} className="rounded-lg" priority />
             </div>
-            <span className="text-lg font-bold tracking-tight uppercase">OptiBot</span>
+            <span className="text-lg font-bold tracking-tight uppercase">AudiBot</span>
           </Link>
           <Link href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-xs font-black uppercase tracking-widest transition-colors">
             <ArrowLeft className="w-4 h-4" /> Retour
@@ -480,7 +444,7 @@ export default async function PortailsPage() {
       <section className="py-20 px-6 bg-slate-50 border-b border-slate-100">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100 text-green-700 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-            <CheckCircle className="w-3.5 h-3.5" /> 50+ portails mutuelles & ERP supportés
+            <CheckCircle className="w-3.5 h-3.5" /> 50+ portails mutuelles & logiciels audio supportés
           </div>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
             Votre portail est{" "}
@@ -512,7 +476,7 @@ export default async function PortailsPage() {
                 <Video className="w-4 h-4 text-red-500" />
                 <p className="text-sm font-black text-slate-900">Recorder</p>
               </div>
-              <p className="text-xs text-slate-500 leading-relaxed">Enregistrez votre parcours une fois — OptiBot le rejoue automatiquement pour tous les dossiers suivants.</p>
+              <p className="text-xs text-slate-500 leading-relaxed">Enregistrez votre parcours une fois — AudiBot le rejoue automatiquement pour tous les dossiers suivants.</p>
               <div className="flex flex-col gap-1.5">
                 <span className="inline-flex items-center gap-1.5 w-fit px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-xs font-black">
                   <CheckCircle className="w-3 h-3" /> Disponible — prêt à l&apos;emploi
@@ -544,7 +508,7 @@ export default async function PortailsPage() {
         <div className="max-w-6xl mx-auto space-y-16">
 
           <PortailMatrix items={mutuellesEnrichies} label="Portails mutuelles" />
-          <PortailMatrix items={erpsEnrichis} label="Logiciels métiers (ERP)" />
+          <PortailMatrix items={erpsEnrichis} label="Logiciels métiers audiologie" />
 
           {/* CTA */}
           <div className="bg-slate-900 rounded-[40px] p-10 md:p-14 text-center relative overflow-hidden">
@@ -588,7 +552,7 @@ export default async function PortailsPage() {
             <Link href="/legal/cgv" className="hover:text-white transition-colors">CGV</Link>
             <Link href="/legal/mentions-legales" className="hover:text-white transition-colors">Mentions</Link>
           </div>
-          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">© 2026 OptiBot</div>
+          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">© 2026 AudiBot</div>
         </div>
       </footer>
 

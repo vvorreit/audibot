@@ -54,7 +54,7 @@ export async function getEmailPreview(type: string): Promise<{ subject: string; 
         subject: `${brand.name} — avez-vous essayé le scan automatique ?`,
         html: emailWrapper(brand, `
           <h1 style="font-size:20px;font-weight:800;margin:0 0 12px 0;">Avez-vous essayé le scan automatique ?</h1>
-          <p style="font-size:14px;line-height:1.6;color:#475569;">Photographiez une carte mutuelle ou une ordonnance — ${brand.name} remplit le formulaire en 3 secondes.</p>
+          <p style="font-size:14px;line-height:1.6;color:#475569;">Photographiez une carte mutuelle ou une prescription audiologique — ${brand.name} remplit le formulaire en 3 secondes.</p>
           ${btn(primary, appUrl + "/dashboard", "Essayer maintenant")}
         `),
       };
@@ -99,10 +99,10 @@ export async function getEmailPreview(type: string): Promise<{ subject: string; 
       };
     case "alerte-expiration":
       return {
-        subject: `${brand.name} — Ordonnance expire dans 30 jours`,
+        subject: `${brand.name} — Prescription audiologique expire dans 30 jours`,
         html: emailWrapper(brand, `
-          <h1 style="font-size:20px;font-weight:800;margin:0 0 12px 0;">Ordonnance expire dans 30 jours ⚠️</h1>
-          <p style="font-size:14px;line-height:1.6;color:#475569;">L'ordonnance du patient <strong>Marie Dupont</strong> expire le <strong>25/04/2026</strong>.</p>
+          <h1 style="font-size:20px;font-weight:800;margin:0 0 12px 0;">Prescription audiologique expire dans 30 jours ⚠️</h1>
+          <p style="font-size:14px;line-height:1.6;color:#475569;">La prescription audiologique du patient <strong>Marie Dupont</strong> expire le <strong>25/04/2026</strong>.</p>
           ${btn(primary, appUrl + "/tiers-payant/alertes", "Voir les alertes")}
         `),
       };
@@ -111,14 +111,14 @@ export async function getEmailPreview(type: string): Promise<{ subject: string; 
         subject: "Rappel — Votre renouvellement",
         html: emailWrapper(brand, `
           <h1 style="font-size:20px;font-weight:800;margin:0 0 12px 0;">Rappel — votre renouvellement</h1>
-          <p style="font-size:14px;line-height:1.6;color:#475569;">Bonjour Marie,<br>Votre ordonnance arrive bientôt à expiration. Contactez notre cabinet pour prendre rendez-vous.</p>
+          <p style="font-size:14px;line-height:1.6;color:#475569;">Bonjour Marie,<br>Votre prescription audiologique arrive bientôt à expiration. Contactez notre cabinet pour prendre rendez-vous.</p>
           <p style="font-size:14px;color:#475569;">Téléphone : 01 23 45 67 89</p>
         `),
       };
     case "webhook-stripe-failed":
       return {
         subject: "[ALERTE] Webhook Stripe échoué",
-        html: `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;background:#fef2f2;color:#7f1d1d;"><h2 style="margin:0 0 16px 0;">[ALERTE] Webhook Stripe échoué</h2><p>Erreur détectée dans le traitement du webhook Stripe.</p><p>Timestamp: ${new Date().toISOString()}</p><p style="background:#fee2e2;padding:12px;border-radius:8px;">Vérifier immédiatement : docker logs optibot-app --tail 50</p></body></html>`,
+        html: `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;background:#fef2f2;color:#7f1d1d;"><h2 style="margin:0 0 16px 0;">[ALERTE] Webhook Stripe échoué</h2><p>Erreur détectée dans le traitement du webhook Stripe.</p><p>Timestamp: ${new Date().toISOString()}</p><p style="background:#fee2e2;padding:12px;border-radius:8px;">Vérifier immédiatement : docker logs audibot-app --tail 50</p></body></html>`,
       };
     case "verify-email":
       return {

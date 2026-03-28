@@ -21,13 +21,13 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Éditeur du site</h2>
             <p className="text-slate-600 leading-relaxed">
-              Le site <strong>optibot.fr</strong> est édité par :<br /><br />
+              Le site <strong>audibot.fr</strong> est édité par :<br /><br />
               <strong>Vorreiter Activities</strong><br />
               Forme juridique : Société par Actions Simplifiée Unipersonnelle (SASU)<br />
               Adresse : 54 rue Marcel et Ida Demia, 01500 Ambérieu-en-Bugey<br />
               SIRET : 92252355000023<br />
               Numéro de TVA intracommunautaire : FR30922523550<br />
-              Email : <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              Email : <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
           </section>
 
@@ -36,7 +36,7 @@ export default function MentionsLegalesPage() {
             <p className="text-slate-600 leading-relaxed">
               Le directeur de la publication est :<br /><br />
               <strong>Vincent Vorreiter</strong><br />
-              Email : <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              Email : <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
           </section>
 
@@ -76,7 +76,7 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">7. Contact</h2>
             <p className="text-slate-600 leading-relaxed">
-              Pour toute question relative à ces mentions légales : <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              Pour toute question relative à ces mentions légales : <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
           </section>
 

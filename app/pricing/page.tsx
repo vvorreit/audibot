@@ -26,12 +26,12 @@ const soloPlans = [
     key: "ESSENTIEL",
     name: "Essentiel",
     monthly: 39.9,
-    tagline: "Pour découvrir OptiBot — sans engagement",
+    tagline: "Pour découvrir AudiBot — sans engagement",
     color: "blue" as const,
     badge: null,
     trialBadge: "14 jours gratuits",
     features: [
-      "Lecture automatique carte mutuelle & ordonnance",
+      "Lecture automatique carte mutuelle & audiogramme",
       "Autofill portails & Smart Fill",
       "Extension Chrome",
       "80 scans/mois (≈ 4 clients/jour)",
@@ -42,7 +42,7 @@ const soloPlans = [
     key: "PRO",
     name: "Pro",
     monthly: 69.9,
-    tagline: "Pour l'opticien actif — scans illimités",
+    tagline: "Pour l'audioprothésiste actif — scans illimités",
     color: "indigo" as const,
     badge: "Le plus choisi",
     trialBadge: "14 jours gratuits",
@@ -51,7 +51,7 @@ const soloPlans = [
       "Suivi tiers payant complet",
       "Relances automatiques + alertes rejets",
       "Support prioritaire (réponse < 4h)",
-      "Alertes d'expiration d'ordonnances",
+      "Alertes d'expiration de prescriptions",
     ],
   },
 ] as const;
@@ -129,7 +129,7 @@ const teamPlans = [
 /* ─── Comparison table ─── */
 type CellValue = true | false | string;
 const comparisonRows: { label: string; values: [CellValue, CellValue, CellValue, CellValue, CellValue] }[] = [
-  { label: "Lecture auto carte & ordonnance",          values: [true,       true,          true,      true,       true] },
+  { label: "Lecture auto carte & audiogramme",          values: [true,       true,          true,      true,       true] },
   { label: "Autofill portails",        values: [true,       true,          true,      true,       true] },
   { label: "Extension Chrome",         values: [true,       true,          true,      true,       true] },
   { label: "Scans/mois",               values: ["80/mois",  "Illimité",    "Illimité","Illimité", "Illimité"] },
@@ -260,7 +260,7 @@ export default function PricingPage() {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-black text-lg">O</span>
             </div>
-            <span className="text-xl font-black text-slate-900 tracking-tight">OptiBot</span>
+            <span className="text-xl font-black text-slate-900 tracking-tight">AudiBot</span>
           </Link>
           <Link
             href={ctaHref}
@@ -416,7 +416,7 @@ export default function PricingPage() {
           <div className="text-center mb-14">
             <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 mb-2">Pour les équipes</p>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900">
-              Plusieurs opticiens ? Un seul abonnement.
+              Plusieurs audioprothésistes ? Un seul abonnement.
             </h2>
             <p className="text-slate-400 font-medium mt-3 max-w-xl mx-auto text-sm">
               Gérez toute votre équipe depuis un tableau de bord centralisé. Une facture, tous les accès.
@@ -438,7 +438,7 @@ export default function PricingPage() {
               </div>
 
               <p className="text-slate-400 text-sm font-medium italic mb-6">
-                Pour les petits cabinets 2–3 opticiens.
+                Pour les petits cabinets 2–3 audioprothésistes.
               </p>
 
               <div className="mb-2">
@@ -701,7 +701,7 @@ export default function PricingPage() {
             Prêt à gagner 1h30/jour ?
           </h2>
           <p className="text-blue-200 font-medium mb-4 text-lg">
-            Rejoignez les opticiens qui ont automatisé leur tiers payant.
+            Rejoignez les audioprothésistes qui ont automatisé leur tiers payant.
           </p>
           <p className="text-blue-300 text-xs font-medium mb-10">
             Sans carte bancaire · Sans engagement · Annulable à tout moment
@@ -729,8 +729,8 @@ export default function PricingPage() {
       <footer className="py-12 bg-slate-900 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/icon.png" alt="OptiBot" width={32} height={32} className="rounded-lg" />
-            <span className="text-sm font-black text-white">OptiBot</span>
+            <Image src="/icon.png" alt="AudiBot" width={32} height={32} className="rounded-lg" />
+            <span className="text-sm font-black text-white">AudiBot</span>
           </Link>
           <div className="flex items-center gap-6 text-xs font-bold text-slate-400">
             <Link href="/legal/cgu" className="hover:text-white transition-colors">CGU</Link>
@@ -738,7 +738,7 @@ export default function PricingPage() {
             <Link href="/legal/cgv" className="hover:text-white transition-colors">CGV</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
           </div>
-          <p className="text-xs text-slate-500 font-medium">© {new Date().getFullYear()} OptiBot. Tous droits réservés.</p>
+          <p className="text-xs text-slate-500 font-medium">© {new Date().getFullYear()} AudiBot. Tous droits réservés.</p>
         </div>
       </footer>
 

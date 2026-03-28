@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog";
 
-const BASE_URL = "https://optibot.fr";
+const BASE_URL = "https://audibot.fr";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
@@ -70,25 +70,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
-    /* ERP */
-    {
-      url: `${BASE_URL}/erp/igestion`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/erp/winoptics`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/erp/optiflex`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
     {
       url: `${BASE_URL}/franchise`,
       lastModified: new Date(),
@@ -122,55 +103,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/glossaire/code-rejet-tiers-payant`,
+      url: `${BASE_URL}/glossaire/tiers-payant-audioprothese`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.75,
     },
     {
-      url: `${BASE_URL}/glossaire/rejet-amo-optique`,
+      url: `${BASE_URL}/glossaire/prescription-audiologique`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.75,
     },
     {
-      url: `${BASE_URL}/glossaire/tiers-payant-optique`,
+      url: `${BASE_URL}/glossaire/appareils-auditifs-remboursement`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.75,
     },
     {
-      url: `${BASE_URL}/glossaire/lpp-optique`,
+      url: `${BASE_URL}/glossaire/almerys-audioprothesiste`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.75,
     },
     {
-      url: `${BASE_URL}/glossaire/100-sante-optique`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${BASE_URL}/glossaire/ocam-optique`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${BASE_URL}/glossaire/almerys-opticien`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${BASE_URL}/glossaire/viamedis-opticien`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${BASE_URL}/glossaire/smart-fill-opticien`,
+      url: `${BASE_URL}/glossaire/viamedis-audioprothesiste`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.75,

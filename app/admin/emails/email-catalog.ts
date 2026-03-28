@@ -5,7 +5,7 @@ export const EMAIL_CATALOG = [
   { id: "nps", label: "NPS Satisfaction", category: "Engagement", description: "Enquête satisfaction J+14", trigger: "Cron J+14" },
   { id: "scan-limit-warning", label: "Alerte limite scans", category: "Engagement", description: "Alerte 80% quota atteint (64/80)", trigger: "Cron quotidien" },
   { id: "relance-tp", label: "Relance tiers-payant", category: "Tiers-Payant", description: "Relance vers mutuelle", trigger: "Cron relances-tp" },
-  { id: "alerte-expiration", label: "Alerte expiration ordonnance", category: "Tiers-Payant", description: "Ordonnance expire bientôt", trigger: "Cron alertes-expiration" },
+  { id: "alerte-expiration", label: "Alerte expiration prescription", category: "Tiers-Payant", description: "Prescription audiologique expire bientôt", trigger: "Cron alertes-expiration" },
   { id: "webhook-stripe-failed", label: "Alerte webhook Stripe", category: "Alertes ops", description: "Alerte admin si webhook échoue", trigger: "Erreur webhook" },
   { id: "verify-email", label: "Vérification email", category: "Auth", description: "Confirmation adresse email", trigger: "À l'inscription" },
   { id: "smart-fill-stats", label: "Stats Smart Fill hebdo", category: "Engagement", description: "Résumé hebdomadaire", trigger: "Cron hebdomadaire" },
