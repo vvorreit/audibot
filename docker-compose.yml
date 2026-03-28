@@ -4,23 +4,32 @@ services:
     build: .                                   # utilisé uniquement en local (docker compose build)
     container_name: audibot-app
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+        labels: "service=audibot-app"
     ports:
       - "3001:3000"
     environment:
-      - DATABASE_URL=postgresql://optibot_user:optibot_password@db:5432/optibot_prod
+      - DATABASE_URL=postgresql://audibot_user:audibot_password@db:5432/audibot_prod
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
       - NODE_ENV=production
+      - NEXT_PUBLIC_BRAND_ID=audibot
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # SMTP — pointe vers le service mailserver interne
-      - SMTP_HOST=mailserver
-      - SMTP_PORT=587
-      - SMTP_SECURE=false
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
+      # Email transactionnel (Resend)
+      - RESEND_API_KEY=${RESEND_API_KEY}
       - SMTP_FROM=${SMTP_FROM}
+      # IMAP (inbox admin)
+      - IMAP_HOST=${IMAP_HOST}
+      - IMAP_PORT=${IMAP_PORT}
+      - IMAP_SECURE=${IMAP_SECURE}
+      - IMAP_USER=${IMAP_USER}
+      - IMAP_PASS=${IMAP_PASS}
       # LBO credentials (server-side uniquement)
       - LBO_LOGIN=${LBO_LOGIN}
       - LBO_PASSWORD=${LBO_PASSWORD}
@@ -28,64 +37,84 @@ services:
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_PRICE_SOLO=${STRIPE_PRICE_SOLO}
-      - STRIPE_PRICE_DUO=${STRIPE_PRICE_DUO}
-      - STRIPE_PRICE_SOLO_AMOUNT=${STRIPE_PRICE_SOLO_AMOUNT}
-      - STRIPE_PRICE_DUO_AMOUNT=${STRIPE_PRICE_DUO_AMOUNT}
+      - STRIPE_PRICE_ESSENTIEL=${STRIPE_PRICE_ESSENTIEL}
+      - STRIPE_PRICE_ESSENTIEL_ANNUAL=${STRIPE_PRICE_ESSENTIEL_ANNUAL}
+      - STRIPE_PRICE_PRO=${STRIPE_PRICE_PRO}
+      - STRIPE_PRICE_PRO_ANNUAL=${STRIPE_PRICE_PRO_ANNUAL}
+      - STRIPE_PRICE_CABINET=${STRIPE_PRICE_CABINET}
+      - STRIPE_PRICE_CABINET_ANNUAL=${STRIPE_PRICE_CABINET_ANNUAL}
+      - STRIPE_PRICE_RESEAU=${STRIPE_PRICE_RESEAU}
+      - STRIPE_PRICE_RESEAU_ANNUAL=${STRIPE_PRICE_RESEAU_ANNUAL}
+      - STRIPE_PRICE_RESEAU_SEAT_EXTRA=${STRIPE_PRICE_RESEAU_SEAT_EXTRA}
+      - STRIPE_PRICE_RESEAU_SEAT_EXTRA_ANNUAL=${STRIPE_PRICE_RESEAU_SEAT_EXTRA_ANNUAL}
+      - STRIPE_PRICE_EQUIPE=${STRIPE_PRICE_EQUIPE}
+      - STRIPE_PRICE_EQUIPE_ANNUAL=${STRIPE_PRICE_EQUIPE_ANNUAL}
+      - STRIPE_PRICE_ESSENTIEL_AMOUNT=${STRIPE_PRICE_ESSENTIEL_AMOUNT}
+      - STRIPE_PRICE_PRO_AMOUNT=${STRIPE_PRICE_PRO_AMOUNT}
+      - STRIPE_PRICE_CABINET_AMOUNT=${STRIPE_PRICE_CABINET_AMOUNT}
+      - STRIPE_PRICE_RESEAU_AMOUNT=${STRIPE_PRICE_RESEAU_AMOUNT}
+      - STRIPE_PRICE_EQUIPE_AMOUNT=${STRIPE_PRICE_EQUIPE_AMOUNT}
       # Limites
-      - NEXT_PUBLIC_FREE_LIMIT=${NEXT_PUBLIC_FREE_LIMIT}
+      - NEXT_PUBLIC_ESSENTIEL_SCAN_LIMIT=${NEXT_PUBLIC_ESSENTIEL_SCAN_LIMIT}
+      - ESSENTIEL_MONTHLY_SCAN_LIMIT=${ESSENTIEL_MONTHLY_SCAN_LIMIT}
+      # Légal
+      - CGV_VERSION=${CGV_VERSION}
+      - DPA_VERSION=${DPA_VERSION}
+      # Analytics
+      - NEXT_PUBLIC_GA_ID=${NEXT_PUBLIC_GA_ID}
+      # Sentry
+      - SENTRY_DSN=${SENTRY_DSN}
+      - NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+      # Cron
+      - CRON_SECRET=${CRON_SECRET}
+      # OCR service (PaddleOCR)
+      - OCR_SERVICE_URL=http://ocr:8000
     depends_on:
       - db
-      - mailserver
+      - ocr
     networks:
-      - optibot-network
+      - audibot-network
+
+  ocr:
+    image: ghcr.io/vvorreit/audibot-ocr:latest
+    build: ./ocr-service
+    container_name: audibot-ocr
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+        labels: "service=audibot-ocr"
+    networks:
+      - audibot-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
   db:
     image: postgres:16-alpine
     container_name: audibot-db
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+        labels: "service=audibot-db"
     environment:
-      POSTGRES_USER: optibot_user
-      POSTGRES_PASSWORD: optibot_password
-      POSTGRES_DB: optibot_prod
+      POSTGRES_USER: audibot_user
+      POSTGRES_PASSWORD: audibot_password
+      POSTGRES_DB: audibot_prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - optibot-network
-
-  mailserver:
-    image: ghcr.io/docker-mailserver/docker-mailserver:latest
-    container_name: audibot-mailserver
-    hostname: ${MAIL_HOSTNAME}          # ex: mail.tondomaine.fr
-    domainname: ${MAIL_DOMAIN}          # ex: tondomaine.fr
-    ports:
-      - "25:25"                          # Réception SMTP (MX entrant)
-      - "587:587"                        # Soumission SMTP (envoi authentifié)
-    volumes:
-      - ./mail-data:/var/mail
-      - ./mail-state:/var/mail-state
-      - ./mail-config:/tmp/docker-mailserver
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - SMTP_ONLY=1                      # Send-only, pas d'IMAP/POP3
-      - ENABLE_DKIM=1
-      - DKIM_SELECTOR=mail
-      - POSTFIX_INET_PROTOCOLS=ipv4
-      - ONE_DIR=1
-      - ENABLE_AMAVIS=0
-      - ENABLE_SPAMASSASSIN=0
-      - ENABLE_CLAMAV=0
-      - PERMIT_DOCKER=connected-networks # Autorise les conteneurs du même réseau
-    cap_add:
-      - NET_ADMIN
-      - SYS_PTRACE
-    restart: unless-stopped
-    networks:
-      - optibot-network
+      - audibot-network
 
 volumes:
   postgres_data:
 
 networks:
-  optibot-network:
+  audibot-network:
     driver: bridge

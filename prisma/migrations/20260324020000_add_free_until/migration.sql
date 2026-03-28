@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "freeUntil" TIMESTAMP(3);
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "freeMonthsNote" TEXT;

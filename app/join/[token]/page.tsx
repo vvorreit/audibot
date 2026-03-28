@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -24,11 +26,11 @@ export default async function JoinPage({ params }: Props) {
 
   if (!invitation || invitation.expires < new Date()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <div className="bg-white p-8 rounded-2xl shadow-sm text-center">
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h1 className="text-xl font-bold text-gray-800 mb-2">Invitation invalide</h1>
-          <p className="text-gray-500">Ce lien a expiré ou n'existe pas.</p>
+          <h1 className="text-xl font-bold text-slate-800 mb-2">Invitation invalide</h1>
+          <p className="text-slate-500">Ce lien a expiré ou n&apos;existe pas.</p>
         </div>
       </div>
     );
@@ -50,13 +52,13 @@ export default async function JoinPage({ params }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-4">
+      <div className="bg-white p-8 rounded-2xl shadow-lg border border-slate-100 max-w-md w-full text-center">
         <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
           {invitation.team.name.substring(0, 2).toUpperCase()}
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Invitation d'équipe</h1>
-        <p className="text-gray-500 mb-8">
+        <h1 className="text-2xl font-bold text-slate-900 mb-2">Invitation d&apos;équipe</h1>
+        <p className="text-slate-500 mb-8">
           Vous avez été invité à rejoindre <strong>{invitation.team.name}</strong> en tant que {invitation.role}.
         </p>
 
@@ -65,12 +67,12 @@ export default async function JoinPage({ params }: Props) {
             type="submit"
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-blue-200 shadow-lg"
           >
-            Rejoindre l'équipe
+            Rejoindre l&apos;équipe
           </button>
         </form>
         
-        <p className="mt-6 text-xs text-gray-400">
-          En rejoignant cette équipe, l'administrateur aura accès à votre activité liée à l'équipe.
+        <p className="mt-6 text-xs text-slate-400">
+          En rejoignant cette équipe, l&apos;administrateur aura accès à votre activité liée à l&apos;équipe.
         </p>
       </div>
     </div>

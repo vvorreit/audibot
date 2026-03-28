@@ -1,0 +1,66 @@
+export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { rateLimit } from "@/lib/rateLimit";
+
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS });
+}
+
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
+  const token =
+    req.nextUrl.searchParams.get("token") ||
+    (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null);
+
+  if (!token) {
+    return NextResponse.json(
+      { ok: false, error: "Token manquant" },
+      { status: 401, headers: CORS },
+    );
+  }
+
+  const allowed = await rateLimit(`verify:${token}`, 10, 60_000);
+  if (!allowed) {
+    return NextResponse.json(
+      { ok: false, error: "Trop de requêtes. Réessayez dans une minute." },
+      { status: 429, headers: CORS },
+    );
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { syncToken: token },
+    select: { id: true, plan: true, isPro: true, email: true, name: true, role: true },
+  });
+
+  if (!user) {
+    return NextResponse.json(
+      { ok: false, error: "Compte introuvable. Créez un compte sur optibot.fr" },
+      { status: 401, headers: CORS },
+    );
+  }
+
+  const rpaEnabled =
+    user.isPro ||
+    user.plan === "PRO" ||
+    user.plan === "EQUIPE" ||
+    user.role === "ADMIN";
+
+  return NextResponse.json(
+    {
+      ok: true,
+      plan: user.plan,
+      isPro: user.isPro,
+      name: user.name || user.email,
+      rpaEnabled,
+    },
+    { headers: CORS },
+  );
+}

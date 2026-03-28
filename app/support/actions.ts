@@ -1,6 +1,11 @@
 "use server";
 
+import { headers } from "next/headers";
 import { getTransporter } from "@/lib/mailer";
+import { rateLimit } from "@/lib/rateLimit";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TYPES_VALIDES = ["suggestion", "incident", "evolution"] as const;
 
 function esc(str: string) {
   return str
@@ -15,33 +20,51 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export async function sendSupportEmail(formData: FormData) {
-  const type    = esc((formData.get("type")    as string) ?? "");
-  const name    = esc((formData.get("name")    as string) ?? "");
-  const email   = esc((formData.get("email")   as string) ?? "");
-  const phone   = esc((formData.get("phone")   as string) ?? "");
-  const subject = esc((formData.get("subject") as string) ?? "");
-  const message = esc((formData.get("message") as string) ?? "");
+  // Rate limit : 3 emails de support par heure par IP
+  const reqHeaders = await headers();
+  const ip = reqHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const allowed = await rateLimit(`support:${ip}`, 3, 60 * 60_000);
+  if (!allowed) {
+    return { success: false, error: "Trop de requêtes. Réessayez dans une heure." };
+  }
 
-  if (!type || !name || !email || !message) return { success: false };
+  const typeRaw  = ((formData.get("type")    as string) ?? "").trim();
+  const nameRaw  = ((formData.get("name")    as string) ?? "").trim();
+  const emailRaw = ((formData.get("email")   as string) ?? "").trim();
+  const phone    = ((formData.get("phone")   as string) ?? "").trim().slice(0, 20);
+  const subject  = ((formData.get("subject") as string) ?? "").trim().slice(0, 200);
+  const messageRaw = ((formData.get("message") as string) ?? "").trim();
 
-  const typeLabel = TYPE_LABELS[type] ?? type;
+  // Validation
+  if (!TYPES_VALIDES.includes(typeRaw as typeof TYPES_VALIDES[number])) {
+    return { success: false, error: "Type invalide." };
+  }
+  if (!nameRaw || nameRaw.length > 100) return { success: false, error: "Nom invalide." };
+  if (!emailRaw || !EMAIL_REGEX.test(emailRaw) || emailRaw.length > 254) {
+    return { success: false, error: "Email invalide." };
+  }
+  if (!messageRaw || messageRaw.length < 10 || messageRaw.length > 5000) {
+    return { success: false, error: "Message invalide (10–5000 caractères)." };
+  }
+
+  const name    = esc(nameRaw);
+  const email   = esc(emailRaw);
+  const typeLabel = TYPE_LABELS[typeRaw] ?? typeRaw;
+  const typeBadgeColor = typeRaw === "incident" ? "#ef4444" : typeRaw === "evolution" ? "#8b5cf6" : "#2563eb";
 
   const phoneRow = phone
-    ? `<tr><td style="padding:6px 0;color:#64748b;font-weight:600">Téléphone</td><td style="padding:6px 0">${phone}</td></tr>`
+    ? `<tr><td style="padding:6px 0;color:#64748b;font-weight:600">Téléphone</td><td style="padding:6px 0">${esc(phone)}</td></tr>`
     : "";
-
   const subjectRow = subject
-    ? `<tr><td style="padding:6px 0;color:#64748b;font-weight:600">Objet</td><td style="padding:6px 0">${subject}</td></tr>`
+    ? `<tr><td style="padding:6px 0;color:#64748b;font-weight:600">Objet</td><td style="padding:6px 0">${esc(subject)}</td></tr>`
     : "";
-
-  const typeBadgeColor = type === "incident" ? "#ef4444" : type === "evolution" ? "#8b5cf6" : "#2563eb";
 
   const html = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <div style="background:#0f172a;padding:24px 32px;border-radius:16px 16px 0 0">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:36px;height:36px;background:#2563eb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:18px">O</div>
-          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">AudiBot Support</span>
+          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">OptiBot Support</span>
         </div>
       </div>
       <div style="background:white;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 16px 16px">
@@ -53,7 +76,7 @@ export async function sendSupportEmail(formData: FormData) {
           ${subjectRow}
         </table>
         <div style="background:#f8fafc;border-left:4px solid ${typeBadgeColor};padding:16px 20px;border-radius:0 8px 8px 0">
-          <p style="margin:0;color:#1e293b;line-height:1.6;white-space:pre-wrap">${message}</p>
+          <p style="margin:0;color:#1e293b;line-height:1.6;white-space:pre-wrap">${esc(messageRaw)}</p>
         </div>
       </div>
     </div>
@@ -62,14 +85,14 @@ export async function sendSupportEmail(formData: FormData) {
   try {
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
-      to: "contact@audibot.fr",
-      replyTo: email,
-      subject: `[${typeLabel}] ${subject || name}`,
+      to: "contact@optibot.fr",
+      replyTo: emailRaw,
+      subject: `[${typeLabel}] ${subject || nameRaw}`,
       html,
     });
     return { success: true };
   } catch (err) {
-    console.error(err);
-    return { success: false };
+    console.error("[support] Erreur envoi email:", err);
+    return { success: false, error: "Erreur serveur. Réessayez." };
   }
 }

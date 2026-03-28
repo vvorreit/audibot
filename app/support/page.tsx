@@ -11,7 +11,7 @@ const TYPES: { value: RequestType; label: string; desc: string; icon: React.Reac
   {
     value: "suggestion",
     label: "Suggestion",
-    desc: "Une idée pour améliorer AudiBot",
+    desc: "Une idée pour améliorer OptiBot",
     icon: <Lightbulb className="w-5 h-5" />,
     color: "blue",
   },
@@ -63,16 +63,16 @@ export default function SupportPage() {
       <div className="max-w-2xl mx-auto">
 
         <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-bold mb-10 hover:underline">
-          <ArrowLeft className="w-4 h-4" /> Retour à l'accueil
+          <ArrowLeft className="w-4 h-4" /> Retour à l&apos;accueil
         </Link>
 
         <div className="mb-8">
           <h1 className="text-3xl font-black text-slate-900 mb-2">Nous contacter</h1>
-          <p className="text-slate-500 font-medium">Suggestions, incidents ou demandes d'évolution — on est à l'écoute.</p>
+          <p className="text-slate-500 font-medium">Suggestions, incidents ou demandes d&apos;évolution — on est à l&apos;écoute.</p>
         </div>
 
         {status === "success" ? (
-          <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-12 text-center">
+          <div className="bg-white rounded-card border border-slate-100 shadow-sm p-12 text-center">
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-8 h-8" />
             </div>
@@ -86,7 +86,7 @@ export default function SupportPage() {
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-card border border-slate-100 shadow-sm overflow-hidden">
 
             {/* Sélecteur de type */}
             <div className="p-8 border-b border-slate-100">
@@ -126,7 +126,7 @@ export default function SupportPage() {
                     name="name"
                     type="text"
                     placeholder="Jean Dupont"
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -136,7 +136,7 @@ export default function SupportPage() {
                     name="email"
                     type="email"
                     placeholder="jean@exemple.fr"
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -152,7 +152,7 @@ export default function SupportPage() {
                     name="phone"
                     type="tel"
                     placeholder="06 00 00 00 00"
-                    className="w-full px-4 py-3 rounded-2xl border border-violet-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-2xl border border-violet-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                   />
                   <p className="mt-1.5 text-xs text-violet-500 font-semibold">
                     Nous vous rappellerons pour comprendre votre besoin.
@@ -174,7 +174,7 @@ export default function SupportPage() {
                       ? "Ex: Le bookmarklet ne fonctionne plus..."
                       : "Ex: Améliorer la vitesse de scan..."
                   }
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
@@ -191,7 +191,7 @@ export default function SupportPage() {
                       ? "Décrivez l'ERP ou la mutuelle à intégrer, votre contexte..."
                       : "Partagez votre idée..."
                   }
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
               </div>
 

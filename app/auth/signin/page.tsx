@@ -49,11 +49,11 @@ function SignInForm() {
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200 group-hover:scale-105 transition-transform">
               O
             </div>
-            <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
+            <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
           </Link>
         </div>
 
-        <div className="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
+        <div className="bg-white p-6 sm:p-10 rounded-card shadow-sm border border-slate-100">
           <h1 className="text-3xl font-black text-slate-900 mb-2">Content de vous revoir</h1>
           <p className="text-slate-500 font-medium mb-8">
             Connectez-vous pour accéder à votre tableau de bord.
@@ -72,11 +72,13 @@ function SignInForm() {
             </div>
           )}
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-semibold">
-              {error}
-            </div>
-          )}
+          <div aria-live="polite" aria-atomic="true">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-semibold" role="alert">
+                {error}
+              </div>
+            )}
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -87,7 +89,7 @@ function SignInForm() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="jean@exemple.fr"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -99,8 +101,12 @@ function SignInForm() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="Votre mot de passe"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-slate-900 font-medium focus-visible:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+            </div>
+
+            <div className="text-right">
+              <a href="/auth/reset-password" className="text-sm text-blue-600 hover:underline">Mot de passe oublié ?</a>
             </div>
 
             <button
@@ -132,11 +138,12 @@ function SignInForm() {
             onClick={() => signIn("google", { callbackUrl })}
             className="w-full flex items-center justify-center gap-4 py-4 px-6 bg-white border-2 border-slate-100 rounded-2xl text-slate-900 font-bold hover:bg-slate-50 hover:border-blue-100 transition-all shadow-sm active:scale-95"
           >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/google.svg" alt="Google" className="w-5 h-5" />
             Continuer avec Google
           </button>
 
-          <p className="text-xs text-slate-400 font-bold leading-relaxed px-4 text-center mt-6">
+          <p className="text-xs text-slate-500 font-bold leading-relaxed px-4 text-center mt-6">
             En vous connectant, vous acceptez nos{" "}
             <Link href="/legal/cgu" className="text-blue-600 underline">CGU</Link>{" "}
             et notre{" "}
@@ -146,7 +153,7 @@ function SignInForm() {
 
         <p className="text-center mt-8">
           <Link href="/" className="text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2">
-            Retour à l'accueil
+            Retour à l&apos;accueil
             <ArrowRight className="w-4 h-4" />
           </Link>
         </p>

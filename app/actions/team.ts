@@ -7,20 +7,21 @@ import { getTransporter, smtpConfigured } from "@/lib/mailer";
 import { randomBytes } from "crypto";
 
 // Nombre de postes maximum par plan d'équipe
-function getTeamSeatsLimit(plan: string): number {
+export async function getTeamSeatsLimit(plan: string): Promise<number> {
   switch (plan) {
-    case "TEAM_5": return 5;
-    case "TEAM_3": return 3;
-    case "PRO":    return 3; // ancien plan PRO → 3 postes par défaut
-    default:       return 1; // FREE → solo, pas d'invitation possible
+    case "EQUIPE":  return 5;
+    case "TEAM_5":  return 5; // rétrocompat
+    case "TEAM_3":  return 3; // rétrocompat
+    case "PRO":     return 3; // rétrocompat ancien plan PRO
+    default:        return 1; // FREE / ESSENTIEL → solo, pas d'invitation possible
   }
 }
 
 export async function createTeam(name: string) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Unauthorized");
+  if (!session?.user?.email) throw new Error("Non autorisé");
 
-  const userId = (session.user as any).id;
+  const userId = session.user.id;
 
   // Check if user already has a team
   const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -47,9 +48,9 @@ export async function createTeam(name: string) {
 
 export async function inviteMember(email: string) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Unauthorized");
+  if (!session?.user?.email) throw new Error("Non autorisé");
 
-  const userId = (session.user as any).id;
+  const userId = session.user.id;
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
@@ -68,7 +69,7 @@ export async function inviteMember(email: string) {
 
   // Enforce seat limit based on team owner's plan
   const owner = await prisma.user.findUnique({ where: { id: user.team!.ownerId }, select: { plan: true } });
-  const limit = getTeamSeatsLimit(owner?.plan ?? "FREE");
+  const limit = await getTeamSeatsLimit(owner?.plan ?? "FREE");
   const occupied = (user.team?.users.length ?? 0) + (user.team?.invitations.length ?? 0);
   if (occupied >= limit) {
     throw new Error(`Limite de postes atteinte (${limit} postes maximum pour votre plan).`);
@@ -105,7 +106,7 @@ export async function inviteMember(email: string) {
       await getTransporter().sendMail({
         from: process.env.SMTP_FROM,
         to: email,
-        subject: `Rejoignez l'équipe ${user.team?.name} sur AudiBot`,
+        subject: `Rejoignez l'équipe ${user.team?.name} sur OptiBot`,
         html: `
           <h1>Invitation d'équipe</h1>
           <p><strong>${user.name || user.email}</strong> vous a invité à rejoindre l'équipe <strong>${user.team?.name}</strong>.</p>
@@ -115,7 +116,6 @@ export async function inviteMember(email: string) {
       });
       return { success: true, sent: true };
     } else {
-      console.log("SMTP_HOST manquant, email non envoyé:", inviteLink);
       return { success: true, sent: false, link: inviteLink };
     }
   } catch (error) {
@@ -126,9 +126,9 @@ export async function inviteMember(email: string) {
 
 export async function removeMember(memberId: string) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Unauthorized");
+  if (!session?.user?.email) throw new Error("Non autorisé");
 
-  const userId = (session.user as any).id;
+  const userId = session.user.id;
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
   if (!user?.teamId || user.teamRole !== "OWNER") {
@@ -152,7 +152,7 @@ export async function removeMember(memberId: string) {
 
 export async function acceptInvite(token: string) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Unauthorized");
+  if (!session?.user?.email) throw new Error("Non autorisé");
 
   const invitation = await prisma.invitation.findUnique({
     where: { token },
@@ -163,7 +163,7 @@ export async function acceptInvite(token: string) {
     throw new Error("Invitation invalide ou expirée.");
   }
 
-  const userId = (session.user as any).id;
+  const userId = session.user.id;
 
   // Check seat limit before accepting
   const teamWithData = await prisma.team.findUnique({
@@ -171,7 +171,7 @@ export async function acceptInvite(token: string) {
     include: { users: { select: { id: true } } },
   });
   const teamOwner = teamWithData ? await prisma.user.findUnique({ where: { id: teamWithData.ownerId }, select: { plan: true } }) : null;
-  const limit = getTeamSeatsLimit(teamOwner?.plan ?? "FREE");
+  const limit = await getTeamSeatsLimit(teamOwner?.plan ?? "FREE");
   if ((teamWithData?.users.length ?? 0) >= limit) {
     throw new Error("L'équipe est complète, aucun poste disponible.");
   }
@@ -204,7 +204,7 @@ export async function getTeamDetails() {
   if (!session?.user?.email) return null;
 
   // Résoudre l'id via l'email si absent de la session (ex: première connexion Google)
-  const userId = (session.user as any).id;
+  const userId = session.user.id;
   const whereClause = userId
     ? { id: userId }
     : { email: session.user.email };
@@ -226,7 +226,7 @@ export async function getTeamDetails() {
   if (!user?.team) return null;
 
   const teamOwner = await prisma.user.findUnique({ where: { id: user.team.ownerId }, select: { plan: true } });
-  const seatsLimit = getTeamSeatsLimit(teamOwner?.plan ?? "FREE");
+  const seatsLimit = await getTeamSeatsLimit(teamOwner?.plan ?? "FREE");
 
   return {
     ...user.team,

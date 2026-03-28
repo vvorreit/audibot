@@ -23,38 +23,42 @@ export interface MutuelleData {
   dateNaissance: string;
   // Toutes les personnes détectées
   personnes: Personne[];
+  fieldConfidence?: Record<string, number>; // 0-1 par champ, absent = non rempli
 }
 
-// ─── Prescription ORL audioprothésiste ───────────────────────────────────────
+// ─── Ordonnance opticien ──────────────────────────────────────────────────────
 
-export interface AudiogrammeOreille {
-  hz250: string;   // Perte en dB à 250 Hz
-  hz500: string;   // Perte en dB à 500 Hz
-  hz1000: string;  // Perte en dB à 1 kHz
-  hz2000: string;  // Perte en dB à 2 kHz
-  hz4000: string;  // Perte en dB à 4 kHz
+export interface CorrectionOeil {
+  sphere: string;
+  cylindre: string;
+  axe: string;
+  addition: string;
 }
 
-export type TypeAppareillage = "BTE" | "ITE" | "RIC" | "RITE" | "";
-export type ClasseAppareillage = "1" | "2" | "";
+export interface CorrectionLentille {
+  sphere: string;
+  cylindre: string;
+  axe: string;
+  addition: string;
+  rayonCourbure: string;
+  diametre: string;
+}
 
 export interface OrdonnanceData {
-  // Prescripteur
-  nomORL: string;
-  rpps: string;
-  datePrescription: string;
-  // Patient
+  nomOphtalmologue: string;
+  dateOrdonnance: string;
+  dateValidite: string;
   nomPatient: string;
   prenomPatient: string;
   dateNaissancePatient: string;
-  // Audiogramme
-  oreilleDroite: AudiogrammeOreille;
-  oreilleGauche: AudiogrammeOreille;
-  // Appareillage
-  classeAppareillage: ClasseAppareillage;
-  typeAppareillage: TypeAppareillage;
-  renouvellement: boolean;
+  distancePupillaire: string;
+  typePrescription: "lunettes" | "lentilles" | "les deux" | "";
+  lunettesOD: CorrectionOeil;
+  lunettesOG: CorrectionOeil;
+  lentillesOD: CorrectionLentille;
+  lentillesOG: CorrectionLentille;
   remarques: string;
+  fieldConfidence?: Record<string, number>; // 0-1 par champ, absent = non rempli
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -96,8 +100,10 @@ function normalizeNSS(s: string): string {
 }
 
 // Abréviations parasites qui peuvent apparaître collées au nom dans le OCR
+// ou dans les colonnes de tableau (tiers-payant, PEC = prise en charge, IDB = label, …)
 const NOISE_TOKENS = new Set([
   "TM", "TC", "VM", "OC", "ROC", "CSR", "STS", "SV", "DRE", "AMC", "RSS",
+  "PEC", "IDB", "CLC", "ROC", "SP", "IT", "IS",
 ]);
 
 // Mots-clés de structure de carte qui ne sont jamais des noms de personnes
@@ -139,6 +145,85 @@ function addPersonne(
   seen.add(key);
   const { nom, prenom } = splitNomPrenom(clean(cleaned));
   personnes.push({ nom, prenom, numeroSecuriteSociale: nss, dateNaissance: dob });
+}
+
+const DATE_DDMMYYYY = /^\d{2}\/\d{2}\/\d{4}$/;
+
+// ─── Confidence helpers ───────────────────────────────────────────────────
+
+function computeMutuelleConfidence(data: Omit<MutuelleData, "fieldConfidence">): Record<string, number> {
+  const conf: Record<string, number> = {};
+  const set = (key: string, val: string, score: number) => {
+    if (val.trim()) conf[key] = score;
+  };
+
+  // numeroSecuriteSociale : 15 chiffres → 0.92, sinon → 0.55
+  if (data.numeroSecuriteSociale.trim()) {
+    conf["numeroSecuriteSociale"] = /^\d{13,15}$/.test(data.numeroSecuriteSociale.replace(/\s/g, "")) ? 0.92 : 0.55;
+  }
+  // numeroAMC : 8-9 chiffres → 0.88, sinon → 0.55
+  if (data.numeroAMC.trim()) {
+    conf["numeroAMC"] = /^\d{8,9}$/.test(data.numeroAMC.replace(/\s/g, "")) ? 0.88 : 0.55;
+  }
+  // dates : format reconnu → 0.85, sinon → 0.58
+  if (data.dateDebutValidite.trim()) {
+    conf["dateDebutValidite"] = DATE_DDMMYYYY.test(data.dateDebutValidite.trim()) ? 0.85 : 0.58;
+  }
+  if (data.dateFinValidite.trim()) {
+    conf["dateFinValidite"] = DATE_DDMMYYYY.test(data.dateFinValidite.trim()) ? 0.85 : 0.58;
+  }
+  // organisme : texte libre → 0.75
+  set("organisme", data.organisme, 0.75);
+  // autres champs → 0.70
+  set("numeroAdherent", data.numeroAdherent, 0.70);
+  set("numeroTeletransmission", data.numeroTeletransmission, 0.70);
+  set("typeConv", data.typeConv, 0.70);
+  set("nom", data.nom, 0.70);
+  set("prenom", data.prenom, 0.70);
+  if (data.dateNaissance.trim()) {
+    conf["dateNaissance"] = DATE_DDMMYYYY.test(data.dateNaissance.trim()) ? 0.85 : 0.58;
+  }
+
+  return conf;
+}
+
+const DATE_PATTERN = /^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}$/;
+const NUMERIC_OPTICAL = /^[+\-]?\d+[.,]\d+$|^0[.,]00$/;
+
+function computeOrdonnanceConfidence(data: Omit<OrdonnanceData, "fieldConfidence">): Record<string, number> {
+  const conf: Record<string, number> = {};
+  const set = (key: string, val: string, score: number) => {
+    if (val.trim()) conf[key] = score;
+  };
+
+  // dateOrdonnance
+  if (data.dateOrdonnance.trim()) {
+    conf["dateOrdonnance"] = DATE_PATTERN.test(data.dateOrdonnance.trim()) ? 0.88 : 0.60;
+  }
+  set("nomOphtalmologue", data.nomOphtalmologue, 0.72);
+  set("nomPatient", data.nomPatient, 0.72);
+  set("prenomPatient", data.prenomPatient, 0.72);
+  if (data.dateNaissancePatient.trim()) {
+    conf["dateNaissancePatient"] = DATE_PATTERN.test(data.dateNaissancePatient.trim()) ? 0.88 : 0.60;
+  }
+  if (data.dateValidite.trim()) {
+    conf["dateValidite"] = DATE_PATTERN.test(data.dateValidite.trim()) ? 0.88 : 0.60;
+  }
+  set("distancePupillaire", data.distancePupillaire, 0.70);
+  set("remarques", data.remarques, 0.70);
+
+  // lunettes OD/OG — clés plates
+  for (const side of ["OD", "OG"] as const) {
+    const oeil = side === "OD" ? data.lunettesOD : data.lunettesOG;
+    for (const field of ["sphere", "cylindre", "axe", "addition"] as const) {
+      const v = oeil[field].trim();
+      if (v) {
+        conf[`lunettes${side}.${field}`] = NUMERIC_OPTICAL.test(v) || /^\d{1,3}$/.test(v) ? 0.90 : 0.60;
+      }
+    }
+  }
+
+  return conf;
 }
 
 // ─── Parser mutuelle ──────────────────────────────────────────────────────────
@@ -186,8 +271,19 @@ export function parseMutuelle(text: string): MutuelleData {
     /(?:du|valable\s+du|p[eé]riode[^\n]{0,20}?du|p[eé]riode\s+de)\s+(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i
   );
   const finMatch = t.match(/(?:au|jusqu'au|validit[eé])\s+(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i);
-  const dateDebutValidite = debutMatch ? debutMatch[1] : "";
-  const dateFinValidite = finMatch ? finMatch[1] : "";
+  let dateDebutValidite = debutMatch ? debutMatch[1] : "";
+  let dateFinValidite = finMatch ? finMatch[1] : "";
+
+  // Fallback : pattern "DD/MM/YYYY au DD/MM/YYYY" (SOGAREP, GEREP sans "du" explicite)
+  if (!dateDebutValidite) {
+    const rangeDateMatch = t.match(
+      /(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})\s+au\s+(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i
+    );
+    if (rangeDateMatch) {
+      dateDebutValidite = rangeDateMatch[1];
+      if (!dateFinValidite) dateFinValidite = rangeDateMatch[2];
+    }
+  }
 
   // N° INSEE (format SP Santé / GEREP : "N° INSEE : 2 85 09 69 388 168 56")
   const inseeMatch = t.match(/n[°o\.]\s*insee\s*[:\s]+([\d\s]{13,22})/i);
@@ -218,6 +314,16 @@ export function parseMutuelle(text: string): MutuelleData {
     if (nss.length >= 13) addPersonne(m[1], nss, m[2], personnes, seen);
   }
 
+  // Format "TABLE-NSS" – Nom suivi de données sur la même ligne, date+rang+NSS ligne suivante
+  // (SOGAREP/AXA avec colonnes de taux collées au nom)
+  // Ex : "REBILLARD JUSTINE   100/100/100 IDB PEC …\n03/09/1993    1    2 93 09 69 266 044 53"
+  const fmtTableNSS =
+    /([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ][A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ -]{2,40})[^\n]+\n(\d{2}[\/\-]\d{2}[\/\-]\d{4})\s+\d{1,2}\s+([12][\d\s]{14,25})/g;
+  while ((m = fmtTableNSS.exec(t)) !== null) {
+    const nss = normalizeNSS(m[3]).slice(0, 15);
+    if (nss.length >= 13) addPersonne(m[1], nss, m[2], personnes, seen);
+  }
+
   // Format 2b – ACTIL/Alptis : "NOM PRENOM\nCODE_ALPHANUM...DATE RANG NSS(espaces)"
   // La ligne suivant le nom contient un code arbitraire avant la date de naissance
   // Espace littéral dans le nom pour ne pas traverser les sauts de ligne
@@ -226,6 +332,17 @@ export function parseMutuelle(text: string): MutuelleData {
   while ((m = fmt2b.exec(t)) !== null) {
     const nss = normalizeNSS(m[3]).slice(0, 15);
     if (nss.length >= 13) addPersonne(m[1], nss, m[2], personnes, seen);
+  }
+
+  // Format "TABLE-NoNSS" – Nom + données tiers-payant sur même ligne, date+rang ligne suivante
+  // (GEREP multi-bénéficiaires : "REBILLARD LEA   (7)   (10)…\n27/02/2014    1")
+  if (personnes.length === 0) {
+    const fmtTableNoNSS =
+      /([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ][A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ -]{2,40})[^\n]+\n(\d{2}[\/\-]\d{2}[\/\-]\d{4})\s+\d{1}/g;
+    while ((m = fmtTableNoNSS.exec(t)) !== null) {
+      const nss = personnes.length === 0 ? inseeNSS : "";
+      addPersonne(m[1], nss, m[2], personnes, seen);
+    }
   }
 
   // Format 3 – Personnes sans NSS individuel (GEREP bénéficiaires tableau) :
@@ -266,7 +383,7 @@ export function parseMutuelle(text: string): MutuelleData {
     dateNaissance: "",
   };
 
-  return {
+  const result: Omit<MutuelleData, "fieldConfidence"> = {
     organisme,
     numeroAMC,
     numeroAdherent,
@@ -280,118 +397,118 @@ export function parseMutuelle(text: string): MutuelleData {
     dateNaissance: first.dateNaissance,
     personnes,
   };
+  return { ...result, fieldConfidence: computeMutuelleConfidence(result) };
 }
 
-// ─── Parser prescription ORL audioprothésiste ─────────────────────────────────
+// ─── Parser ordonnance opticien ───────────────────────────────────────────────
 
-const EMPTY_AUDIOGRAMME: AudiogrammeOreille = {
-  hz250: "",
-  hz500: "",
-  hz1000: "",
-  hz2000: "",
-  hz4000: "",
+const EMPTY_OEIL: CorrectionOeil = { sphere: "", cylindre: "", axe: "", addition: "" };
+const EMPTY_LENTILLE: CorrectionLentille = {
+  sphere: "",
+  cylindre: "",
+  axe: "",
+  addition: "",
+  rayonCourbure: "",
+  diametre: "",
 };
 
 /**
- * Extrait la section de texte correspondant à une oreille (droite ou gauche).
- * Capture depuis "Oreille droite/gauche" (ou OD/OG) jusqu'à l'oreille opposée ou fin.
+ * Extrait la section de texte correspondant à un œil (droit ou gauche).
+ * Capture depuis "Oeil droit/gauche" (ou OD/OG) jusqu'à l'œil opposé ou fin.
  */
-function extractEarSection(text: string, side: "droite" | "gauche"): string {
+function extractEyeSection(text: string, side: "droit" | "gauche"): string {
   const thisSide =
-    side === "droite"
-      ? "(?:oreille\\s+droite|\\bO\\.?D\\.?\\b)"
-      : "(?:oreille\\s+gauche|\\bO\\.?G\\.?\\b)";
+    side === "droit"
+      ? "(?:oeil\\s+droit|\\bO\\.?D\\.?\\b)"
+      : "(?:oeil\\s+gauche|\\bO\\.?G\\.?\\b)";
   const otherSide =
-    side === "droite"
-      ? "(?:oreille\\s+gauche|\\bO\\.?G\\.?\\b)"
-      : "(?:oreille\\s+droite|\\bO\\.?D\\.?\\b)";
+    side === "droit"
+      ? "(?:oeil\\s+gauche|\\bO\\.?G\\.?\\b)"
+      : "(?:oeil\\s+droit|\\bO\\.?D\\.?\\b)";
 
   const re = new RegExp(`${thisSide}[:\\s]+(.+?)(?=${otherSide}|$)`, "is");
   const m = text.match(re);
-  return m ? m[1].slice(0, 500) : "";
+  return m ? m[1].slice(0, 300) : "";
 }
 
 /**
- * Extrait les pertes auditives en dB depuis une section audiogramme.
- * Formats supportés :
- *   - "250Hz : 45dB" ou "250 Hz 45"
- *   - Tableau : "250 500 1000 2000 4000\n45 60 70 75 80"
- *   - "250 Hz = 45 dB"
+ * Parse les valeurs optiques depuis une section de texte d'un œil.
+ * Gère les formats :
+ *   - "+5,00 (-3,00 à 125°)"
+ *   - "-3.75 (-1.50) 90°"
+ *   - "Prescription finale : +0.50 (-0.25) 75°"
+ *   - "+0.50" (sphère seule)
+ *   - "+0.00 (-0.50) 130° Addition : +2.50"
  */
-function parseAudiogramme(section: string): AudiogrammeOreille {
-  function extractHz(hz: number): string {
-    // Cherche la valeur dB associée à la fréquence
-    const patterns = [
-      // "250Hz : 45dB" ou "250Hz 45dB" ou "250 Hz = 45 dB"
-      new RegExp(`${hz}\\s*[Hh][Zz]?\\s*[:=\\s]+\\s*(\\d{1,3})\\s*(?:dB)?`, "i"),
-      // "250 : 45" (format tableau simple)
-      new RegExp(`\\b${hz}\\b[\\s:=]+(\\d{1,3})\\b`),
-    ];
-    for (const re of patterns) {
-      const m = section.match(re);
-      if (m) return m[1];
-    }
-    return "";
-  }
+function parseEyeSection(section: string): CorrectionOeil {
+  let sphere = "",
+    cylindre = "",
+    axe = "",
+    addition = "";
 
-  // Tentative d'extraction par fréquence individuelle
-  const hz250 = extractHz(250);
-  const hz500 = extractHz(500);
-  const hz1000 = extractHz(1000);
-  const hz2000 = extractHz(2000);
-  const hz4000 = extractHz(4000);
-
-  // Fallback : tableau de valeurs numériques sur une ligne (ex: "45 60 70 75 80")
-  if (!hz250 && !hz500) {
-    const tableMatch = section.match(/\b(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\b/);
-    if (tableMatch) {
-      return {
-        hz250: tableMatch[1],
-        hz500: tableMatch[2],
-        hz1000: tableMatch[3],
-        hz2000: tableMatch[4],
-        hz4000: tableMatch[5],
-      };
-    }
-  }
-
-  return { hz250, hz500, hz1000, hz2000, hz4000 };
-}
-
-/**
- * Parse une prescription ORL audioprothésiste française.
- * Extrait : prescripteur ORL, patient, audiogramme OD/OG,
- *           classe et type d'appareillage, renouvellement.
- */
-export function parseOrdonnance(text: string): OrdonnanceData {
-  // ── ORL / Médecin prescripteur ────────────────────────────────────────────
-  const medecinMatch = text.match(
-    /(?:Dr\.?|Docteur|ORL|Oto-rhino|Médecin\s+prescripteur)\s+([A-Za-zÀ-ÖØ-öø-ÿ\s\-]+)/i
+  // Correction principale : sph (cyl [à] axe°) ou sph (cyl) axe°
+  // sph peut être un nombre ou "plano"
+  // Formats couverts :
+  //   "+2.50 (-0.75 à 180°)"   — séparateur "à"
+  //   "+2.50 (-0.75 x 180°)"   — séparateur "x" (notation anglosaxonne)
+  //   "+2.50 (-0.75) 180°"     — axe hors parenthèse
+  //   "plano (-0.50 x 90°)"    — plano en sphère
+  const corMatch = section.match(
+    /(plano|[+\-]?\d+[.,]\d+)\s*\(\s*([+\-]?\d+[.,]\d+)(?:\s*(?:à|a|[xX])\s*(\d{1,3})°?)?\s*\)(?:\s*(\d{1,3})°)?/i
   );
-  const nomORL = medecinMatch ? clean(medecinMatch[1].split("\n")[0]) : "";
+  if (corMatch) {
+    sphere = parseOpticalValue(corMatch[1]);
+    cylindre = parseOpticalValue(corMatch[2]);
+    axe = corMatch[3] || corMatch[4] || "";
+  } else {
+    // Sphère seule (ex : "Prescription finale : +0.50")
+    const sphMatch = section.match(/(?:finale\s*:?\s*)?([+\-]?\d+[.,]\d+)/i);
+    if (sphMatch) sphere = parseOpticalValue(sphMatch[1]);
+  }
 
-  // ── RPPS ──────────────────────────────────────────────────────────────────
-  const rppsMatch = text.match(/(?:RPPS|n[°o\.]\s*RPPS)[:\s]+(\d{11})/i);
-  const rpps = rppsMatch ? rppsMatch[1] : "";
+  // Addition (peut être sur la même ligne)
+  const addMatch = section.match(/[Aa]ddition\s*[:\s]+([+\-]?\d+[.,]\d+)/);
+  if (addMatch) addition = parseOpticalValue(addMatch[1]);
 
-  // ── Date de prescription ──────────────────────────────────────────────────
+  return { sphere, cylindre, axe, addition };
+}
+
+export function parseOrdonnance(text: string): OrdonnanceData {
+  // ── Ophtalmologue ──────────────────────────────────────────────────────────
+  const medecinMatch = text.match(
+    /(?:Dr\.?|Docteur|Ophtalmologue|Ophtalmo\.?)\s+([A-Za-zÀ-ÖØ-öø-ÿ\s\-]+)/i
+  );
+  const nomOphtalmologue = medecinMatch ? clean(medecinMatch[1].split("\n")[0]) : "";
+
+  // ── Date ordonnance ────────────────────────────────────────────────────────
   const dateMatch =
-    text.match(/(?:le\s+|date\s*:?\s*|fait\s+le\s+|prescrit\s+le\s+)(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/i) ||
-    text.match(/(?:le\s+)(\d{1,2}\s+(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+\d{4})/i) ||
+    text.match(
+      /(?:le\s+|date\s*:?\s*|fait\s+le\s+)(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/i
+    ) ||
+    // Format "le 11 mars 2021" ou "le 17/12/2025"
+    text.match(
+      /(?:le\s+)(\d{1,2}\s+(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+\d{4})/i
+    ) ||
     text.match(/(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4})/);
-  const datePrescription = dateMatch ? dateMatch[1] : "";
+  const dateOrdonnance = dateMatch ? dateMatch[1] : "";
 
-  // ── Patient ───────────────────────────────────────────────────────────────
+  const dateValiditeMatch = text.match(
+    /(?:valable|validit[eé]|jusqu|[eé]ch[eé]ance)[^\n]*?(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/i
+  );
+  const dateValidite = dateValiditeMatch ? dateValiditeMatch[1] : "";
+
+  // ── Patient : Monsieur / Madame / M. / Mme / Enfant ───────────────────────
   let nomPatient = "";
   let prenomPatient = "";
 
   const civMatch = text.match(
-    /(?:Monsieur|Madame|M\.\s+|Mme\.?\s+|Patient\s*:?\s*)\s*([A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ\s\-]+)/i
+    /(?:Monsieur|Madame|M\.\s+|Mme\.?\s+|Enfant\s+)\s*([A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ\s\-]+)/i
   );
   if (civMatch) {
     const fullName = clean(civMatch[1].split("\n")[0]);
     const parts = fullName.split(/\s+/).filter(Boolean);
     if (parts.length >= 2) {
+      // Tokens tout-majuscules → NOM, sinon → prénom
       const nomParts = parts.filter((p) => /^[A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ\-]+$/.test(p));
       const prenomParts = parts.filter((p) => !/^[A-ZÀÂÄÉÈÊËÎÏÔÙÛÜÇ\-]+$/.test(p));
       if (nomParts.length > 0 && prenomParts.length > 0) {
@@ -405,7 +522,10 @@ export function parseOrdonnance(text: string): OrdonnanceData {
       nomPatient = fullName;
     }
   } else {
-    const patientMatch = text.match(/(?:nom\s*:?)\s*:?\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\-]+)/i);
+    // Fallback ancien comportement
+    const patientMatch = text.match(
+      /(?:patient|nom\s*:?|m\.?\s|mme\.?\s)\s*:?\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\-]+)/i
+    );
     if (patientMatch) nomPatient = clean(patientMatch[1].split("\n")[0]);
     prenomPatient = findAfterKeyword(text, ["pr[eé]nom"]);
   }
@@ -415,47 +535,56 @@ export function parseOrdonnance(text: string): OrdonnanceData {
   );
   const dateNaissancePatient = dnMatch ? dnMatch[1] : "";
 
-  // ── Audiogramme OD / OG ───────────────────────────────────────────────────
-  const odSection = extractEarSection(text, "droite");
-  const ogSection = extractEarSection(text, "gauche");
+  // ── Distance pupillaire ────────────────────────────────────────────────────
+  const dpMatch = text.match(
+    /(?:distance\s+pupillaire|[eé]cart\s+inter.?pupillaire|\bDP\b)[^\d]*(\d{2}(?:[.,]\d)?)\s*mm/i
+  );
+  const distancePupillaire = dpMatch ? dpMatch[1].replace(",", ".") : "";
 
-  const oreilleDroite = odSection ? parseAudiogramme(odSection) : { ...EMPTY_AUDIOGRAMME };
-  const oreilleGauche = ogSection ? parseAudiogramme(ogSection) : { ...EMPTY_AUDIOGRAMME };
+  // ── Type prescription ──────────────────────────────────────────────────────
+  const hasLunettes = /lunettes|verres?|monture/i.test(text);
+  const hasLentilles = /lentilles?|lc\b|contact/i.test(text);
+  let typePrescription: OrdonnanceData["typePrescription"] = "";
+  if (hasLunettes && hasLentilles) typePrescription = "les deux";
+  else if (hasLunettes) typePrescription = "lunettes";
+  else if (hasLentilles) typePrescription = "lentilles";
 
-  // Fallback : si la structure n'est pas séparée par oreille, essai sur le texte global
+  // ── Extraction OD / OG ────────────────────────────────────────────────────
+  const odSection = extractEyeSection(text, "droit");
+  const ogSection = extractEyeSection(text, "gauche");
+
+  let lunettesOD: CorrectionOeil = EMPTY_OEIL;
+  let lunettesOG: CorrectionOeil = EMPTY_OEIL;
+
+  if (odSection) {
+    lunettesOD = parseEyeSection(odSection);
+  }
+  if (ogSection) {
+    lunettesOG = parseEyeSection(ogSection);
+  }
+
+  // Fallback : si aucune section "Oeil droit/gauche" détectée,
+  // utiliser l'ancienne méthode par mots-clés (sphère/cylindre/axe séparés)
   if (!odSection && !ogSection) {
-    // Cherche un tableau à 2 lignes de valeurs (OD puis OG)
-    const rows = [...text.matchAll(/\b(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\b/g)];
-    if (rows.length >= 2) {
-      oreilleDroite.hz250 = rows[0][1]; oreilleDroite.hz500 = rows[0][2];
-      oreilleDroite.hz1000 = rows[0][3]; oreilleDroite.hz2000 = rows[0][4]; oreilleDroite.hz4000 = rows[0][5];
-      oreilleGauche.hz250 = rows[1][1]; oreilleGauche.hz500 = rows[1][2];
-      oreilleGauche.hz1000 = rows[1][3]; oreilleGauche.hz2000 = rows[1][4]; oreilleGauche.hz4000 = rows[1][5];
-    }
+    lunettesOD = fallbackOD(text);
+    lunettesOG = fallbackOG(text);
   }
 
-  // ── Classe d'appareillage ─────────────────────────────────────────────────
-  // Classe 1 = entrée de gamme / Classe 2 = premium (100% Santé = Classe 1)
-  let classeAppareillage: ClasseAppareillage = "";
-  const classeMatch = text.match(/[Cc]lasse\s*([12])/);
-  if (classeMatch) {
-    classeAppareillage = classeMatch[1] as ClasseAppareillage;
-  } else if (/100\s*%\s*sant[eé]|sans\s+reste[\s\-]à[\s\-]charge|srac/i.test(text)) {
-    classeAppareillage = "1";
-  }
-
-  // ── Type d'appareillage ───────────────────────────────────────────────────
-  let typeAppareillage: TypeAppareillage = "";
-  if (/\b(?:ric|rite|écouteur\s+déporté|receiver\s+in\s+(?:canal|ear))\b/i.test(text)) {
-    typeAppareillage = "RIC";
-  } else if (/\b(?:ite|intra[\s\-]?auriculaire|intra[\s\-]?canal|in[\s\-]?the[\s\-]?ear)\b/i.test(text)) {
-    typeAppareillage = "ITE";
-  } else if (/\b(?:bte|contour[\s\-]?d['']?oreille|behind[\s\-]?the[\s\-]?ear)\b/i.test(text)) {
-    typeAppareillage = "BTE";
-  }
-
-  // ── Renouvellement ────────────────────────────────────────────────────────
-  const renouvellement = /renouvellement|renouvel|renouvelle/i.test(text);
+  // ── Lentilles ─────────────────────────────────────────────────────────────
+  const bcOD = extractBC(text);
+  const diaOD = extractDia(text);
+  const lentillesOD: CorrectionLentille = {
+    ...EMPTY_LENTILLE,
+    ...lunettesOD,
+    rayonCourbure: bcOD,
+    diametre: diaOD,
+  };
+  const lentillesOG: CorrectionLentille = {
+    ...EMPTY_LENTILLE,
+    ...lunettesOG,
+    rayonCourbure: bcOD,
+    diametre: diaOD,
+  };
 
   // ── Remarques ─────────────────────────────────────────────────────────────
   const remarquesMatch = text.match(
@@ -463,18 +592,204 @@ export function parseOrdonnance(text: string): OrdonnanceData {
   );
   const remarques = remarquesMatch ? clean(remarquesMatch[1]) : "";
 
-  return {
-    nomORL,
-    rpps,
-    datePrescription,
+  const result: Omit<OrdonnanceData, "fieldConfidence"> = {
+    nomOphtalmologue,
+    dateOrdonnance,
+    dateValidite,
     nomPatient,
     prenomPatient,
     dateNaissancePatient,
-    oreilleDroite,
-    oreilleGauche,
-    classeAppareillage,
-    typeAppareillage,
-    renouvellement,
+    distancePupillaire,
+    typePrescription,
+    lunettesOD,
+    lunettesOG,
+    lentillesOD,
+    lentillesOG,
     remarques,
   };
+  return { ...result, fieldConfidence: computeOrdonnanceConfidence(result) };
+}
+
+// ── Scoring ─────────────────────────────────────────────────────────────────
+
+export function scoreMutuelle(data: MutuelleData): number {
+  const fields = [
+    data.organisme,
+    data.numeroAMC,
+    data.numeroAdherent,
+    data.nom,
+    data.prenom,
+    data.numeroSecuriteSociale,
+    data.dateDebutValidite,
+    data.dateFinValidite,
+  ];
+  let score = fields.filter((f) => f.trim().length > 0).length * 12.5;
+
+  if (data.numeroSecuriteSociale.trim() && !/^\d{13}$/.test(data.numeroSecuriteSociale.replace(/\s/g, ""))) {
+    score -= 20;
+  }
+  if (data.dateDebutValidite.trim() && !DATE_DDMMYYYY.test(data.dateDebutValidite.trim())) {
+    score -= 10;
+  }
+  if (data.dateFinValidite.trim() && !DATE_DDMMYYYY.test(data.dateFinValidite.trim())) {
+    score -= 10;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+export function scoreOrdonnance(data: OrdonnanceData): number {
+  const fields = [
+    data.nomOphtalmologue,
+    data.dateOrdonnance,
+    data.nomPatient,
+    data.typePrescription,
+    data.lunettesOD.sphere,
+    data.lunettesOG.sphere,
+  ];
+  let score = fields.filter((f) => f.trim().length > 0).length * (100 / 6);
+
+  if (data.lunettesOD.sphere.trim() && isNaN(parseFloat(data.lunettesOD.sphere))) {
+    score -= 15;
+  }
+  if (data.lunettesOG.sphere.trim() && isNaN(parseFloat(data.lunettesOG.sphere))) {
+    score -= 15;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+// ── Fallback : ancienne méthode ligne par ligne (si pas de "Oeil droit/gauche") ─
+
+function extractODOGLine(text: string, keyword: string): [string, string] {
+  const lines = text.split("\n");
+  for (const line of lines) {
+    if (new RegExp(keyword, "i").test(line)) {
+      const values = line.match(/([+\-]?\d{1,2}[.,]\d{2}|pl(?:ano)?|\d{1,3}°)/gi);
+      if (values && values.length >= 2)
+        return [parseOpticalValue(values[0]), parseOpticalValue(values[1])];
+      if (values?.length === 1) return [parseOpticalValue(values[0]), ""];
+    }
+  }
+  return ["", ""];
+}
+
+function fallbackOD(text: string): CorrectionOeil {
+  const [sphOD] = extractODOGLine(text, "sph[eè]?r?e?");
+  const [cylOD] = extractODOGLine(text, "cyl(?:indre)?");
+  const [axeOD_raw] = extractODOGLine(text, "ax[e]?(?:is)?");
+  const [addOD] = extractODOGLine(text, "add(?:ition)?");
+  return {
+    sphere: sphOD,
+    cylindre: cylOD,
+    axe: axeOD_raw.replace(/[^\d]/g, ""),
+    addition: addOD,
+  };
+}
+
+function fallbackOG(text: string): CorrectionOeil {
+  const [, sphOG] = extractODOGLine(text, "sph[eè]?r?e?");
+  const [, cylOG] = extractODOGLine(text, "cyl(?:indre)?");
+  const [, axeOG_raw] = extractODOGLine(text, "ax[e]?(?:is)?");
+  const [, addOG] = extractODOGLine(text, "add(?:ition)?");
+  return {
+    sphere: sphOG,
+    cylindre: cylOG,
+    axe: axeOG_raw.replace(/[^\d]/g, ""),
+    addition: addOG,
+  };
+}
+
+// ── Merge de deux résultats OCR ─────────────────────────────────────────────
+// Combine les résultats de deux moteurs OCR (PaddleOCR + Tesseract).
+// Stratégie : pour chaque champ, garder la valeur non-vide.
+// En cas de conflit, préférer le résultat du moteur "primary" (score plus élevé).
+
+function pick(primary: string, secondary: string): string {
+  if (primary.trim()) return primary;
+  return secondary;
+}
+
+function mergeCorrection(primary: CorrectionOeil, secondary: CorrectionOeil): CorrectionOeil {
+  return {
+    sphere: pick(primary.sphere, secondary.sphere),
+    cylindre: pick(primary.cylindre, secondary.cylindre),
+    axe: pick(primary.axe, secondary.axe),
+    addition: pick(primary.addition, secondary.addition),
+  };
+}
+
+function mergeLentille(primary: CorrectionLentille, secondary: CorrectionLentille): CorrectionLentille {
+  return {
+    sphere: pick(primary.sphere, secondary.sphere),
+    cylindre: pick(primary.cylindre, secondary.cylindre),
+    axe: pick(primary.axe, secondary.axe),
+    addition: pick(primary.addition, secondary.addition),
+    rayonCourbure: pick(primary.rayonCourbure, secondary.rayonCourbure),
+    diametre: pick(primary.diametre, secondary.diametre),
+  };
+}
+
+/** Fusionne deux listes de personnes par nom/prénom. */
+function mergePersonnes(primary: Personne[], secondary: Personne[]): Personne[] {
+  const merged = [...primary];
+  const seen = new Set(primary.map((p) => `${p.nom}-${p.prenom}`.toUpperCase()));
+
+  for (const p of secondary) {
+    const key = `${p.nom}-${p.prenom}`.toUpperCase();
+    if (!seen.has(key)) {
+      merged.push(p);
+      seen.add(key);
+    } else {
+      /* Compléter les champs manquants de la personne déjà présente */
+      const existing = merged.find((m) => `${m.nom}-${m.prenom}`.toUpperCase() === key);
+      if (existing) {
+        if (!existing.numeroSecuriteSociale && p.numeroSecuriteSociale) existing.numeroSecuriteSociale = p.numeroSecuriteSociale;
+        if (!existing.dateNaissance && p.dateNaissance) existing.dateNaissance = p.dateNaissance;
+      }
+    }
+  }
+  return merged;
+}
+
+/** Fusionne deux résultats mutuelle. `primary` = moteur avec meilleur score. */
+export function mergeMutuelle(primary: MutuelleData, secondary: MutuelleData): MutuelleData {
+  const personnes = mergePersonnes(primary.personnes, secondary.personnes);
+  const first = personnes[0] ?? { nom: "", prenom: "", numeroSecuriteSociale: "", dateNaissance: "" };
+
+  const merged: Omit<MutuelleData, "fieldConfidence"> = {
+    organisme: pick(primary.organisme, secondary.organisme),
+    numeroAMC: pick(primary.numeroAMC, secondary.numeroAMC),
+    numeroAdherent: pick(primary.numeroAdherent, secondary.numeroAdherent),
+    numeroTeletransmission: pick(primary.numeroTeletransmission, secondary.numeroTeletransmission),
+    typeConv: pick(primary.typeConv, secondary.typeConv),
+    dateDebutValidite: pick(primary.dateDebutValidite, secondary.dateDebutValidite),
+    dateFinValidite: pick(primary.dateFinValidite, secondary.dateFinValidite),
+    nom: pick(primary.nom, first.nom),
+    prenom: pick(primary.prenom, first.prenom),
+    numeroSecuriteSociale: pick(primary.numeroSecuriteSociale, first.numeroSecuriteSociale),
+    dateNaissance: pick(primary.dateNaissance, first.dateNaissance),
+    personnes,
+  };
+  return { ...merged, fieldConfidence: computeMutuelleConfidence(merged) };
+}
+
+/** Fusionne deux résultats ordonnance. `primary` = moteur avec meilleur score. */
+export function mergeOrdonnance(primary: OrdonnanceData, secondary: OrdonnanceData): OrdonnanceData {
+  const merged: Omit<OrdonnanceData, "fieldConfidence"> = {
+    nomOphtalmologue: pick(primary.nomOphtalmologue, secondary.nomOphtalmologue),
+    dateOrdonnance: pick(primary.dateOrdonnance, secondary.dateOrdonnance),
+    dateValidite: pick(primary.dateValidite, secondary.dateValidite),
+    nomPatient: pick(primary.nomPatient, secondary.nomPatient),
+    prenomPatient: pick(primary.prenomPatient, secondary.prenomPatient),
+    dateNaissancePatient: pick(primary.dateNaissancePatient, secondary.dateNaissancePatient),
+    distancePupillaire: pick(primary.distancePupillaire, secondary.distancePupillaire),
+    typePrescription: primary.typePrescription || secondary.typePrescription,
+    lunettesOD: mergeCorrection(primary.lunettesOD, secondary.lunettesOD),
+    lunettesOG: mergeCorrection(primary.lunettesOG, secondary.lunettesOG),
+    lentillesOD: mergeLentille(primary.lentillesOD, secondary.lentillesOD),
+    lentillesOG: mergeLentille(primary.lentillesOG, secondary.lentillesOG),
+    remarques: pick(primary.remarques, secondary.remarques),
+  };
+  return { ...merged, fieldConfidence: computeOrdonnanceConfidence(merged) };
 }

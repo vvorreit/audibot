@@ -1,16 +1,21 @@
 name: CI/CD
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Raison du déploiement"
+        required: false
+        default: "Déploiement manuel"
 
 env:
-  IMAGE: ghcr.io/${{ github.repository_owner }}/audibot
+  IMAGE: ghcr.io/${{ github.repository_owner }}/optibot
+  IMAGE_OCR: ghcr.io/${{ github.repository_owner }}/optibot-ocr
 
 jobs:
-  # ─── 1. Build & push l'image Docker sur GHCR ───────────────────────────────
+  # ─── 1. Build & push les images Docker sur GHCR ─────────────────────────────
   build:
-    name: Build & Push image
+    name: Build & Push images
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,7 +35,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker metadata (tag = sha court)
+      - name: Docker metadata — App
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -39,17 +44,38 @@ jobs:
             type=sha,prefix=,format=short
             type=raw,value=latest
 
+      - name: Docker metadata — OCR
+        id: meta-ocr
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_OCR }}
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest
+
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build & Push
+      - name: Build & Push — App
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha       # cache des layers entre les runs
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_GA_ID=${{ secrets.NEXT_PUBLIC_GA_ID }}
+
+      - name: Build & Push — OCR (PaddleOCR)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ocr-service
+          push: true
+          tags: ${{ steps.meta-ocr.outputs.tags }}
+          labels: ${{ steps.meta-ocr.outputs.labels }}
+          cache-from: type=gha
           cache-to: type=gha,mode=max
 
   # ─── 2. Déploiement sur le serveur via SSH ──────────────────────────────────
@@ -72,16 +98,16 @@ jobs:
             # Authentification GHCR sur le serveur
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USER }}" --password-stdin
 
-            cd /app/audibot
+            cd /app/optibot
 
             # Récupère la dernière version du docker-compose
             git pull origin main
 
-            # Tire la nouvelle image (déjà compilée sur GitHub Actions)
-            docker compose pull app
+            # Tire les nouvelles images (déjà compilées sur GitHub Actions)
+            docker compose pull app ocr
 
-            # Redémarre le conteneur app sans downtime notable
-            docker compose up -d --no-build app
+            # Redémarre les conteneurs sans downtime notable
+            docker compose up -d --no-build app ocr
 
             # Nettoyage des anciennes images
             docker image prune -f

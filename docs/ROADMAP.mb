@@ -1,0 +1,456 @@
+# OptiBot — ROADMAP Enrichie (Brainstorming Collectif)
+
+**Date de mise à jour** : 2026-03-25
+**Base** : Analyse Product Manager + Ingénieur Système senior (v0 originale)
+**Enrichi par** : Luc (Dev), Alex (Growth), Clara (UX), Max (CS), Sarah (Data), Lila (PM)
+
+---
+
+# ANALYSE ORIGINALE — PM + Ingénieur Système
+
+> *(Voir sections 1–4 de la version précédente — 25 points P0/P1/P2)*
+> Conservée comme base de référence. Les sections suivantes la challengent et la complètent.
+
+---
+
+---
+
+# 🔧 LUC — Senior Developer · Architecture · Sécurité OWASP
+
+## Challenges (ce qui cloche)
+
+**Sous-estimés :**
+- **Résilience sélecteurs (P0)** → c'est en réalité 3–6 mois de travail, pas une feature. Chaque ERP (Cosium, WinOptics, LBO) a des DOM propriétaires qui changent à chaque update. Sans abstraction par versioning de sélecteurs + CI qui rejoue des tests E2E contre des snapshots HTML, tu repasses en prod à chaque déploiement ERP.
+- **OWASP audit (P1)** → trop tardif. Un produit SaaS B2B avec données patients (RGPD Art. 9 = données de santé ?) doit avoir l'audit en P0, pas après le Store.
+- **Sessions désynchronisées** → mentionné comme faille mais absent des solutions. Ce n'est pas un "bug", c'est un problème d'architecture : JWT + sliding session + invalidation côté serveur = travail non trivial.
+
+**Mal priorisés :**
+- **Chrome Web Store avant tests automatisés** → publier sans CI/CD fiable = régressions en prod visibles par les reviewers Google → rejet ou suspension. Inverser l'ordre.
+- **Multi-ERP (P1)** → conditionné au découplage ERP d'abord. Si l'archi n'est pas découplée, ajouter Cosium = dette × 2.
+- **Firefox/Edge (P1)** → faible valeur pour des opticiens (Chrome domine en B2B France). Pousser en P2.
+
+**Manquant :**
+- Zéro mention de **RGPD / données de santé** — registre des traitements, DPO, chiffrement at-rest obligatoires.
+- **Versioning de l'API** — si une API publique est prévue (P2), il faut `/v1/` dès maintenant ou les intégrations futures cassent.
+- **Error boundaries côté extension** — un crash JS silencieux dans le content script = perte de données utilisateur sans feedback.
+
+## Ajouts recommandés
+
+| Priorité | Item | Pourquoi |
+|----------|------|----------|
+| P0 | Conformité RGPD + chiffrement at-rest | Obligation légale, données santé Art. 9 |
+| P0 | Error tracking extension (Sentry CRX) | Crash silencieux = churn invisible |
+| P0 | Versioning sélecteurs DOM (JSON schema par ERP + version) | Résilience réelle, pas cosmétique |
+| P1 | Audit logs (qui accède à quoi, quand) | Requis pour B2B sérieux + RGPD |
+| P1 | Feature flags (LaunchDarkly ou maison) | Déploiements graduels sans risque |
+| P1 | Contract testing (Pact) entre extension ↔ API | Évite les régressions silencieuses |
+
+## Features à supprimer / simplifier
+
+- **SmartFill ML (P2)** → supprimer. ROI nul avant 10k users actifs. Remplacer par prefill basé sur l'historique — même UX, zéro coût infra.
+- **Programme referral (P2)** → supprimer. C'est du Growth, pas du Product. Lien UTM + discount manuel au début.
+- **Dark mode (P2)** → supprimer. Outil pro en journée. Zéro valeur business. Dette CSS garantie.
+- **ROI calculator (P2)** → simplifier. Page statique avec sliders, pas une feature dynamique connectée à la BDD.
+- **API publique (P2)** → reporter à P3 ou conditionner au premier client enterprise qui en fait la demande.
+
+## Vision technique
+
+**Principe directeur : stabilité avant croissance.**
+
+1. **Socle test** → Jest (unit) + Playwright (E2E) + snapshots HTML par ERP. CI bloque la merge si snapshot diff.
+2. **Sélecteurs versionnés** → fichier JSON `selectors/lbo-v3.2.json` chargé dynamiquement. Mise à jour sans redéployer l'extension.
+3. **Observabilité** → Sentry (extension + backend) + structured logs + 3 dashboards : erreurs, latence API, taux de complétion formulaire.
+4. **Conformité** → RGPD d'abord, Store ensuite. Sans ça, le premier opticien qui reçoit une CNIL = churn + réputation.
+
+**Archi cible en 6 mois :** monolithe modulaire (pas de microservices prématurés), adapter pattern par ERP, queue légère (BullMQ) pour les webhooks Stripe, PostgreSQL avec chiffrement colonne pour données sensibles.
+
+> La dette actuelle est sous-estimée d'un facteur 2. Tailler dans les P2 gadgets libère 3 sprints pour consolider le cœur.
+
+---
+
+---
+
+# 🎯 ALEX — Growth B2B SaaS · Acquisition · Rétention · Revenu
+
+## Challenges — Ce qui est sous-estimé
+
+**1. L'activation est le vrai goulot d'étranglement**
+Le North Star (≥20 scans/mois) suppose que les users *comprennent* la valeur sans friction. Or l'onboarding est en P1. C'est un paradoxe : tu paies pour acquérir des users qui ne convertissent jamais parce que l'activation est bâclée.
+
+**2. Zéro motion virale structurée**
+Le programme referral est en P2 alors que les opticiens sont un réseau *dense et géographiquement concentré* (groupements, franchises). C'est le canal d'acquisition le moins cher dans ce secteur. Le mettre en P2, c'est laisser de l'argent sur la table.
+
+**3. Pas de signal de valeur pré-achat**
+Le ROI calculator en P2 est une erreur. Dans un cycle B2B, même court, un opticien demande *combien ça me rapporte* avant de signer. Sans preuve chiffrée, le FREE 14j suffit rarement à convaincre.
+
+**4. La limite à 50 scans/mois sur ESSENTIEL est un plafond de verre**
+Un cabinet moyen fait 80–150 remboursements mutuelles/mois. ESSENTIEL est donc inutile pour un usage réel → friction vers le PRO mal expliquée → churn.
+
+## Ajouts recommandés — Fort impact business
+
+| Initiative | Levier AARRR | Impact | Effort |
+|---|---|---|---|
+| **Onboarding → P0** (pas P1) | Activation | 🔴 Critique | Moyen |
+| **ROI calculator → P1** | Acquisition | 🔴 Critique | Faible |
+| **Referral opticien → P1** | Referral | 🟠 Fort | Moyen |
+| **Dashboard ROI in-app** (temps gagné, scans/mois, € récupérés) | Rétention | 🟠 Fort | Moyen |
+| **Intégration groupements/franchises** (Krys, Optic 2000…) | Revenu | 🔴 Critique | Élevé |
+| **Rapport mensuel automatique PDF** | Rétention | 🟡 Moyen | Faible |
+
+Le dashboard ROI in-app est clé : si l'opticien voit "ce mois-ci, OptiBot vous a économisé 4h30 et récupéré 1 240€", le churn s'effondre et l'upsell se fait seul.
+
+## Features à déprioritiser (ROI marketing faible)
+
+- **Dark mode** — zéro impact sur rétention B2B opticien
+- **i18n** — marché français validé en premier ; internationaliser trop tôt = dispersion
+- **API publique** — qui va l'utiliser ? Pas un opticien. Utile seulement si partenariats ERP signés
+- **Push notifications** — canal saturé, faible adoption B2B ; le rapport PDF mensuel couvre mieux
+- **Mode hors-ligne** — usage rare, complexité élevée, pas un pain point remonté
+
+## Vision Growth
+
+**Séquence recommandée :**
+
+1. **Mois 1–2** : Onboarding + ROI calculator → activation trial → conversion FREE→PRO
+2. **Mois 3** : Dashboard ROI in-app → ancrer l'habitude, atteindre les 20 scans/mois
+3. **Mois 4** : Referral structuré (1 mois offert par filleul) → croissance organique réseau
+4. **Mois 5+** : Approche groupements → deal B2B2B, déploiement en masse, ARR prévisible
+
+**Revoir le pricing :**
+- ESSENTIEL à 100 scans/mois minimum (ou illimité à prix revu) pour coller à la réalité terrain
+- Ajouter un palier **CABINET** (multi-postes, ~99€/mois) pour les chaînes
+
+**North Star complémentaire à tracker :**
+- Taux d'activation J14 (trial → 5 scans minimum)
+- NPS à J30
+- Churn mensuel < 3%
+
+> Bottom line : La roadmap est trop orientée tech-debt et pas assez time-to-value. Un opticien qui ne voit pas de valeur en 7 jours ne paie pas.
+
+---
+
+---
+
+# 🖌️ CLARA — UX/UI · Professions de santé · B2B
+
+## Challenges UX
+
+**P0 — Ce qui manque cruellement :**
+- **Résilience sélecteurs** est technique mais son impact UX est maximal : si l'extension plante en plein tiers-payant avec un client devant soi, l'opticien abandonne définitivement. C'est le risque #1 de churn.
+- **Onboarding est en P1** — erreur critique. Un outil non-tech sans onboarding guidé = abandon au bout de 2 jours. À monter en P0.
+- **Monitoring sans alertes proactives** = inutile pour l'opticien. Il faut du statut visible dans l'extension, pas juste un dashboard.
+
+**P1 — Frictions identifiées :**
+- **Firefox/Edge** : les opticiens utilisent souvent des postes configurés par des prestataires IT avec des navigateurs imposés. Bloquer sur Chrome = friction d'adoption réelle.
+- **Feedback in-app mal positionné** : si c'est un formulaire modal, personne ne le remplit. Ça doit être passif (NPS post-session, 1 clic).
+
+**P2 — Red flags :**
+- **Mode hors-ligne** : les portails mutuelle sont online par définition. Use case quasi-nul, effort élevé.
+- **Dark mode + i18n** : zéro impact sur la rétention pour cette cible. Effort/valeur déséquilibré.
+
+## Ajouts recommandés
+
+**Flows manquants (haute valeur) :**
+- **"Mode guichet"** : interface réduite à l'essentiel — 1 champ patient, 1 bouton, 1 statut. Conçue pour être utilisée avec un client devant soi en < 10 secondes.
+- **Statut inline dans l'extension** : indicateur visuel (vert/orange/rouge) de l'état des portails, sans quitter la page. Évite l'anxiété "est-ce que ça marche ?"
+- **Historique rapide** : les 5 derniers dossiers traités accessibles en 1 clic. 80% des cas sont des récurrents.
+
+**Micro-interactions :**
+- Confirmation sonore/visuelle discrète après soumission réussie (pas de modale, juste un checkmark 🟢)
+- Auto-focus sur le premier champ à compléter après OCR
+- Raccourcis clavier pour les actions fréquentes
+
+**Accessibilité :**
+- Contraste élevé par défaut (écrans souvent en plein soleil ou lumière forte)
+- Taille de police ajustable dans l'extension
+
+## Features à simplifier ou supprimer
+
+| Feature | Verdict | Raison |
+|---|---|---|
+| Mode hors-ligne | ❌ Supprimer | Use case inexistant |
+| Dark mode | ⏸️ Déprioritiser | Pas de demande terrain |
+| i18n | ⏸️ Post-PMF | Marché FR uniquement à ce stade |
+| API publique | ⚠️ Simplifier | Réserver aux intégrateurs, pas aux opticiens |
+| ROI Calculator | ✂️ Simplifier | 1 chiffre suffit : "X min économisées ce mois" |
+
+## Vision UX
+
+> **"3 secondes pour soumettre, zéro stress, zéro doublon."**
+
+L'extension doit disparaître visuellement au quotidien — elle s'active, fait son travail, confirme, et s'efface.
+
+**Piliers :**
+1. **Vitesse** — chaque interaction < 5 secondes, zéro loading apparent
+2. **Confiance** — statut toujours visible, erreurs en langage humain ("La CPAM est indisponible, réessai dans 2 min")
+3. **Habitude** — historique + raccourcis créent le réflexe quotidien
+4. **Simplicité radicale** — une seule action principale par écran, jamais de choix superflu
+
+L'onboarding doit être une démo live sur un vrai dossier fictif, pas un tutoriel. Si l'opticien voit OptiBot remplir un formulaire en 8 secondes lors du setup, il est convaincu.
+
+---
+
+---
+
+# 💼 MAX — Customer Success · Sales B2B · Professions de santé
+
+## Challenges Adoption
+
+**La friction est trop tôt dans le funnel.**
+
+- **Installation Chrome = barrier #1** : L'opticien moyen n'est pas tech. Sans accompagnement humain ou vidéo guidée à l'install, le taux d'activation s'effondre. Le CWS ne suffit pas.
+- **14j de trial sans valeur démontrée = churn silencieux** : Si l'utilisateur ne fait pas son premier scan réussi dans les 48h, il désinstalle et n'y revient jamais. Le "aha moment" doit être forcé.
+- **50 scans/mois sur ESSENTIEL = limite mal perçue** : Un opticien actif dépasse facilement 50 mutuelles/mois. La limite ressemble à une punition, pas à un palier logique.
+- **Pas de ROI visible pendant le trial** : Sans preuve chiffrée, la conversion FREE→ESSENTIEL repose uniquement sur la foi.
+
+## Ajouts recommandés
+
+**P0 — non-négociables pour l'adoption :**
+
+- **Wizard d'activation (3 étapes max)** : Install → Premier scan guidé → Confirmation "✅ 1ère fiche remplie en X secondes". Sans ça, l'onboarding P1 arrive trop tard.
+- **Email d'activation J+1 si 0 scan** : Trigger automatique. "Vous n'avez pas encore testé OptiBot — voici une démo 90s." Coût quasi-nul, impact énorme.
+
+**P1 :**
+
+- **Compteur de temps économisé en dashboard** : "Vous avez économisé 3h12 ce mois-ci." Transforme chaque session en preuve ROI.
+- **Alerte pré-limite (à 40/50 scans)** : Prévenir avant la friction, pas après. Proposer l'upgrade proactivement.
+- **Chat support in-app (Crisp/Intercom)** : Les opticiens n'ouvrent pas des tickets. Ils abandonnent. Un chat visible dès l'install réduit le churn silencieux de 30–40%.
+
+## Features à clarifier ou supprimer
+
+- **Dark mode** — zéro valeur métier pour un opticien en cabinet
+- **API publique** — prématuré, maintenance sans ROI
+- **i18n** — conditionner à une demande DACH/Benelux documentée
+- **Firefox/Edge** — prioriser seulement si les retours terrain le confirment
+- **SmartFill ML** — une suggestion ML erronée sur une fiche mutuelle = erreur de remboursement = perte de confiance totale. Conditionner à un test bêta fermé avec NPS > 8.
+
+## Vision Customer Success
+
+**Objectif : 0 churn involontaire dans les 90 premiers jours.**
+
+| Phase | Action | KPI cible |
+|---|---|---|
+| J0–J2 | Wizard + 1er scan guidé | Activation > 70% |
+| J3–J7 | Email auto si inactif | Réactivation > 25% |
+| J14 | Score d'usage → proposition upgrade | Conversion FREE→payant > 30% |
+| M1–M3 | Dashboard ROI + NPS in-app | NPS > 40, churn < 5%/mois |
+| M6 | Referral déclenché sur NPS ≥ 8 | 1 referral / 5 comptes actifs |
+
+**Règle d'or CS** : Un opticien qui a fait 10+ scans ne churne presque jamais. Tout doit converger vers cet objectif dans le trial.
+
+> Le vrai P0 manquant : **l'activation**. Le reste est secondaire.
+
+---
+
+---
+
+# 📊 SARAH — Data · Analytics · ML · SaaS B2B
+
+## Challenges Data
+
+**La North Star Metric est incomplète.** "≥ 20 scans/mois" mesure le volume, pas la valeur. Un scan échoué ou corrigé manuellement compte autant qu'un scan parfait — c'est trompeur.
+
+**Métriques critiques manquantes :**
+- **Taux de succès end-to-end** : % scans → soumission mutuelle validée sans intervention humaine
+- **Time-to-completion** : durée moyenne scan → validation TP
+- **SmartFill acceptance rate** : % suggestions acceptées sans correction
+- **Error clustering** : quels portails concentrent 80% des échecs RPA ?
+- **Churn signal précoce** : baisse scans semaine-sur-semaine > 30% = signal fort de désengagement
+
+**Données sous-exploitées :**
+- `SmartFillCorrection` → goldmine pour l'entraînement ML, probablement pas loggée structurellement
+- `scores OCR` → distribution non analysée par type de document / mutuelle
+- `logRPA server-side` → pas de corrélation établie avec les KPIs produit
+
+## Ajouts recommandés
+
+**P0 — Instrumenter correctement avant tout :**
+- Event tracking structuré : `scan_started`, `scan_success`, `scan_failed`, `smartfill_accepted`, `smartfill_corrected`
+- Dashboard interne temps réel : taux succès par mutuelle, latence RPA, score OCR moyen
+
+**P1 — Analytics produit actionnable :**
+- **Heatmap d'erreurs par mutuelle** : identifier les portails à résilience prioritaire (data-driven, pas au feeling)
+- **Alertes proactives opticien** : "Votre taux de succès Malakoff a chuté à 40% — portail en maintenance ?"
+- **Cohort analysis** : rétention J7/J30 par type d'ERP, par volume initial
+
+**P2 — Intelligence prédictive :**
+- **SmartFill v2 ML** : modèle basé sur `historique TP` + `SmartFillCorrection` par profil opticien — monter en P1 si acceptance rate > 60%
+- **Anomaly detection** : détecter automatiquement les portails qui changent leur structure (avant que les sélecteurs cassent)
+- **Score de santé compte** : composite (taux succès + fréquence + diversité mutuelles) → trigger CSM ou email automation
+
+## Features à déprioritiser
+
+| Feature | Pourquoi |
+|---|---|
+| Dark mode | Zéro signal data, aucun pain point remonté |
+| i18n | Marché FR uniquement — effort élevé, ROI nul |
+| Push notifications | Avant d'avoir les alertes intelligentes → canal sans contenu pertinent |
+| Changelog | Utile, mais jamais lu — cibler plutôt des release notes in-app |
+| Export CSV | Remplacer par un vrai dashboard — le CSV est un aveu d'absence d'analytics |
+
+## Vision Data/ML
+
+**OptiBot doit devenir le "pilote automatique" du tiers-payant.**
+
+```
+Aujourd'hui : Opticien déclenche → OptiBot exécute
+Demain      : OptiBot anticipe → Opticien valide
+```
+
+**3 axes :**
+1. **Prédictif** — détecter les pannes portail avant qu'elles impactent l'opticien
+2. **Auto-apprenant** — chaque correction SmartFill enrichit le modèle
+3. **Proactif** — "Vous avez 12 dossiers en attente Harmonie Mutuelle, taux succès : 94% — lancer ?"
+
+**North Star révisée proposée :**
+> **Taux de scans réussis sans intervention ≥ 85%** sur base active ≥ 20 scans/mois
+
+---
+
+---
+
+# 🔧 LILA — Senior Product Manager · PLG · RICE · Outcome over Output
+
+## Challenges PM
+
+**Priorisation globalement correcte, mais 3 problèmes :**
+
+- **P0 sous-estimé** : sans résilience sélecteurs + monitoring, le produit peut tomber silencieusement sur n'importe lequel des 38 portails → churn immédiat, pas de feedback. C'est existentiel.
+- **Onboarding est P0, pas P1** : un outil technique livré sans onboarding structuré = adoption < 20 scans/mois dès J1. Le North Star mourra en trial.
+- **Firefox/Edge est P2 déguisé en P1** : Edge mérite d'être remonté en P1 réel (Windows pro). Firefox = faible ROI.
+
+**Quick wins manquants :**
+- Alerting proactif par email si un portail échoue → rétention sans code
+- Compteur de scans in-dashboard visible → engagement + preuve de valeur → upgrade
+- Récap hebdo auto (email) → stickiness
+
+## User Stories clés manquantes
+
+**P0 — Résilience sélecteurs**
+> Given un portail mutuelle a mis à jour son DOM,
+> When OptiBot tente de remplir un formulaire,
+> Then il détecte l'échec, log l'erreur avec contexte (portail, champ), et notifie l'équipe sans bloquer l'opticien.
+
+**P0 — Onboarding (à remonter)**
+> Given un opticien s'inscrit en FREE trial,
+> When il lance l'extension pour la première fois,
+> Then un wizard interactif (3 étapes max) lui permet de réaliser son premier scan guidé en < 5 minutes.
+
+**P0 — Monitoring**
+> Given le service backend est dégradé,
+> When un opticien tente un scan,
+> Then il voit un message clair ("Service temporairement indisponible, reprise dans ~10 min") plutôt qu'un timeout silencieux.
+
+**P1 — Feedback in-app**
+> Given un scan a échoué ou produit un résultat incorrect,
+> When l'opticien le signale en 1 clic,
+> Then un ticket enrichi (screenshot + DOM snapshot) est créé automatiquement pour l'équipe.
+
+**P1 — Stripe webhooks**
+> Given un paiement échoue en renouvellement,
+> When Stripe envoie `invoice.payment_failed`,
+> Then l'accès est dégradé (read-only) après 3j grace, avec email de relance J0/J3/J7.
+
+## Features à supprimer
+
+| Feature | Raison |
+|---|---|
+| Dark mode | Zéro lien avec le North Star. Usage pro, pas préférence UI |
+| i18n | Marché = opticiens FR. Prématuré, effort/impact défavorable |
+| Programme referral | Valide uniquement si NPS > 8 et base active. Pas avant 100 users actifs |
+| API publique | Aucun opticien n'a demandé à s'intégrer. Feature pour se rassurer, pas pour l'user |
+| SmartFill ML | L'OCR + règles métier couvrent 95% des cas. ML = pari non prouvé |
+
+## Vision Produit 6 mois
+
+**Objectif unique** : faire passer chaque opticien actif à ≥ 20 scans/mois avant M6.
+
+**M1–M2 — Stabilité (fondation)**
+- Résilience sélecteurs + monitoring → 0 panne silencieuse
+- Onboarding wizard → activation J1 > 80%
+- Rate limiting fail-closed + RGPD
+
+**M3–M4 — Valeur perçue (rétention)**
+- Compteur de scans dashboard + récap hebdo email
+- Feedback in-app → boucle produit rapide
+- Stripe webhooks + gestion dunning
+
+**M5–M6 — Croissance (expansion)**
+- Multi-ERP Cosium/WinOptics → unlock segment > 60% du marché
+- Edge extension
+- Export CSV → valeur admin/comptable
+
+**Ce qu'on ne construit PAS avant M6 :**
+dark mode, i18n, API publique, ML, referral.
+
+---
+
+**Signal d'alerte** : si à M2 le taux d'activation trial → payant est < 15%, l'onboarding et la clarté de la valeur sont le vrai problème — pas les features P1.
+
+---
+
+---
+
+# ⚡ SYNTHÈSE — Lila (orchestratrice)
+
+## Consensus fort (5–6 votes sur 6)
+
+### À supprimer / reporter
+| Feature | Votes | Verdict |
+|---|---|---|
+| Dark mode | 6/6 | ❌ Supprimer |
+| i18n | 6/6 | ❌ Reporter post-PMF |
+| Mode hors-ligne | 5/6 | ❌ Supprimer |
+| API publique | 5/6 | ❌ Reporter P3 |
+| SmartFill ML full | 5/6 | ⚠️ Remplacer par prefill historique |
+
+### À remonter en priorité
+| Feature | Avant | Après | Votes |
+|---|---|---|---|
+| Onboarding wizard | P1 | **P0** | 6/6 |
+| ROI calculator | P2 | **P1** | 5/6 |
+| RGPD + chiffrement | absent | **P0** | Luc |
+| Error tracking extension | absent | **P0** | Luc |
+| Programme referral | P2 | **P1** (post 100 users) | Alex |
+| Edge extension | P1 Firefox | **P1 Edge / P2 Firefox** | 4/6 |
+
+## North Star révisée (Sarah + Lila)
+> **Taux de scans réussis sans intervention humaine ≥ 85%** sur base active ≥ 20 scans/mois
+
+## Plan d'exécution révisé
+
+### M1–M2 — Fondation
+- Tests automatisés (Jest + Playwright + snapshots ERP)
+- Sentry extension + error boundaries
+- Résilience sélecteurs (versioning JSON + CI)
+- Rate limiting fail-closed
+- RGPD + chiffrement at-rest
+- Onboarding wizard (3 étapes, < 5 min, démo live)
+- Monitoring + event tracking structuré
+- Chrome Web Store
+
+### M3–M4 — Valeur perçue
+- ROI dashboard in-app + récap hebdo email
+- Feedback in-app (NPS passif + signalement 1 clic)
+- Stripe webhooks edge cases + dunning
+- Heatmap erreurs mutuelle (dashboard interne)
+- Alerte pré-limite scans + chat support in-app
+- Feature flags
+
+### M5–M6 — Croissance
+- ERPAdapter + Multi-ERP Cosium/WinOptics
+- Edge extension
+- Programme referral (si NPS > 8 + 100 users actifs)
+- OWASP audit + backup BDD
+- Mode guichet, historique rapide, alertes proactives opticien
+
+### Post M6 — Après validation PMF
+- Intégration groupements/franchises (Krys, Optic 2000)
+- Palier CABINET (multi-postes ~99€/mois)
+- Firefox extension
+- Export CSV → dashboard analytics
+- Changelog in-app
+
+---
+
+*Brainstorming collectif — 2026-03-25 · OptiBot Mission Contrôle*

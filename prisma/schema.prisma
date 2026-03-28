@@ -58,18 +58,51 @@ model User {
   invitationsSent Invitation[]
 
   syncToken     String?   @unique @default(cuid())
+  storeName     String?
 
   passwordChangedAt DateTime?
 
+  // --- 2FA (TOTP optionnel) ---
+  twoFactorEnabled  Boolean   @default(false)
+  twoFactorSecret   String?   // base32 secret, null si 2FA non activé
+
   // --- Plan ---
-  plan          String    @default("FREE") // FREE, SOLO, DUO
+  plan          String    @default("FREE") // FREE, ESSENTIEL, PRO, CABINET, RESEAU, EQUIPE
+
+  // --- Scan limit (ESSENTIEL = 50/mois) ---
+  monthlyScanCount   Int       @default(0)
+  monthlyScanResetAt DateTime?
 
   // --- Stripe (Personal) ---
   stripeCustomerId       String?   @unique
   stripeSubscriptionId   String?   @unique
+  pendingPlan            String?   // plan prévu au prochain cycle (downgrade différé)
+
+  onboardingStep Int      @default(0) // 0=inscrit, 1=extension, 2=premier doc, 3=copié, 4=rempli
+  npsEmailSentAt DateTime?
+  onboardingCompletedEmailSentAt DateTime?
+
+  // --- Cadeau mois gratuits ---
+  freeUntil           DateTime? // date jusqu'à laquelle l'accès Pro est offert
+  freeMonthsNote      String?   // note interne admin (raison du cadeau)
+
+  // --- CGV ---
+  needsCgvAcceptance  Boolean @default(false)
+  cgvVersion          String?
 
   createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   lastActiveAt  DateTime  @default(now())
+
+  injectionLogs InjectionLog[]
+  ocrFeedbacks  OcrFeedback[]
+  ocrScanLogs   OcrScanLog[]
+  dossiersTP    DossierTiersPayant[]
+  alertes       AlerteExpiration[]
+  legalAcceptances LegalAcceptance[]
+  notifications Notification[]
+  adminAuditLogs AdminAuditLog[]
+  churnReasons    ChurnReason[]
 
   @@index([teamId])
   @@index([role])
@@ -84,7 +117,7 @@ model Team {
   // --- Stripe (Team) ---
   stripeCustomerId       String?   @unique
   stripeSubscriptionId   String?   @unique
-  plan                   String    @default("FREE") // FREE, PRO, ENTERPRISE
+  plan                   String    @default("FREE") // FREE, ESSENTIEL, PRO, CABINET, RESEAU, EQUIPE
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -117,4 +150,709 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model InjectionLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  site        String
+  success     Boolean
+  fieldsCount Int      @default(0)
+  mode        String   @default("smartfill") // "smartfill" | "bot" | "recorder"
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([mode])
+}
+
+model OcrFeedback {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  fileName  String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model OcrScanLog {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          String
+  success       Boolean
+  ocrConfidence Float
+  dataScore     Float
+  globalScore   Float
+  level         String
+  fileName      String?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+  @@index([userId])
+}
+
+model RateLimit {
+  key       String   @id
+  count     Int      @default(1)
+  resetAt   DateTime
+
+  @@map("rate_limits")
+}
+
+enum StatutDossierTP {
+  EN_ATTENTE
+  RECU
+  REJETE
+  EN_LITIGE
+}
+
+enum Mutuelle {
+  CPAM
+  ALMERYS
+  VIAMEDIS
+  ITELIS
+  KALIXIA
+  CARTE_BLANCHE
+  SANTECLAIR
+  SEVEANE
+  SP_SANTE
+  AUTRE
+}
+
+model DossierTiersPayant {
+  id              String          @id @default(cuid())
+  reference       String          @unique
+  mutuelle        Mutuelle
+  montant         Float
+  dateEnvoi       DateTime
+  numeroAdherent  String?
+  referenceInterne String?
+  statut          StatutDossierTP @default(EN_ATTENTE)
+
+  montantRecu     Float?
+  dateReception   DateTime?
+  motifRejet      String?
+  commentaire     String?         @db.Text
+
+  relanceCount      Int           @default(0)
+  derniereRelanceAt DateTime?
+  relanceDesactivee Boolean       @default(false)
+
+  lboDetailId     String?         @unique
+  erpDetailId     String?         @unique
+  mode            String?
+
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  historique      HistoriqueStatutTP[]
+  relances        RelanceLog[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([statut])
+  @@index([createdAt])
+}
+
+model HistoriqueStatutTP {
+  id              String          @id @default(cuid())
+  dossierId       String
+  dossier         DossierTiersPayant @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  ancienStatut    StatutDossierTP
+  nouveauStatut   StatutDossierTP
+  commentaire     String?         @db.Text
+  auteurId        String
+  auteurNom       String
+  createdAt       DateTime        @default(now())
+
+  @@index([dossierId])
+  @@index([createdAt])
+}
+
+model RegleRelance {
+  id              String    @id @default(cuid())
+  delaiJours      Int
+  action          String    @default("both") // email, dashboard, both
+  mutuelle        Mutuelle?
+  actif           Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([delaiJours, mutuelle])
+}
+
+model RelanceLog {
+  id              String    @id @default(cuid())
+  dossierId       String
+  dossier         DossierTiersPayant @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type            String    // email, dashboard, both
+  delaiJours      Int
+  statut          String    @default("envoyee") // prevue, envoyee, reportee, annulee
+  datePrevu       DateTime
+  dateExecution   DateTime?
+  pdfGenerated    Boolean   @default(false)
+  pdfType         String?
+  createdAt       DateTime  @default(now())
+
+  @@index([dossierId])
+  @@index([statut])
+  @@index([datePrevu])
+}
+
+model TemplateRelance {
+  id              String    @id @default(cuid())
+  nom             String
+  type            String    @default("amiable") // amiable, ferme, mise_en_demeure
+  objet           String
+  contenu         String    @db.Text
+  delaiJours      Int?
+  actif           Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AlerteExpiration {
+  id                String    @id @default(cuid())
+  dossierId         String?
+  dateOrdonnance    DateTime
+  dateExpiration    DateTime
+  joursAvant        Int
+  traitee           Boolean   @default(false)
+  traiteePar        String?
+  traiteeAt         DateTime?
+  commentaire       String?   @db.Text
+  notifEmail        Boolean   @default(false)
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
+  @@index([traitee])
+  @@index([dateExpiration])
+}
+
+model MutuelleEmailConfig {
+  id              String    @id @default(cuid())
+  mutuelle        Mutuelle  @unique
+  emailDefaut     String
+  emailPerso      String?
+  actif           Boolean   @default(true)
+  updatedAt       DateTime  @updatedAt
+}
+
+model RejetAutoDetecte {
+  id              String    @id @default(cuid())
+  userId          String?
+  portail         String    // ALMERYS, VIAMEDIS, ITELIS, KALIXIA
+  numeroDossier   String?
+  motif           String?
+  dateRejet       DateTime?
+  montant         Float?
+  dossierId       String?
+  matched         Boolean   @default(false)
+  traite          Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@index([traite])
+  @@index([dossierId])
+}
+
+model LegalAcceptance {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email           String
+  documentType    String
+  documentVersion String
+  acceptedAt      DateTime @default(now())
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([documentType, documentVersion])
+}
+
+// ─── Franchise Leads ─────────────────────────────────────────────────────────
+
+model FranchiseLead {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  company       String
+  stores        String
+  seats         String?
+  erp           String?
+  message       String?
+  status        String   @default("NEW") // NEW | CONTACTED | QUALIFIED | CLOSED_WON | CLOSED_LOST
+  notes         String?  @db.Text
+  reseau        String?
+  nbMagasins    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  statusHistory FranchiseLeadStatusHistory[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model FranchiseLeadStatusHistory {
+  id        String        @id @default(cuid())
+  leadId    String
+  lead      FranchiseLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  oldStatus String
+  newStatus String
+  note      String?
+  createdAt DateTime      @default(now())
+
+  @@index([leadId])
+}
+
+// ─── Bookmarklet Health Monitoring ───────────────────────────────────────────
+
+model ScanSession {
+  id          String   @id @default(cuid())
+  userId      String
+  blob        String?  @db.Text
+  delivered   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model BookmarkletPing {
+  id          String   @id @default(cuid())
+  version     String   // version du bookmarklet (ex: "1.0.3")
+  portal      String   // identifiant du portail (ex: "almerys", "wemind", "viamedis")
+  status      String   // "ok" | "broken" | "partial"
+  userAgent   String?
+  errorHint   String?  // description courte de l'erreur (sans données patient)
+  createdAt   DateTime @default(now())
+
+  @@index([portal])
+  @@index([status])
+  @@index([createdAt])
+  @@index([version])
+}
+
+model RpaLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  syncToken   String?
+  mutuelle    String   // "almerys", "wemind", "viamedis", etc.
+  etape       String   // "navigation", "page1_beneficiaire", "page2_equipements", "saisir", etc.
+  statut      String   // "succes", "echec", "bloque"
+  erreur      String?  @db.Text
+  url         String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([mutuelle])
+  @@index([statut])
+  @@index([createdAt])
+  @@index([syncToken])
+}
+
+// ─── Notifications in-app ─────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "alerte_expiration" | "rejet_tp" | "relance_tp" | "paiement"
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?  // URL relative vers laquelle pointer
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([createdAt])
+}
+
+
+// ── Parcours RPA Dynamique ──────────────────────────────────────────────── //
+
+model ParcoursRPA {
+  id          String   @id @default(cuid())
+  hostname    String   // ex: "almerys.com", "wemind.io"
+  nom         String   // ex: "Almerys — Demande TP"
+  etapes      Json     // tableau d'EtapeRPA — uniquement variables {{nom}}, {{nss}}, etc.
+  htmlSnapshots Json?  // { stepId: "<html>..." } — snapshots par étape pour dry-run
+  valide      Boolean  @default(false)
+  version     Int      @default(1)
+  history     Json?    @default("[]") // historique des versions précédentes (5 max)
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([hostname])
+  @@index([valide])
+}
+
+// ─── Admin Audit Log ─────────────────────────────────────────────────────────
+
+model AdminAuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String   // ex: "parcours.create", "parcours.delete", "test-mail.send"
+  target    String?  // id ou nom de la ressource concernée
+  ip        String?
+  meta      Json?    // données additionnelles (ex: hostname, nom parcours)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── Smart Fill Learning ──────────────────────────────────────────────────────
+
+model SmartFillCorrection {
+  id             String   @id @default(cuid())
+  hostname       String
+  selector       String
+  label          String
+  oldVariable    String
+  createdAt      DateTime @default(now())
+
+  @@index([hostname, label])
+  @@index([createdAt])
+}
+
+// ─── Resolution Guidee des Rejets ────────────────────────────────────────────
+
+model RejetGuidance {
+  id           String   @id @default(cuid())
+  portail      String
+  codeErreur   String?
+  motifPattern String
+  titre        String
+  description  String   @db.Text
+  actionType   String   @default("info") // info, rescan, edit, contact
+  actionUrl    String?
+  priorite     Int      @default(0)
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([portail])
+  @@index([actif])
+}
+
+// ─── Batch Scan (Scanner de Masse) ───────────────────────────────────────────
+
+model BatchScanSession {
+  id        String   @id @default(cuid())
+  userId    String
+  status    String   @default("OPEN")
+  itemCount Int      @default(0)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  items     BatchScanItem[]
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([status])
+}
+
+model BatchScanItem {
+  id          String   @id @default(cuid())
+  batchId     String
+  batch       BatchScanSession @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  blob        String   @db.Text
+  status      String   @default("PENDING")
+  orderIndex  Int
+  processedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([batchId])
+  @@index([status])
+}
+
+// ── Portal Selector Override (Remote Config) ──────────────────────────────────
+
+model PortalSelectorOverride {
+  id           String   @id @default(cuid())
+  portal       String
+  selectorName String
+  selector     String
+  enabled      Boolean  @default(true)
+  updatedBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([portal, selectorName])
+  @@index([portal])
+  @@index([enabled])
+}
+
+// ── Selector Health Telemetry ─────────────────────────────────────────────────
+
+model SelectorHealthPing {
+  id            String   @id @default(cuid())
+  portal        String
+  selectorName  String
+  found         Boolean
+  userId        String?
+  url           String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  @@index([portal])
+  @@index([selectorName])
+  @@index([found])
+  @@index([createdAt])
+  @@index([portal, selectorName, createdAt])
+}
+
+// ── Extension Events (SSE Sync) ───────────────────────────────────────────────
+
+model ExtensionEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  payload   Json     @default("{}")
+  delivered Boolean  @default(false)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([userId, delivered])
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+// ── Email Campaign Tracking ──────────────────────────────────────────────────
+
+model EmailCampaign {
+  id        String    @id @default(cuid())
+  name      String
+  subject   String?
+  subjectB  String?   // A/B test: alternative subject line
+  htmlBody  String?
+  sendingAt DateTime? // null = pas en cours, non-null = envoi en cours
+  sentAt    DateTime? // date de fin d'envoi
+  scheduledAt   DateTime? // date/heure d'envoi planifié
+  drip_enabled     Boolean @default(false)
+  drip_delay_days  Int     @default(3)
+  drip_subject     String?
+  drip_html_body   String? @db.Text
+  drip_sent_at     DateTime?
+  reportSentAt     DateTime?
+  createdAt DateTime  @default(now())
+  emails    EmailTracking[]
+}
+
+model EmailTracking {
+  id           String    @id @default(cuid())
+  campaignId   String
+  campaign     EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  email        String
+  firstName    String?
+  lastName     String?
+  token        String    @unique @default(cuid())
+  status       String    @default("pending") // pending | sent | error | skipped
+  errorReason  String?   @db.Text
+  errorAt      DateTime?
+  openCount    Int       @default(0)
+  clickCount   Int       @default(0)
+  sentAt       DateTime?
+  firstOpenAt  DateTime?
+  firstClickAt DateTime?
+  variant      String?   // A/B test variant: "A" or "B"
+  createdAt    DateTime  @default(now())
+
+  @@index([campaignId])
+  @@index([token])
+}
+
+// ── NPS ─────────────────────────────────────────────────────────────────────
+
+model NpsResponse {
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String?
+  score     Int      // 1-10 ou 1-5 selon la campagne
+  message   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([score])
+}
+
+// ── RGPD — Email Unsubscribe ────────────────────────────────────────────────
+
+model EmailUnsubscribe {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  unsubscribedAt DateTime @default(now())
+  reason         String?
+
+  @@index([email])
+}
+
+// ── Churn Retention ─────────────────────────────────────────────────────────
+
+model ChurnReason {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason         String
+  comment        String?  @db.Text
+  plan           String
+  retained       Boolean  @default(false)
+  retentionOffer String?
+  createdAt      DateTime @default(now())
+
+  @@index([reason])
+  @@index([retained])
+  @@index([createdAt])
+}
+
+// ── V3: Selector Repair Snapshots ─────────────────────────────────────────────
+
+model SelectorRepairRequest {
+  id           String   @id @default(cuid())
+  userId       String
+  hostname     String
+  skipRate     Float
+  failedFields Json     @default("{}")
+  snapshot     Json     @default("[]")
+  status       String   @default("pending") // pending, reviewed, deployed
+  createdAt    DateTime @default(now())
+
+  @@index([hostname])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ── V3: Smart Fill Learned Weights ───────────────────────────────────────────
+
+model SmartFillWeight {
+  id        String   @id @default(cuid())
+  hostname  String
+  field     String
+  multiplier Float   @default(1.0)
+  sampleSize Int     @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([hostname, field])
+  @@index([hostname])
+}
+
+// ── V3: TP Dossier Status Tracking ───────────────────────────────────────────
+
+model TPDossier {
+  id         String   @id @default(cuid())
+  userId     String
+  date       String?
+  fse        String?
+  organisme  String?
+  montant    String?
+  status     String   @default("pending") // pending, accepted, rejected
+  rejetMotif String?
+  portail    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ── V3: Devis Capture ────────────────────────────────────────────────────────
+
+model DevisCaptured {
+  id        String   @id @default(cuid())
+  userId    String
+  hostname  String
+  url       String?
+  devis     Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([hostname])
+  @@index([createdAt])
+}
+
+// ── V3: Rejection Model Rules ────────────────────────────────────────────────
+
+model RejectionRule {
+  id         String   @id @default(cuid())
+  hostname   String?  // null = global rule
+  type       String   // montant_max, organisme, equipment
+  threshold  Float?
+  organisms  Json?    // array of strings
+  codes      Json?    // array of strings
+  weight     Int      @default(10)
+  reason     String
+  suggestion String?
+  enabled    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  @@index([hostname])
+  @@index([enabled])
+}
+
+// ── Email Campaign Tracking ──────────────────────────────────────────────────
+
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  emailId   String   @unique  // correspond à EMAIL_CATALOG[].id
+  subject   String
+  html      String   @db.Text
+  updatedAt DateTime @updatedAt
+  updatedBy String?  // email de l'admin
+
+  @@index([emailId])
+}
+
+// ── US-8 : Field Feedback ────────────────────────────────────────────────────
+
+model FieldFeedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  selector  String
+  fieldType String
+  portal    String
+  url       String?
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+
+  @@index([portal])
+  @@index([status])
+  @@index([fieldType])
+}
+
+// ── US-9 : Remote Config Mappings ────────────────────────────────────────────
+
+model PortalMapping {
+  id         String   @id @default(cuid())
+  source     String   @unique
+  urlPattern String
+  fields     Json     @default("{}")
+  version    Int      @default(1)
+  enabled    Boolean  @default(true)
+  updatedBy  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([enabled])
 }

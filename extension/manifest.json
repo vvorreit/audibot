@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AudiBot Multi-Site",
-  "version": "1.0",
-  "description": "Auto-saisie pour Auditdata et sites de mutuelles (Almerys, Viamedis, Ameli Pro).",
+  "version": "1.3",
+  "description": "Auto-saisie des formulaires mutuelles pour audioprothésistes. Données chiffrées, jamais transmises à des tiers.",
   "browser_specific_settings": {
     "gecko": {
       "id": "audibot-extension@vvorreit.fr"
@@ -11,20 +11,46 @@
   "permissions": [
     "clipboardRead",
     "activeTab",
-    "storage"
+    "storage",
+    "tabs",
+    "alarms",
+    "scripting"
   ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "host_permissions": [
     "https://*.auditdata.com/*",
     "https://app.auditdata.com/*",
     "https://*.almerys.com/*",
+    "https://*.be-almerys.com/*",
     "https://*.viamedis.net/*",
     "https://amelipro.ameli.fr/*",
     "https://*.ameli.fr/*",
     "https://*.ism-tp.fr/*",
-    "https://*.actil.com/*"
+    "https://*.actil.com/*",
+    "https://*.audibot.fr/*"
   ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "content_scripts": [
     {
@@ -32,17 +58,29 @@
         "https://*.auditdata.com/*",
         "https://app.auditdata.com/*",
         "https://*.almerys.com/*",
+        "https://*.be-almerys.com/*",
         "https://*.viamedis.net/*",
-        "https://amelipro.ameli.fr/*",
         "https://*.ameli.fr/*",
         "https://*.ism-tp.fr/*",
         "https://*.actil.com/*"
       ],
       "js": [
-        "content.js"
+        "crypto.js",
+        "content.js",
+        "rejet-detector.js"
       ],
       "css": [
         "content.css"
+      ],
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://*.audibot.fr/*"
+      ],
+      "js": [
+        "crypto.js",
+        "bridge.js"
       ]
     }
   ]

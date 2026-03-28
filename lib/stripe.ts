@@ -5,6 +5,7 @@ export function getStripe(): Stripe {
     throw new Error("STRIPE_SECRET_KEY is missing from environment variables");
   }
   return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     apiVersion: "2025-01-27.acacia" as any,
     typescript: true,
   });

@@ -1,0 +1,25 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contacter OptiBot — Support & Questions",
+  description:
+    "Contactez l'équipe OptiBot pour toute question, demande de démo ou devis personnalisé. Réponse sous 24h.",
+  alternates: { canonical: "https://optibot.fr/contact" },
+  openGraph: {
+    type: "website",
+    url: "https://optibot.fr/contact",
+    title: "Contacter OptiBot — Support & Questions",
+    description: "Contactez l'équipe OptiBot pour toute question, demande de démo ou devis personnalisé. Réponse sous 24h.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Contacter OptiBot" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contacter OptiBot — Support & Questions",
+    description: "Contactez l'équipe OptiBot pour toute question. Réponse sous 24h.",
+    images: ["/og-image.png"],
+  },
+};
+
+export default function ContactLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}

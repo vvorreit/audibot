@@ -21,21 +21,33 @@ export async function sendContactEmail(formData: FormData) {
     return { success: false };
   }
 
-  const name = escapeHtml((formData.get('name') as string) ?? "");
-  const company = escapeHtml((formData.get('company') as string) ?? "");
-  const email = escapeHtml((formData.get('email') as string) ?? "");
-  const shops = escapeHtml((formData.get('shops') as string) ?? "");
-  const message = escapeHtml((formData.get('message') as string) ?? "");
+  const nameRaw    = ((formData.get("name")    as string) ?? "").trim().slice(0, 100);
+  const companyRaw = ((formData.get("company") as string) ?? "").trim().slice(0, 200);
+  const emailRaw   = ((formData.get("email")   as string) ?? "").trim().slice(0, 254);
+  const shopsRaw   = ((formData.get("shops")   as string) ?? "").trim().slice(0, 50);
+  const messageRaw = ((formData.get("message") as string) ?? "").trim().slice(0, 3000);
+
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!nameRaw || !companyRaw || !emailRaw || !EMAIL_REGEX.test(emailRaw) || !messageRaw) {
+    return { success: false };
+  }
+
+  const name    = escapeHtml(nameRaw);
+  const company = escapeHtml(companyRaw);
+  const email   = escapeHtml(emailRaw);
+  const shops   = escapeHtml(shopsRaw);
+  const message = escapeHtml(messageRaw);
 
   if (!smtpConfigured()) return { success: false };
 
   try {
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
-      to: 'contact@audibot.fr',
+      to: "contact@optibot.fr",
+      replyTo: emailRaw,
       subject: `Nouveau Devis Franchise : ${company}`,
       html: `
-        <h1>Nouvelle demande de devis AudiBot</h1>
+        <h1>Nouvelle demande de devis OptiBot</h1>
         <p><strong>Nom :</strong> ${name}</p>
         <p><strong>Enseigne :</strong> ${company}</p>
         <p><strong>Email :</strong> ${email}</p>

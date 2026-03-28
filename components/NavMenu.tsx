@@ -3,20 +3,22 @@
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, ShieldCheck, CreditCard, User, LogOut, Menu, X, ChevronDown, LifeBuoy } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { LayoutDashboard, Users, ShieldCheck, CreditCard, User, LogOut, Menu, X, ChevronDown, LifeBuoy, FileText, Bot, History, Store } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 import { createPortalSession } from "@/app/dashboard/actions";
 
 export default function NavMenu() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const router = useRouter();
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const user = session?.user as any;
+  const user = session?.user;
   const isAdmin = user?.role === "ADMIN";
   const showTeam = Boolean(session); // visible pour tout utilisateur connecté
   const isPro = user?.isPro;
@@ -49,22 +51,29 @@ export default function NavMenu() {
     ? user.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
     : user?.email?.[0]?.toUpperCase() ?? "?";
 
+  const isTeamOwner = user?.teamRole === "OWNER";
+  const isEquipePlan = user?.plan === "EQUIPE" || user?.plan === "TEAM_5" || user?.plan === "TEAM_3";
+  const isProPlan = user?.plan === "PRO";
+  const isCabinetPlan = user?.plan === "CABINET" || user?.plan === "RESEAU" || user?.plan === "ENTERPRISE";
+  const hasTPAccess = isProPlan || isEquipePlan || isCabinetPlan || isAdmin || user?.isPro;
+
   const navLinks = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, show: true },
-    { href: "/dashboard/team", label: "Mon équipe", icon: Users, show: showTeam },
+    { href: "/tiers-payant/dashboard", label: "Suivi Tiers-Payant", icon: FileText, show: hasTPAccess },
+    { href: "/dashboard/team", label: "Mon équipe", icon: Users, show: isEquipePlan },
+    { href: "/dashboard/franchise", label: "Franchise", icon: Store, show: isEquipePlan && isTeamOwner },
     { href: "/admin", label: "Administration", icon: ShieldCheck, show: isAdmin },
+    { href: "/dashboard/historique", label: "Historique", icon: History, show: true },
   ].filter((l) => l.show);
 
   return (
-    <nav className="bg-white border-b border-slate-100 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <nav aria-label="Navigation principale" className="bg-white border-b border-slate-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
 
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0 group">
-          <div className="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-200 group-hover:scale-105 transition-transform">
-            O
-          </div>
-          <span className="text-lg font-black tracking-tight text-slate-900">AudiBot</span>
+          <Image src="/icon.png" alt="OptiBot" width={36} height={36} className="rounded-xl shadow-md shadow-blue-200 group-hover:scale-105 transition-transform" priority />
+          <span className="text-lg font-black tracking-tight text-slate-900">OptiBot</span>
         </Link>
 
         {/* Nav links — desktop */}
@@ -75,6 +84,7 @@ export default function NavMenu() {
               <Link
                 key={href}
                 href={href}
+                aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
                   active
                     ? "bg-blue-50 text-blue-600"
@@ -88,11 +98,14 @@ export default function NavMenu() {
           })}
         </div>
 
+        {/* Notifications */}
+        <NotificationBell />
+
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {isPro && (
-            <span className="hidden sm:inline-flex px-2.5 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full uppercase tracking-wider">
-              PRO
+          {user?.plan && user.plan !== "FREE" && (
+            <span className="hidden sm:inline-flex px-2.5 py-1 bg-blue-600 text-white text-2xs font-black rounded-full uppercase tracking-wider">
+              {user.plan === "EQUIPE" || user.plan === "TEAM_5" || user.plan === "TEAM_3" ? "ÉQUIPE" : user.plan}
             </span>
           )}
 
@@ -100,20 +113,24 @@ export default function NavMenu() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen((v) => !v)}
+              aria-label="Mon compte"
+              aria-expanded={dropdownOpen}
+              aria-haspopup="menu"
               className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-slate-50 transition-colors"
             >
               <div className="w-8 h-8 bg-gradient-to-tr from-slate-700 to-slate-900 rounded-xl flex items-center justify-center text-white text-xs font-black">
                 {user?.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={user.image} alt="" className="w-8 h-8 rounded-xl object-cover" />
                 ) : (
                   initials
                 )}
               </div>
-              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+              <ChevronDown aria-hidden="true" className={`w-3.5 h-3.5 text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 overflow-hidden">
+              <div role="menu" className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 overflow-hidden">
                 {/* User info */}
                 <div className="px-4 py-2 border-b border-slate-50 mb-1">
                   <p className="text-sm font-bold text-slate-900 truncate">{user?.name || "Mon compte"}</p>
@@ -174,16 +191,18 @@ export default function NavMenu() {
           {/* Hamburger — mobile */}
           <button
             onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={mobileOpen}
             className="md:hidden p-2 rounded-xl hover:bg-slate-50 transition-colors"
           >
-            {mobileOpen ? <X className="w-5 h-5 text-slate-700" /> : <Menu className="w-5 h-5 text-slate-700" />}
+            {mobileOpen ? <X aria-hidden="true" className="w-5 h-5 text-slate-700" /> : <Menu aria-hidden="true" className="w-5 h-5 text-slate-700" />}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1">
+        <div aria-label="Menu mobile" className="md:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1">
           {navLinks.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
             return (
@@ -191,6 +210,7 @@ export default function NavMenu() {
                 key={href}
                 href={href}
                 onClick={() => setMobileOpen(false)}
+                aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
                   active ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"
                 }`}

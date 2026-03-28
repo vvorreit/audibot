@@ -46,3 +46,13 @@ next-env.d.ts
 mail-data/
 mail-state/
 mail-config/
+
+# Extension build output (sourcemaps)
+/extension/*.js.map
+
+# Local data & test files
+optibot-data/
+test-ocr.mjs
+
+# PDF files
+*.pdf
