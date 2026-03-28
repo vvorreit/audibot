@@ -23,10 +23,10 @@ const features: Feature[] = [
     icon: ScanLine,
     category: "Lecture de documents",
     title: "OCR local — zéro donnée sur nos serveurs",
-    description: "Déposez une carte mutuelle ou une ordonnance. OptiBot extrait instantanément toutes les données utiles directement dans votre navigateur.",
+    description: "Déposez une carte mutuelle ou une prescription audiologique. AudiBot extrait instantanément toutes les données utiles directement dans votre navigateur.",
     details: [
       "Cartes mutuelles : NSS, numéro adhérent, organisme, dates de validité",
-      "Ordonnances : corrections OD/OG, prescripteur, RPPS, date",
+      "Prescriptions audiologiques : audiogramme, prescripteur, RPPS, date",
       "Scan photo depuis votre smartphone (QR code relay)",
       "PDF, photo, scan — tous formats acceptés",
       "Traitement 100% local — aucune donnée patient ne transite par nos serveurs",
@@ -62,7 +62,7 @@ const features: Feature[] = [
     title: "Autofill portails mutuelles",
     description: "Un clic sur 🤖 Remplir — le bot injecte toutes les données dans le formulaire du portail mutuelle ouvert dans votre navigateur.",
     details: [
-      "13 portails avec intégration native (Almerys, Wemind, Oxantis, LBO...)",
+      "13 portails avec intégration native (Almerys, Wemind, Viamedis, Oxantis...)",
       "25+ portails supplémentaires via Smart Fill universel",
       "Gestion ouvrant droit automatique (NSS mère pour les mineurs)",
       "Validation NSS par clé de Luhn avant injection",
@@ -92,20 +92,20 @@ const features: Feature[] = [
     icon: Video,
     category: "Remplissage automatique",
     title: "Recorder — enregistrez votre parcours",
-    description: "Effectuez le parcours manuellement une fois — OptiBot le rejoue automatiquement pour tous les dossiers suivants.",
+    description: "Effectuez le parcours manuellement une fois — AudiBot le rejoue automatiquement pour tous les dossiers suivants.",
     details: [
       "Enregistrement en 5 minutes depuis l'extension",
       "Capture clics, saisies, sélections, navigations entre pages",
       "Détection automatique des variables patient (NSS, nom, dates...)",
       "Wizard de validation avant envoi",
-      "Parcours partagés à toute la communauté OptiBot après validation",
+      "Parcours partagés à toute la communauté AudiBot après validation",
     ],
   },
   {
     icon: Bot,
     category: "Remplissage automatique",
     title: "Parcours dynamiques — replay multi-pages",
-    description: "OptiBot rejoue un parcours enregistré étape par étape : remplissage, clics, attentes, navigation entre pages — le tout automatiquement.",
+    description: "AudiBot rejoue un parcours enregistré étape par étape : remplissage, clics, attentes, navigation entre pages — le tout automatiquement.",
     details: [
       "Parcours configurables depuis le backend (aucun code à modifier)",
       "Replay étape par étape avec barre de progression",
@@ -125,7 +125,7 @@ const features: Feature[] = [
     details: [
       "Statuts : En attente / Reçu / Rejeté / En litige",
       "Historique complet de chaque dossier avec auteur et date",
-      "Synchronisation automatique depuis LivebyOptimum",
+      "Synchronisation automatique depuis votre logiciel audiologie",
       "Filtres par mutuelle, statut, date, montant",
       "Export CSV pour votre comptable",
     ],
@@ -134,7 +134,7 @@ const features: Feature[] = [
     icon: RefreshCw,
     category: "Suivi tiers payant",
     title: "Relances automatiques",
-    description: "OptiBot relance automatiquement les mutuelles qui ne répondent pas, selon vos règles personnalisées.",
+    description: "AudiBot relance automatiquement les mutuelles qui ne répondent pas, selon vos règles personnalisées.",
     details: [
       "Règles de relance par délai (J+30, J+60, J+90)",
       "Règles spécifiques par mutuelle",
@@ -163,10 +163,10 @@ const features: Feature[] = [
     icon: Bell,
     category: "Suivi tiers payant",
     title: "Alertes & notifications",
-    description: "Ne ratez plus aucune échéance. OptiBot vous alerte sur les ordonnances qui expirent, les relances dues, les rejets détectés.",
+    description: "Ne ratez plus aucune échéance. AudiBot vous alerte sur les prescriptions qui expirent, les relances dues, les rejets détectés.",
     details: [
       "Centre de notifications in-app (cloche)",
-      "Alertes expiration ordonnance à J-60, J-30, J-7",
+      "Alertes expiration prescription à J-60, J-30, J-7",
       "Notification de rejet détecté avec lien direct vers le dossier",
       "Rapport mensuel automatique par email (plan Pro)",
     ],
@@ -177,7 +177,7 @@ const features: Feature[] = [
     icon: Users,
     category: "Équipe & gestion",
     title: "Gestion d'équipe",
-    description: "Déployez OptiBot sur toute votre équipe avec des rôles et permissions adaptés.",
+    description: "Déployez AudiBot sur toute votre équipe avec des rôles et permissions adaptés.",
     details: [
       "Jusqu'à 5 postes sur le plan Équipe",
       "Rôles : Owner, Admin, Member",
@@ -192,7 +192,7 @@ const features: Feature[] = [
     icon: BarChart2,
     category: "Équipe & gestion",
     title: "Dashboard analytique admin",
-    description: "Suivez l'activité de votre équipe et mesurez le ROI d'OptiBot en temps réel.",
+    description: "Suivez l'activité de votre équipe et mesurez le ROI d'AudiBot en temps réel.",
     details: [
       "Temps économisé calculé automatiquement (×7 min par dossier)",
       "Taux de rejet par mutuelle",
@@ -206,7 +206,7 @@ const features: Feature[] = [
     icon: ShieldCheck,
     category: "Sécurité & conformité",
     title: "Conformité RGPD native",
-    description: "OptiBot a été conçu dès le départ pour les données de santé. Zéro compromis.",
+    description: "AudiBot a été conçu dès le départ pour les données de santé. Zéro compromis.",
     details: [
       "OCR 100% local — aucune donnée patient ne quitte votre appareil",
       "Cache local chiffré AES-256-GCM avec clé device-only (jamais transmise)",
@@ -236,14 +236,14 @@ const features: Feature[] = [
     icon: Code2,
     category: "Extension Chrome",
     title: "Extension Chrome Pro",
-    description: "L'extension est le cœur d'OptiBot — elle tourne en arrière-plan sur tous vos portails mutuelles.",
+    description: "L'extension est le cœur d'AudiBot — elle tourne en arrière-plan sur tous vos portails mutuelles.",
     details: [
       "Bouton 🤖 Remplir fixe sur tous les portails compatibles",
       "Raccourci clavier Ctrl+Shift+F pour remplir instantanément",
       "Popup avec données patient éditables en direct",
       "Remplissage auto au chargement de page (configurable)",
-      "Bouton 💾 Mémoriser les données client (LBO)",
-      "Synchronisation tiers payant depuis LivebyOptimum",
+      "Bouton 💾 Mémoriser les données patient (logiciel audio)",
+      "Synchronisation tiers payant depuis votre logiciel audiologie",
       "Suivi TP, alertes rejets et dashboard équipe dans la popup (Pro)",
       "Icône dynamique (bleue = portail actif, grise = inactif)",
       "Compatible Chrome, Edge, Brave",
@@ -266,10 +266,10 @@ const features: Feature[] = [
   {
     icon: Zap,
     category: "Intégrations",
-    title: "Bridge ERP — connexion à votre logiciel opticien",
-    description: "OptiBot lit et écrit automatiquement dans votre ERP optique. Le patient scanné est injecté directement dans votre logiciel métier.",
+    title: "Bridge ERP — connexion à votre logiciel audioprothésiste",
+    description: "AudiBot lit et écrit automatiquement dans votre logiciel audioprothésiste. Le patient scanné est injecté directement dans votre logiciel métier.",
     details: [
-      "10 ERP supportés : Cosium, I-Optics (Cegid), PVO (Ginkoia), IDM Optic, MyEasyOptic, WinOptics, Optimum (CIT), Osmose (Amonis), Acuitas 3 (Ocuco), Archimed",
+      "6 logiciels audio supportés : Audiosoft, Noah (HIMSA), Sycle, Audinsoft, Axiom (Propulso), Irium Audio",
       "Auto-détection de l'ERP au chargement de la page",
       "Smart Scrape : lecture automatique des champs patient depuis l'ERP",
       "Smart Inject : injection PEC (accord mutuelle) dans l'ERP",
@@ -280,24 +280,24 @@ const features: Feature[] = [
   {
     icon: Zap,
     category: "Intégrations",
-    title: "Synchronisation LivebyOptimum (LBO)",
-    description: "OptiBot s'intègre profondément avec LivebyOptimum pour un flux de travail entièrement automatisé.",
+    title: "Synchronisation logiciel audiologie",
+    description: "AudiBot s'intègre profondément avec votre logiciel audiologie pour un flux de travail entièrement automatisé.",
     details: [
-      "Lecture automatique des données client depuis LBO",
-      "Scraping des prescriptions, régimes RO/RC1/RC2",
+      "Lecture automatique des données patient depuis votre logiciel",
+      "Scraping des prescriptions audiologiques et audiogrammes",
       "Synchronisation des dossiers TP (montants, statuts, bordereaux)",
-      "Scraping des équipements (codes LPP, prix, RAC) pour Almerys",
+      "Scraping des équipements (codes LPP appareils auditifs, prix, RAC) pour Almerys",
     ],
   },
   {
     icon: Mail,
     category: "Intégrations",
     title: "Emails transactionnels",
-    description: "OptiBot vous tient informé à chaque étape importante par email.",
+    description: "AudiBot vous tient informé à chaque étape importante par email.",
     details: [
       "Email de bienvenue + guide d'installation",
       "Relances TP envoyées automatiquement aux mutuelles",
-      "Alertes expiration ordonnance",
+      "Alertes expiration prescription",
       "Rapport mensuel tiers payant (plan Pro)",
       "Email si portail cassé détecté (monitoring automatique)",
     ],
@@ -322,9 +322,9 @@ export default function FonctionnalitesPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Image src="/icon.png" alt="OptiBot" width={28} height={28} className="rounded-lg" priority />
+              <Image src="/icon.png" alt="AudiBot" width={28} height={28} className="rounded-lg" priority />
             </div>
-            <span className="text-lg font-bold tracking-tight uppercase">OptiBot</span>
+            <span className="text-lg font-bold tracking-tight uppercase">AudiBot</span>
           </Link>
           <Link href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-xs font-black uppercase tracking-widest transition-colors">
             <ArrowLeft className="w-4 h-4" /> Retour
@@ -339,11 +339,11 @@ export default function FonctionnalitesPage() {
             {features.length} fonctionnalités
           </div>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
-            Tout ce qu&apos;OptiBot fait<br />
+            Tout ce qu&apos;AudiBot fait<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">pour vous</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed">
-            De la lecture de document au suivi tiers payant, en passant par l&apos;autofill et les relances automatiques — voici le détail complet de ce qu&apos;OptiBot automatise à votre place.
+            De la lecture de document au suivi tiers payant, en passant par l&apos;autofill et les relances automatiques — voici le détail complet de ce qu&apos;AudiBot automatise à votre place.
           </p>
 
           {/* Ancres par catégorie */}
@@ -451,7 +451,7 @@ export default function FonctionnalitesPage() {
             href="/dashboard"
             className="inline-flex items-center gap-3 px-10 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 uppercase tracking-widest text-sm"
           >
-            Essayer OptiBot gratuitement
+            Essayer AudiBot gratuitement
             <ArrowRight className="w-5 h-5" />
           </Link>
           <p className="text-xs text-slate-500 mt-4">Sans CB · Sans engagement · Annulable à tout moment</p>
@@ -467,7 +467,7 @@ export default function FonctionnalitesPage() {
             <Link href="/legal/cgu" className="hover:text-white transition-colors">CGU</Link>
             <Link href="/legal/cgv" className="hover:text-white transition-colors">CGV</Link>
           </div>
-          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">© 2026 OptiBot</div>
+          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">© 2026 AudiBot</div>
         </div>
       </footer>
 
