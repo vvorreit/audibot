@@ -22,10 +22,11 @@ export async function exportUserData() {
       role: true,
       teamId: true,
       teamRole: true,
-      syncToken: true,
+      plan: true,
+      pendingPlan: true,
       createdAt: true,
       lastActiveAt: true,
-      // Ne jamais inclure password, stripeCustomerId, stripeSubscriptionId
+      // Ne jamais inclure password, syncToken, stripeCustomerId, stripeSubscriptionId
       accounts: {
         select: {
           provider: true,
@@ -91,6 +92,22 @@ export async function exportUserData() {
   };
 
   return { data: JSON.stringify(payload, null, 2) };
+}
+
+export async function updateUserName(name: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return { error: "Non autorisé." };
+
+  const trimmed = name.trim();
+  if (!trimmed || trimmed.length < 1) return { error: "Le nom ne peut pas être vide." };
+  if (trimmed.length > 100) return { error: "Le nom est trop long (100 caractères max)." };
+
+  await prisma.user.update({
+    where: { email: session.user.email },
+    data: { name: trimmed },
+  });
+
+  return { success: true };
 }
 
 export async function updatePassword(currentPassword: string, newPassword: string) {

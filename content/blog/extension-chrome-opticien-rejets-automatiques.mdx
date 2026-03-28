@@ -1,0 +1,78 @@
+---
+title: "Extension Chrome opticien : comment détecter les rejets mutuelle sans y penser"
+description: "Extension Chrome pour opticiens : détection automatique des rejets tiers payant sur Almerys, Viamedis, Wemind. Alertes en temps réel, relances automatisées, zéro dossier oublié."
+date: "2026-03-20"
+slug: "extension-chrome-opticien-rejets-automatiques"
+---
+
+Il y a un phénomène que beaucoup d'opticiens connaissent mais que personne ne mesure vraiment : les rejets fantômes.
+
+Ce ne sont pas les rejets que vous traitez. Ce sont les rejets que vous avez vus, que vous avez notés mentalement, et que vous n'avez jamais retrouvés. Ils se perdent entre deux clients, entre une notification que vous fermez trop vite, entre un onglet de navigateur que vous avez quitté sans copier le numéro de dossier.
+
+Un rejet fantôme, c'est un dossier envoyé à la mutuelle, refusé pour une raison quelconque, et qui dort quelque part dans un portail que vous n'avez pas le temps de surveiller. Il ne reviendra jamais tout seul. Et l'argent qu'il représente non plus.
+
+## Le problème avec les portails mutuelle
+
+Quand vous travaillez avec Almerys, Viamedis, Wemind ou Itelis, vous le savez : chaque portail a son interface, ses codes d'erreur, sa façon d'afficher les rejets. Pas de standard. Pas de vue consolidée. Vous devez vous connecter à chacun, naviguer dans des menus peu intuitifs, et chercher manuellement ce qui a été refusé.
+
+Dans la pratique, ça se passe rarement comme ça. La journée passe. Il y a du monde en magasin. Vous jettez un coup d'œil rapide, vous voyez un rejet, vous dites "je m'en occupe après", et l'après ne vient pas.
+
+Ce n'est pas une question de négligence. C'est une question de charge mentale. Un opticien qui gère seul ou avec une petite équipe ne peut pas surveiller quatre portails en permanence tout en conseillant des clients.
+
+## Ce que l'extension Chrome change
+
+L'idée derrière une extension de navigateur, c'est de ne pas vous demander de changer votre façon de travailler. Vous continuez à naviguer sur vos portails comme d'habitude. L'extension, elle, regarde ce que vous regardez.
+
+Concrètement : quand vous ouvrez un portail mutuelle et qu'un rejet apparaît à l'écran, l'extension le lit. Elle extrait le numéro de dossier, le motif du rejet, le montant, la date. Et elle l'enregistre automatiquement dans votre tableau de bord.
+
+Vous n'avez rien à copier. Rien à taper. Le rejet est capturé pendant que vous êtes dessus, même si vous fermez l'onglet deux secondes après.
+
+Ce qui change, c'est que le lendemain matin, vous avez une liste. Pas des souvenirs flous. Pas des post-its. Une liste précise de ce qui a été rejeté, sur quel portail, pour quel motif, avec quel montant en jeu.
+
+## Le cas Almerys, le plus fréquent
+
+Almerys est le tiers payant santé de Malakoff Humanis et d'autres grandes mutuelles. C'est un des portails que les opticiens fréquentent le plus. Et c'est aussi un des plus techniques : les motifs de rejet y sont souvent cryptiques, les codes d'erreur peu explicites.
+
+Un rejet typique sur Almerys, c'est un message du type "Dossier refusé - code 94" ou "Dépassement de garantie". Sans contexte, sans suggestion de correction. Vous devez savoir ce que ça veut dire, retrouver le bon dossier dans votre logiciel de gestion, corriger, renvoyer.
+
+Si personne ne surveille le portail régulièrement, ce rejet peut rester là des semaines. Le délai de traitement passe. Et même si vous corrigez enfin l'erreur, la mutuelle peut refuser le dossier pour cause de dépassement de délai cette fois-ci.
+
+C'est un enchaînement classique : un premier rejet technique qu'on ne traite pas → un deuxième rejet pour délai → l'argent est définitivement perdu.
+
+## Viamedis, Wemind, Itelis : même problème, interfaces différentes
+
+Viamedis gère les dossiers de Harmonie Mutuelle, la MGEN et d'autres mutuelles de fonctionnaires. Wemind (anciennement Itelis pour certaines couvertures) a sa propre logique. Kalixia idem.
+
+Chaque portail affiche les rejets à sa façon. Certains les mettent en évidence, d'autres les noient dans une liste de dossiers traités. Sur certains portails, il faut cliquer sur chaque dossier individuellement pour voir le statut. Sur d'autres, il y a une page dédiée aux anomalies, mais elle n'est pas forcément dans le menu principal.
+
+Le résultat, c'est qu'un opticien qui gère plusieurs mutuelles doit potentiellement surveiller quatre ou cinq portails différents, avec quatre ou cinq logiques différentes. C'est ingérable sans aide.
+
+## Ce que ça donne dans la pratique
+
+Voici ce que ça change quand les rejets sont capturés automatiquement.
+
+Le matin, avant d'ouvrir le magasin, vous jetez un coup d'œil à votre tableau de bord. Vous voyez : "3 nouveaux rejets détectés hier. Almerys : 2 dossiers, motif dépassement. Viamedis : 1 dossier, motif numéro adhérent incorrect."
+
+Trois lignes. Trois actions à faire. Pas de recherche sur quatre portails. Pas de mémoire à solliciter. Juste une liste.
+
+Vous traitez ce que vous pouvez en dix minutes, vous marquez les autres comme "à faire", et vous passez à votre journée. Les dossiers ne s'accumulent pas. Les délais ne passent pas. L'argent rentre.
+
+## La question du RGPD
+
+C'est une question légitime quand on parle d'une extension qui lit des données sur des portails de santé. Les données tiers payant contiennent des informations sur les patients.
+
+La réponse honnête : l'extension ne lit que les données de rejet (numéro de dossier, motif, montant) — pas les données médicales du patient. Elle n'envoie rien à des serveurs tiers non autorisés. Et dans le cadre du RGPD, l'opticien reste responsable de traitement, l'outil est sous-traitant avec un accord formel (DPA) qui définit les obligations de chacun.
+
+Ce n'est pas différent de ce que vous faites quand vous copiez un numéro de dossier à la main pour le noter quelque part. Sauf que là, c'est automatique, structuré, et traçable.
+
+## Ce que vous pouvez faire maintenant
+
+Si vous perdez régulièrement le fil de vos rejets, la première étape n'est pas d'installer un outil. C'est de mesurer le problème.
+
+Pendant une semaine, notez chaque rejet que vous détectez sur vos portails. Sa date, son montant, le portail concerné. Comptez combien de ces rejets étaient déjà là depuis plus de 7 jours quand vous les avez vus. Calculez le montant total en jeu.
+
+Pour la plupart des opticiens qui font cet exercice, le résultat est surprenant. Pas parce qu'ils négligent leur travail, mais parce que la surveillance manuelle de plusieurs portails est objectivement incompatible avec une journée de travail normale.
+
+Une fois que vous avez ce chiffre, la décision devient simple. Soit vous organisez votre semaine différemment pour surveiller les portails tous les matins — et c'est une contrainte réelle. Soit vous automatisez cette surveillance et vous utilisez ce temps pour autre chose.
+
+C'est exactement pour ça qu'on a construit la détection automatique dans OptiBot. Pas pour faire de la magie. Juste pour que les rejets ne tombent plus dans les trous.

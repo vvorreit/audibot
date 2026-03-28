@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import NextAuth from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -11,6 +13,8 @@ function getIp(req: NextRequest): string {
 
 export { handler as GET };
 
+// NextAuth handler context type is opaque; disable-next-line required
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(req: NextRequest, context: any) {
   const ip = getIp(req);
   // 10 tentatives par IP par minute

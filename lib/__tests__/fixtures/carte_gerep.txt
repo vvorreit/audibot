@@ -1,0 +1,59 @@
+ATTESTATION DE TIERS PAYANT   Période de validité
+GEREP
+01/01/2025 au 31/12/2025
+N° AMC : 00401554
+Typ Conv: voir colonnes, CSR   Assuré Social : POULLENARD MATHILDE
+N° adhérent : 00392776   N° INSEE : 2 85 09 69 388 168 56
+Code GR : 01691  Complément GR : 
+R   N° contrat : 780994/00000
+Bénéficiaire(s) du tiers payant   Dépenses de santé concernées par le tiers payant
+Nom - Prénom   PHAR*  MED*    SVIL*    TRAN*  CSTE*  DESO*  DEPR  DEOR  OPTI    AUDI    EXTE*  HOSP
+Date Naissance  Rang    Typ Conv   SP    SP    SP    SP    SP    SP    IT    IT    IT/SP    IT    SP    SP
+100%   100%    100%    100%    100%    100%    PEC   PEC   PEC   PEC   100%    PEC
+POULLENARD MATHILDE   (7)   (10)   (10)   (10)   (10)   (11)
+26/09/1985    1
+100%   100%    100%    100%    100%    100%    PEC   PEC   PEC   PEC   100%    PEC
+REBILLARD LEA   (7)   (10)   (10)   (10)   (10)   (11)
+27/02/2014    1
+100%   100%    100%    100%    100%    100%    PEC   PEC   PEC   PEC   100%    PEC
+REBILLARD MARTIN   (7)   (10)   (10)   (10)   (10)   (11)
+07/10/2018    1
+* Regle de calcul 029 : Mt RC = 100%TR - MRO
+(7) Y compris pharmacie à 15 %
+(10) Prise en charge pour les partenaires ITELIS sur www.itelis.fr
+(11) Prise en charge sur www.spsante.fr ou à l'adresse indiquée au verso
+
+Signification de la codification   Vos services en ligne :
+PHAR    Pharmacie remboursable   Votre espace assuré sur services.gerep.fr
+MED    Médecin généraliste, spécialiste   Votre application mobile GEREP téléchargeable dans
+SVIL    Sage Femme, Laboratoire, Radiologue, Auxiliaire   Google Play ou l‘App Store
+médical, Fournisseur sauf opticien et audioprothésiste   Le tiers payant optique/dentaire/audioprothèse
+TRAN    Transporteur sanitaire   Avec les partenaires du réseau Itelis, bénéficiez de tarifs
+CSTE    Centre de Santé hors dentaire   privilégiés, de services préférentiels et du tiers payant.
+DESO    Soins Dentaires   Leurs coordonnées sont sur votre espace assuré ou
+DEPR    Prothèse Dentaire   l’application mobile.
+Vos services santé inclus dans votre contrat
+DEOR    Orthodontie   Variable téléconsultation
+OPTI    Opticien   Variable My easy santé
+AUDI    Audioprothèse   Variable Hospiway
+EXTE    Soins externes sauf prothèse dentaire   Variable Assistance
+HOSP    Hospitalisation hors soins externes
+***
+Autre domaine, contacter GEREP    Votre accueil téléphonique :
+***   au 01 45 22 52 53 (appel non surtaxé)
+IT    Itelis
+SP    SP santé   Votre Centre de gestion :
+PEC    Prise en charge   Gerep
+4 rue de Vienne CS 40001
+R    Contrat Responsable   75378 PARIS cedex 08
+Soins externes   Cette mention au recto garantit
+SP  & Hospi   aux  Établissements  de  Santé   Pour les professionnels de santé exclusivement :
+conventionnés SP Santé :   Contact : ps@gerep.fr
+Le traitement des demandes de prise en charge Frais de Séjour   Prise en charge hospitalière sur le portail www.spsante.fr
+via votre espace privé sur le portail www.spsante.fr ou par fax
+au 02 38 90 81 90
+Une adresse de facturation unique :
+SP santé - CETIP - Soins Externes - Hospi   En cas de suspension ou rupture du contrat, informez
+BP 80738   le professionnel de santé et retournez nous votre attestation.
+45207 MONTARGIS CEDEX   A défaut, les frais réglés vous seront réclamés.
+Tel : 0 820 20 06 82

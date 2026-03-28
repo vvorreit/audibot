@@ -1,26 +1,54 @@
-const store = new Map<string, { count: number; resetAt: number }>();
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (now > entry.resetAt) store.delete(key);
+let redis: Redis | null = null;
+
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
   }
-}, 5 * 60 * 1000);
+} catch {
+  // Redis not available, fallback to allow-all
+}
+
+const limiterCache = new Map<string, Ratelimit>();
+
+function getLimiter(limit: number, windowMs: number): Ratelimit | null {
+  if (!redis) return null;
+  const cacheKey = `${limit}:${windowMs}`;
+  if (!limiterCache.has(cacheKey)) {
+    limiterCache.set(
+      cacheKey,
+      new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
+        analytics: false,
+        prefix: "optibot:rl",
+      })
+    );
+  }
+  return limiterCache.get(cacheKey)!;
+}
 
 /**
  * Returns true if the request is allowed, false if rate-limited.
- * @param key     Unique key (e.g. "auth:1.2.3.4")
- * @param limit   Max requests allowed in the window
- * @param windowMs  Window size in milliseconds
+ * Falls back to allowing all requests if Redis is not configured.
  */
-export async function rateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
-  const now = Date.now();
-  const entry = store.get(key);
-  if (!entry || now > entry.resetAt) {
-    store.set(key, { count: 1, resetAt: now + windowMs });
+export async function rateLimit(
+  key: string,
+  limit: number,
+  windowMs: number
+): Promise<boolean> {
+  try {
+    const limiter = getLimiter(limit, windowMs);
+    if (!limiter) return true;
+    const { success } = await limiter.limit(key);
+    return success;
+  } catch {
+    // On Redis error, fail open (allow request)
     return true;
   }
-  if (entry.count >= limit) return false;
-  entry.count++;
-  return true;
 }

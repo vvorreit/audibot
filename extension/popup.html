@@ -3,48 +3,480 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { width: 320px; padding: 15px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f9fafb; color: #1f2937; margin: 0; }
-    .container { display: flex; flex-direction: column; gap: 12px; }
-    h2 { color: #2563eb; font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px; }
-    .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-    .section-title { font-weight: 600; font-size: 13px; color: #4b5563; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .data-item { font-size: 12px; margin-bottom: 4px; display: flex; border-bottom: 1px solid #f3f4f6; padding-bottom: 4px; }
-    .data-label { color: #6b7280; width: 80px; flex-shrink: 0; }
-    .data-value { font-weight: 500; color: #111827; word-break: break-all; }
-    .no-data { font-style: italic; color: #9ca3af; text-align: center; padding: 10px; font-size: 12px; }
-    .status { background: #eff6ff; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #1e40af; border: 1px solid #bfdbfe; line-height: 1.4; }
-    .clear-btn { font-size: 11px; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
-    .edit-btn { font-size: 11px; background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; padding: 2px 8px; border-radius: 4px; cursor: pointer; margin-right: 4px; }
-    .save-btn { font-size: 11px; background: #2563eb; color: white; border: 1px solid #1d4ed8; padding: 2px 8px; border-radius: 4px; cursor: pointer; margin-right: 4px; }
-    .cancel-btn { font-size: 11px; background: white; color: #374151; border: 1px solid #d1d5db; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
-    
-    .edit-input { width: 100%; border: 1px solid #d1d5db; border-radius: 4px; padding: 2px 6px; font-size: 12px; font-family: inherit; box-sizing: border-box; }
+    * { box-sizing: border-box; }
+    body {
+      width: 420px;
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      margin: 0;
+    }
+
+    /* ── Header ── */
+    .popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 12px;
+      background: white;
+      border-bottom: 1px solid #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .popup-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .popup-logo-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #2563eb, #6366f1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .popup-logo-name {
+      font-weight: 800;
+      font-size: 15px;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+    .popup-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .popup-status-badge.connected {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .popup-status-badge.disconnected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .popup-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Container ── */
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 14px 16px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-weight: 700;
+      font-size: 12px;
+      color: #475569;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Data items ── */
+    .data-item {
+      font-size: 12px;
+      margin-bottom: 4px;
+      display: flex;
+      border-bottom: 1px solid #f8fafc;
+      padding-bottom: 4px;
+    }
+    .data-label {
+      color: #94a3b8;
+      width: 84px;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .data-value {
+      font-weight: 600;
+      color: #0f172a;
+      word-break: break-all;
+    }
+
+    /* ── Empty / No data ── */
+    .no-data {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    .no-data-icon { font-size: 36px; }
+    .no-data-title { font-weight: 700; font-size: 14px; color: #1e293b; }
+    .no-data-sub { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+    .no-data-cta {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #2563eb;
+      color: white;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      margin-top: 4px;
+      transition: background .15s;
+    }
+    .no-data-cta:hover { background: #1d4ed8; }
+
+    /* ── Status badge (plan) ── */
+    .plan-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    /* ── Buttons ── */
+    .clear-btn  { font-size: 11px; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 3px 10px; border-radius: 6px; cursor: pointer; }
+    .edit-btn   { font-size: 11px; background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 6px; cursor: pointer; margin-right: 4px; }
+    .save-btn   { font-size: 11px; background: #2563eb; color: white; border: 1px solid #1d4ed8; padding: 3px 10px; border-radius: 6px; cursor: pointer; margin-right: 4px; }
+    .cancel-btn { font-size: 11px; background: white; color: #374151; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 6px; cursor: pointer; }
+
+    /* ── CTA buttons (fill / scan) ── */
+    .cta-group { display: flex; gap: 8px; margin-top: 4px; }
+    .cta-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    .cta-btn:active { transform: scale(0.97); }
+    .cta-btn-primary { background: #2563eb; color: white; }
+    .cta-btn-primary:hover { background: #1d4ed8; }
+    .cta-btn-secondary { background: #f1f5f9; color: #374151; }
+    .cta-btn-secondary:hover { background: #e2e8f0; }
+
+    /* ── Edit inputs ── */
+    .edit-input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-family: inherit;
+    }
     .edit-input:focus { outline: 2px solid #2563eb; border-color: transparent; }
     .data-item.editing { padding-top: 4px; padding-bottom: 8px; flex-direction: column; gap: 4px; }
     .data-item.editing .data-label { width: 100%; margin-bottom: 2px; font-weight: 600; }
-    
-    .actions-group { display: flex; align-items: center; }
-    .tag { display: inline-block; padding: 2px 6px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #dcfce7; color: #166534; margin-bottom: 8px; }
+
+    /* ── Actions group ── */
+    .actions-group { display: flex; align-items: center; gap: 4px; }
+
+    /* ── Tag ── */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    /* ── Collapsible section ── */
+    .collapsible-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .collapsible-trigger .chevron {
+      font-size: 10px;
+      color: #94a3b8;
+      transition: transform .2s;
+    }
+    .collapsible-trigger.open .chevron { transform: rotate(180deg); }
+    .collapsible-content { display: none; margin-top: 10px; }
+    .collapsible-content.open { display: block; }
+
+    /* ── Toggle switch ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f8fafc;
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-label { font-size: 12px; color: #374151; flex: 1; }
+    .toggle-sub { font-size: 10px; color: #94a3b8; margin-top: 1px; }
+    .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; cursor: pointer; flex-shrink: 0; margin-left: 12px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 11px; transition: background .2s; }
+    .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+
+    /* ── Smart Fill ── */
+    .simulate-btn {
+      width: 100%;
+      padding: 9px;
+      background: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background .15s;
+    }
+    .simulate-btn:hover { background: #6d28d9; }
+
+    /* ── ERP ── */
+    .erp-input-row { display: flex; gap: 6px; }
+    .erp-input {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    .erp-input:focus { outline: 2px solid #2563eb; border-color: transparent; }
+    .erp-connect-btn {
+      padding: 8px 14px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ── Equipment cards ── */
+    .eq-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+    .eq-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .eq-title { font-weight: 700; font-size: 11px; color: #1e293b; }
+    .eq-line { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 3px; padding: 3px 0; border-bottom: 1px solid #f1f5f9; }
+    .eq-line:last-child { border-bottom: none; }
+    .eq-field { font-size: 10px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1px 4px; }
+    .eq-field b { color: #475569; }
+    .eq-lpp { color: #2563eb; font-weight: 700; }
+    .eq-prix { color: #059669; font-weight: 600; }
+    .eq-rac { color: #dc2626; font-weight: 600; }
+    .eq-total { font-size: 10px; font-weight: 700; border-top: 1px solid #e2e8f0; padding-top: 4px; margin-top: 4px; }
+    .eq-delete { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; }
+    .eq-edit-btn { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; margin-right: 4px; }
+
+    /* ── Rejets ── */
+    .rejet-badge { background: #fef2f2; color: #dc2626; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+
+    /* ── Warning ── */
+    .warning-banner { font-size: 10px; padding: 7px 10px; background: #fef3c7; color: #92400e; border-radius: 8px; margin-top: 8px; border: 1px solid #fde68a; font-weight: 600; }
+
+    /* ── Locked / blocked ── */
+    .locked-screen { padding: 28px 20px; text-align: center; }
+    .locked-icon { font-size: 36px; margin-bottom: 12px; }
+    .locked-title { font-weight: 700; font-size: 14px; color: #dc2626; margin-bottom: 8px; }
+    .locked-sub { font-size: 12px; color: #6b7280; margin-bottom: 18px; line-height: 1.5; }
+    .locked-cta {
+      display: inline-block;
+      padding: 10px 22px;
+      background: #2563eb;
+      color: white;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>OptiBot Pro 🤖</h2>
-    
-    <div id="data-container">
-      <!-- Les données seront injectées ici -->
-      <div class="no-data">Chargement des données...</div>
+  <!-- Header fixe -->
+  <div class="popup-header">
+    <div class="popup-logo">
+      <div class="popup-logo-icon">O</div>
+      <span class="popup-logo-name">OptiBot</span>
     </div>
-
-    <div class="card">
-      <div class="section-title">Instructions</div>
-      <div class="status">
-        1. Copiez vos données depuis l'application OptiBot.<br>
-        2. Les données apparaîtront ici automatiquement.<br>
-        3. Ouvrez un formulaire client pour l'auto-remplissage.
-      </div>
+    <div id="connection-badge" class="popup-status-badge disconnected">
+      <span class="popup-status-dot"></span>
+      <span id="connection-label">Vérification...</span>
     </div>
   </div>
+
+  <div class="container">
+    <div id="data-container">
+      <div class="no-data">
+        <div class="no-data-icon">⏳</div>
+        <div class="no-data-title">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- Section Smart Fill (repliable) -->
+    <div class="card">
+      <div class="section-title collapsible-trigger" id="smartfill-trigger">
+        Smart Fill
+        <span class="chevron">▼</span>
+      </div>
+      <div class="collapsible-content" id="smartfill-content">
+        <button id="btn-simulate" class="simulate-btn">🧠 Simuler le remplissage</button>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Seuil de confiance</div>
+          </div>
+          <select id="confidence-threshold" style="padding:5px 8px;border:1px solid #e2e8f0;border-radius:8px;font-size:11px;font-weight:600;background:white;cursor:pointer;">
+            <option value="80">Strict (80%)</option>
+            <option value="60" selected>Standard (60%)</option>
+            <option value="40">Large (40%)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Paramètres (repliable) -->
+    <div class="card">
+      <div class="section-title collapsible-trigger" id="settings-trigger">
+        Paramètres
+        <span class="chevron">▼</span>
+      </div>
+      <div class="collapsible-content" id="settings-content">
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Boutons flottants sur les sites</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-buttons">
+            <span id="toggle-track" class="toggle-track"></span>
+            <span id="toggle-thumb" class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Remplissage auto au chargement</div>
+            <div class="toggle-sub">Remplit automatiquement quand des données patient sont en cache</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-autofill">
+            <span id="toggle-autofill-track" class="toggle-track"></span>
+            <span id="toggle-autofill-thumb" class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Détection automatique des rejets</div>
+            <div class="toggle-sub">Scanne vos portails et synchronise les rejets dans OptiBot</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-rejet">
+            <span id="toggle-rejet-track" class="toggle-track"></span>
+            <span id="toggle-rejet-thumb" class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Aperçu avant remplissage</div>
+            <div class="toggle-sub">Afficher un aperçu des champs avant de remplir</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-preview">
+            <span id="toggle-preview-track" class="toggle-track"></span>
+            <span id="toggle-preview-thumb" class="toggle-thumb"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERP -->
+    <div class="card" id="cosium-card">
+      <div class="section-title collapsible-trigger" id="erp-trigger">
+        Logiciel opticien (ERP)
+        <span id="cosium-badge" style="display:none;font-size:10px;padding:2px 8px;border-radius:12px;background:#dcfce7;color:#166534;font-weight:700;">ERP ✓</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="collapsible-content" id="erp-content">
+        <label style="font-size:11px;color:#94a3b8;display:block;margin-bottom:6px;">URL de votre logiciel (Cosium, Optimum, WinOptics, iGestion...)</label>
+        <div class="erp-input-row">
+          <input type="url" id="cosium-url-input" placeholder="https://mon-logiciel.exemple.fr" class="erp-input">
+          <button id="cosium-save-btn" class="erp-connect-btn">Connecter</button>
+        </div>
+        <div id="cosium-url-status" style="font-size:10px;color:#94a3b8;margin-top:4px;"></div>
+        <div id="cosium-pec-banner" style="display:none;padding:8px 10px;background:#eff6ff;border-radius:8px;font-size:11px;color:#1e40af;border:1px solid #bfdbfe;margin-top:6px;font-weight:600;"></div>
+      </div>
+    </div>
+
+    <!-- Rapports (cachés par défaut, affichés si données disponibles) -->
+    <div class="card" id="fill-report-card" style="display:none;">
+      <div class="section-title">Dernier remplissage</div>
+      <div id="fill-report-content" style="font-size:11px;color:#374151;"></div>
+    </div>
+
+    <div class="card" id="tp-sync-card" style="display:none;">
+      <div class="section-title">Dernière sync TP</div>
+      <div id="tp-sync-content" style="font-size:11px;color:#374151;"></div>
+    </div>
+
+    <div id="card-tp-tracker" class="card" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:#1e293b;">Suivi Tiers-Payant</span>
+        <button id="btn-refresh-tp" style="background:none;border:none;color:#2563eb;cursor:pointer;font-size:11px;font-weight:600;">Actualiser</button>
+      </div>
+      <div id="tp-tracker-list" style="font-size:12px;color:#94a3b8;">Chargement...</div>
+    </div>
+
+    <div id="card-rejections" class="card" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:#dc2626;">Rejets détectés</span>
+        <span id="rejet-count" class="rejet-badge"></span>
+      </div>
+      <div id="rejet-details-list" style="font-size:12px;"></div>
+    </div>
+
+    <div id="card-team" class="card" style="display:none;">
+      <div style="margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:#1e293b;">Activité équipe</span>
+      </div>
+      <div id="team-stats" style="font-size:12px;color:#94a3b8;">Chargement...</div>
+    </div>
+  </div>
+
+  <script src="crypto.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

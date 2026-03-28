@@ -8,11 +8,11 @@ export default function CGUPage() {
     <div className="min-h-screen bg-white text-slate-900 font-sans p-6 md:p-20">
       <div className="max-w-3xl mx-auto">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-bold mb-10 hover:underline">
-          <ArrowLeft className="w-4 h-4" /> Retour à l'accueil
+          <ArrowLeft className="w-4 h-4" /> Retour à l&apos;accueil
         </Link>
         <div className="flex items-center gap-4 mb-2 text-blue-600">
           <Scale className="w-12 h-12" />
-          <h1 className="text-4xl font-black">Conditions Générales d'Utilisation</h1>
+          <h1 className="text-4xl font-black">Conditions Générales d&apos;Utilisation</h1>
         </div>
         <p className="text-slate-400 text-sm mb-10">Dernière mise à jour : mars 2026</p>
 
@@ -21,55 +21,55 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Objet du service</h2>
             <p className="text-slate-600">
-              AudiBot est un outil d'assistance à la saisie destiné aux professionnels audioprothésistes. Il repose sur une
+              OptiBot est un outil d&apos;assistance à la saisie destiné aux professionnels opticiens. Il repose sur une
               technologie de reconnaissance optique de caractères (OCR) afin de faciliter le pré-remplissage de
               formulaires à partir de documents tels que des ordonnances ou des cartes de mutuelle.
-              AudiBot n'est pas un logiciel médical, n'effectue aucun acte de soin et ne se substitue en aucun cas
-              au jugement professionnel de l'audioprothésiste.
+              OptiBot n&apos;est pas un logiciel médical, n&apos;effectue aucun acte de soin et ne se substitue en aucun cas
+              au jugement professionnel de l&apos;opticien.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">2. Acceptation des conditions</h2>
             <p className="text-slate-600">
-              L'utilisation du service AudiBot vaut acceptation pleine et entière des présentes Conditions Générales
-              d'Utilisation (CGU). Si l'utilisateur n'accepte pas ces conditions, il doit cesser immédiatement
-              d'utiliser le service.
+              L&apos;utilisation du service OptiBot vaut acceptation pleine et entière des présentes Conditions Générales
+              d&apos;Utilisation (CGU). Si l&apos;utilisateur n&apos;accepte pas ces conditions, il doit cesser immédiatement
+              d&apos;utiliser le service.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Responsabilité de l'utilisateur</h2>
+            <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Responsabilité de l&apos;utilisateur</h2>
             <p className="text-slate-600 font-bold bg-amber-50 p-4 border-l-4 border-amber-400">
-              L'utilisateur est seul responsable de l'exactitude des données injectées dans son logiciel métier.
+              L&apos;utilisateur est seul responsable de l&apos;exactitude des données injectées dans son logiciel métier.
               La technologie OCR peut commettre des erreurs de lecture (ex : confusion entre 0 et O, inversion
-              de chiffres, lecture partielle). L'utilisateur DOIT systématiquement vérifier l'intégralité des champs
+              de chiffres, lecture partielle). L&apos;utilisateur DOIT systématiquement vérifier l&apos;intégralité des champs
               avant toute validation de fiche client ou acte professionnel.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-4 border-b pb-2">4. Limitation de responsabilité d'AudiBot</h2>
+            <h2 className="text-xl font-bold mb-4 border-b pb-2">4. Limitation de responsabilité d&apos;OptiBot</h2>
             <div className="bg-red-50 border-l-4 border-red-500 p-5 rounded-r-xl space-y-3">
               <p className="text-slate-700 font-bold text-sm uppercase tracking-wide">Clause essentielle — à lire attentivement</p>
               <p className="text-slate-700">
-                <strong>AudiBot est un outil d'aide à la saisie, non un logiciel certifié.</strong> Dans les limites
-                permises par la loi applicable, AudiBot, ses dirigeants, employés, partenaires et prestataires
+                <strong>OptiBot est un outil d&apos;aide à la saisie, non un logiciel certifié.</strong> Dans les limites
+                permises par la loi applicable, OptiBot, ses dirigeants, employés, partenaires et prestataires
                 déclinent expressément toute responsabilité pour :
               </p>
               <ul className="list-disc list-inside text-slate-700 space-y-1.5 pl-2">
-                <li>toute erreur, omission ou inexactitude dans les données extraites par l'OCR ;</li>
-                <li>tout préjudice direct ou indirect résultant de l'utilisation ou de l'impossibilité d'utiliser le service ;</li>
+                <li>toute erreur, omission ou inexactitude dans les données extraites par l&apos;OCR ;</li>
+                <li>tout préjudice direct ou indirect résultant de l&apos;utilisation ou de l&apos;impossibilité d&apos;utiliser le service ;</li>
                 <li>toute perte financière, commerciale, de données ou de clientèle liée à une erreur de saisie ;</li>
-                <li>toute réclamation ou litige entre l'utilisateur et ses propres clients ;</li>
+                <li>toute réclamation ou litige entre l&apos;utilisateur et ses propres clients ;</li>
                 <li>toute interruption, suspension ou indisponibilité temporaire du service ;</li>
-                <li>tout dommage résultant d'une intrusion informatique, d'un virus ou d'une défaillance technique ;</li>
+                <li>tout dommage résultant d&apos;une intrusion informatique, d&apos;un virus ou d&apos;une défaillance technique ;</li>
                 <li>tout préjudice lié à la perte ou à la corruption de données.</li>
               </ul>
               <p className="text-slate-700">
-                La responsabilité d'AudiBot, si elle venait à être retenue par une décision judiciaire définitive,
+                La responsabilité d&apos;OptiBot, si elle venait à être retenue par une décision judiciaire définitive,
                 serait en tout état de cause <strong>strictement limitée au montant des sommes effectivement
-                versées par l'utilisateur au titre de son abonnement au cours des trois (3) derniers mois
+                versées par l&apos;utilisateur au titre de son abonnement au cours des trois (3) derniers mois
                 précédant le fait générateur du dommage.</strong>
               </p>
             </div>
@@ -78,19 +78,19 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">5. Exclusion de garantie</h2>
             <p className="text-slate-600">
-              Le service AudiBot est fourni <strong>« en l'état »</strong> et <strong>« tel que disponible »</strong>,
-              sans garantie d'aucune sorte, expresse ou implicite. AudiBot ne garantit pas que le service sera
-              ininterrompu, exempt d'erreurs, sécurisé ou que les résultats obtenus seront exacts ou fiables.
-              Aucune garantie n'est donnée quant à l'adéquation du service à un usage particulier.
+              Le service OptiBot est fourni <strong>« en l&apos;état »</strong> et <strong>« tel que disponible »</strong>,
+              sans garantie d&apos;aucune sorte, expresse ou implicite. OptiBot ne garantit pas que le service sera
+              ininterrompu, exempt d&apos;erreurs, sécurisé ou que les résultats obtenus seront exacts ou fiables.
+              Aucune garantie n&apos;est donnée quant à l&apos;adéquation du service à un usage particulier.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">6. Données personnelles et RGPD</h2>
             <p className="text-slate-600">
-              L'utilisateur est responsable de traitement au sens du RGPD pour les données de ses propres clients
-              qu'il traite via AudiBot. AudiBot agit en qualité de sous-traitant et s'engage à ne pas utiliser ces
-              données à d'autres fins que la fourniture du service. L'utilisateur s'engage à respecter la réglementation
+              L&apos;utilisateur est responsable de traitement au sens du RGPD pour les données de ses propres clients
+              qu&apos;il traite via OptiBot. OptiBot agit en qualité de sous-traitant et s&apos;engage à ne pas utiliser ces
+              données à d&apos;autres fins que la fourniture du service. L&apos;utilisateur s&apos;engage à respecter la réglementation
               applicable en matière de protection des données personnelles, notamment à informer ses clients du
               traitement effectué. Pour plus de détails, consulter notre{" "}
               <Link href="/legal/confidentialite" className="text-blue-600 underline">politique de confidentialité</Link>.
@@ -100,8 +100,8 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">7. Propriété intellectuelle</h2>
             <p className="text-slate-600">
-              Le logiciel AudiBot, l'extension navigateur, l'interface utilisateur, les algorithmes, marques et logos
-              sont la propriété exclusive d'AudiBot. Toute reproduction, représentation, modification, adaptation,
+              Le logiciel OptiBot, l&apos;extension navigateur, l&apos;interface utilisateur, les algorithmes, marques et logos
+              sont la propriété exclusive d&apos;OptiBot. Toute reproduction, représentation, modification, adaptation,
               traduction, extraction, réutilisation totale ou partielle, par quelque procédé que ce soit, est
               strictement interdite sans autorisation écrite préalable.
             </p>
@@ -110,9 +110,9 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">8. Tarifs et abonnements</h2>
             <p className="text-slate-600">
-              L'accès au service est proposé selon des formules d'abonnement détaillées sur la page tarifaire.
-              Tout mois entamé est dû intégralement. La résiliation est possible à tout moment depuis l'espace
-              client, sans frais, avec effet à la fin de la période en cours. AudiBot se réserve le droit de modifier
+              L&apos;accès au service est proposé selon des formules d&apos;abonnement détaillées sur la page tarifaire.
+              Tout mois entamé est dû intégralement. La résiliation est possible à tout moment depuis l&apos;espace
+              client, sans frais, avec effet à la fin de la période en cours. OptiBot se réserve le droit de modifier
               ses tarifs avec un préavis de 30 jours par email.
             </p>
           </section>
@@ -120,8 +120,8 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">9. Suspension et résiliation</h2>
             <p className="text-slate-600">
-              AudiBot se réserve le droit de suspendre ou résilier l'accès au service, sans préavis ni indemnité,
-              en cas de violation des présentes CGU, d'utilisation frauduleuse, abusive ou contraire à l'ordre
+              OptiBot se réserve le droit de suspendre ou résilier l&apos;accès au service, sans préavis ni indemnité,
+              en cas de violation des présentes CGU, d&apos;utilisation frauduleuse, abusive ou contraire à l&apos;ordre
               public, ou de non-paiement.
             </p>
           </section>
@@ -129,8 +129,8 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">10. Modification des CGU</h2>
             <p className="text-slate-600">
-              AudiBot se réserve le droit de modifier les présentes CGU à tout moment. L'utilisateur sera informé
-              par email ou via le service. La poursuite de l'utilisation du service après notification vaut acceptation
+              OptiBot se réserve le droit de modifier les présentes CGU à tout moment. L&apos;utilisateur sera informé
+              par email ou via le service. La poursuite de l&apos;utilisation du service après notification vaut acceptation
               des nouvelles conditions.
             </p>
           </section>
@@ -139,8 +139,8 @@ export default function CGUPage() {
             <h2 className="text-xl font-bold mb-4 border-b pb-2">11. Droit applicable et juridiction</h2>
             <p className="text-slate-600">
               Les présentes CGU sont soumises au droit français. En cas de litige, et à défaut de résolution amiable,
-              les tribunaux compétents du ressort du siège social d'AudiBot seront seuls compétents.
-              Pour tout contact : <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
+              les tribunaux compétents du ressort du siège social d&apos;OptiBot seront seuls compétents.
+              Pour tout contact : <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
             </p>
           </section>
 

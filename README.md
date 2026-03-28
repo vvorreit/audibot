@@ -1,108 +1,36 @@
-# 🦻 AudiBot — Automatisation de saisie pour audioprothésistes
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-AudiBot automatise la saisie des données patient et des prescriptions ORL dans les logiciels et portails mutuelles utilisés par les audioprothésistes français.
+## Getting Started
 
-**Basé sur** [OptiBot](https://github.com/vvorreit/optibot) — adapté au secteur de l'audioprothèse.
-
----
-
-## 🚀 Fonctionnement
-
-1. **Scannez** la carte mutuelle du patient (Almerys, Viamedis, Ameli Pro)
-2. **Scannez** la prescription ORL (PDF ou photo)
-3. AudiBot **extrait automatiquement** les données (patient, prescripteur, audiogramme, classe/type d'appareillage)
-4. **Copiez** les données en un clic → presse-papier JSON
-5. L'extension Chrome **remplit automatiquement** le formulaire dans Auditdata ou le portail mutuelle
-
-**Gain de temps estimé : 45min à 1h30 par jour.**
-
----
-
-## 🛠️ Logiciels supportés
-
-| Logiciel | Statut | Notes |
-|---|---|---|
-| **Auditdata** | 🟡 Beta | Sélecteurs DOM à confirmer (voir TODO dans content.js) |
-| **Otosuite** | 🔜 Prévu | À venir |
-| **Easyaudio** | 🔜 Prévu | À venir |
-
----
-
-## 🏥 Portails mutuelles supportés
-
-| Portail | Statut |
-|---|---|
-| **Almerys** | ✅ Opérationnel |
-| **Viamedis** | ✅ Opérationnel |
-| **SCOR / Ameli Pro** | 🟡 Beta (sélecteurs à affiner) |
-
----
-
-## 📋 Données extraites depuis la prescription ORL
-
-- **Prescripteur** : nom ORL, n° RPPS, date de prescription
-- **Patient** : nom, prénom, date de naissance
-- **Oreille Droite (OD)** : perte auditive à 250, 500, 1000, 2000, 4000 Hz
-- **Oreille Gauche (OG)** : idem
-- **Classe d'appareillage** : Classe 1 (100% Santé) ou Classe 2
-- **Type d'appareillage** : BTE (contour), ITE (intra-auriculaire), RIC/RITE (écouteur déporté)
-- **Renouvellement** : oui / non
-
----
-
-## ⚙️ Installation
-
-### Application Web (Next.js)
+First, run the development server:
 
 ```bash
-git clone https://github.com/vvorreit/audibot.git
-cd audibot
-npm install
-cp .env.example .env.local  # configurer DATABASE_URL, NEXTAUTH_SECRET, etc.
-npx prisma migrate deploy
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-### Extension Chrome
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. Ouvrir `chrome://extensions`
-2. Activer le **mode développeur**
-3. Cliquer **Charger l'extension non empaquetée**
-4. Sélectionner le dossier `extension/`
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
----
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 🗂️ Structure du projet
+## Learn More
 
-```
-audibot/
-├── app/               # Next.js App Router
-├── components/
-│   ├── OrdonnanceForm.tsx    # Formulaire prescription ORL
-│   └── MutuelleForm.tsx      # Formulaire carte mutuelle
-├── lib/
-│   ├── parsers.ts            # Parser OCR prescription ORL + mutuelle
-│   └── ocr.ts                # Extraction texte PDF/image
-├── extension/
-│   ├── manifest.json         # Extension Chrome MV3
-│   ├── content.js            # Content scripts (Auditdata, Almerys, Viamedis, Ameli Pro)
-│   └── popup.html/js         # Interface popup extension
-└── prisma/            # Schéma base de données
-```
+To learn more about Next.js, take a look at the following resources:
 
----
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 🔧 TODO / Roadmap
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-- [ ] Confirmer les sélecteurs DOM Auditdata (nécessite accès instance)
-- [ ] Implémenter autofill audiogramme dans Auditdata
-- [ ] Support Otosuite
-- [ ] Support Easyaudio
-- [ ] Affiner sélecteurs Ameli Pro
-- [ ] Tests unitaires parser prescription ORL
+## Deploy on Vercel
 
----
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## 📄 Licence
-
-MIT — Fork de [OptiBot](https://github.com/vvorreit/optibot) par [@vvorreit](https://github.com/vvorreit)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
