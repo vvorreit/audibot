@@ -8,14 +8,14 @@ import { getAllPosts } from "@/lib/blog";
 export const revalidate = 3600; // revalider toutes les heures max
 
 export const metadata: Metadata = {
-  title: "Blog OptiBot — Conseils tiers payant et automatisation pour opticiens",
+  title: "Blog AudiBot — Conseils tiers payant et automatisation pour audioprothésistes",
   description:
-    "Guides pratiques pour opticiens indépendants : automatiser la saisie tiers payant, réduire les rejets mutuelles, gagner du temps sur Almerys, Wemind, Viamedis. Conseils concrets et retours terrain.",
-  alternates: { canonical: "https://optibot.fr/blog" },
+    "Guides pratiques pour audioprothésistes indépendants : automatiser la saisie tiers payant, réduire les rejets mutuelles, gagner du temps sur Almerys, Wemind, Viamedis. Conseils concrets et retours terrain.",
+  alternates: { canonical: "https://audibot.fr/blog" },
   openGraph: {
-    title: "Blog OptiBot — Conseils tiers payant pour opticiens",
-    description: "Guides pratiques pour opticiens : automatiser la saisie tiers payant, réduire les rejets mutuelles, gagner 1h30/jour sur Almerys, Wemind, Viamedis.",
-    url: "https://optibot.fr/blog",
+    title: "Blog AudiBot — Conseils tiers payant pour audioprothésistes",
+    description: "Guides pratiques pour audioprothésistes : automatiser la saisie tiers payant, réduire les rejets mutuelles, gagner 1h30/jour sur Almerys, Wemind, Viamedis.",
+    url: "https://audibot.fr/blog",
     type: "website",
   },
 };
@@ -29,7 +29,7 @@ export default async function BlogPage() {
       <nav className="fixed w-full z-[100] bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/icon.png" alt="OptiBot logo" width={36} height={36} className="rounded-xl shadow-sm" />
+            <Image src="/icon.png" alt="AudiBot logo" width={36} height={36} className="rounded-xl shadow-sm" />
             <span className="text-xl font-bold tracking-tight uppercase text-slate-900">
               OptiBot
             </span>
@@ -54,7 +54,7 @@ export default async function BlogPage() {
             Conseils tiers payant
             <br />
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              pour opticiens
+              pour audioprothésistes
             </span>
           </h1>
           <p className="text-lg text-slate-500 font-medium max-w-xl mx-auto">
@@ -107,7 +107,7 @@ export default async function BlogPage() {
             Prêt à gagner du temps ?
           </h2>
           <p className="text-slate-500 font-medium mb-8">
-            Essayez OptiBot gratuitement et récupérez 1h par jour sur votre
+            Essayez AudiBot gratuitement et récupérez 1h par jour sur votre
             saisie tiers payant.
           </p>
           <Link

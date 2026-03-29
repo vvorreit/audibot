@@ -1,0 +1,67 @@
+---
+title: "Scanner la carte mutuelle d'un patient : comment ça marche vraiment"
+description: "OCR, reconnaissance automatique, données extraites — comment fonctionne la lecture de carte mutuelle en audioprothèse et ce que ça change dans votre cabinet."
+date: "2026-01-15"
+author: "Équipe AudiBot"
+---
+
+# Scanner la carte mutuelle d'un patient : comment ça marche vraiment
+
+Une des questions qu'on nous pose le plus souvent : "Est-ce que je dois quand même vérifier ce que l'outil a lu ?"
+
+Réponse courte : oui, toujours. Mais beaucoup moins souvent que vous ne le craignez.
+
+Voici comment fonctionne la lecture automatique de carte mutuelle, ses limites, et pourquoi ça change quand même beaucoup de choses.
+
+## Ce que l'OCR lit sur une carte mutuelle
+
+L'OCR (reconnaissance optique de caractères) extrait les informations visibles sur la carte :
+
+- **Nom et prénom** de l'assuré
+- **Numéro d'adhérent** — c'est souvent l'info la plus critique
+- **Nom de la mutuelle** et code réseau (Almerys, Wemind, Viamedis...)
+- **Date de validité** du contrat
+- **Numéro de contrat** quand il est présent
+
+Ce qu'il ne lit pas : les garanties, les plafonds de remboursement, les éventuelles exclusions. Pour ça, il faut la fiche de garanties ou appeler la hotline.
+
+## Pourquoi c'est utile malgré les limites
+
+Avant l'OCR, la saisie manuelle du numéro d'adhérent était la principale source d'erreur sur les portails. Un chiffre mal transcrit, et le dossier est rejeté.
+
+Avec la lecture automatique, ce type d'erreur disparaît quasi complètement. Ce n'est pas anodin : sur Almerys, le rejet pour "patient non identifié" représentait 15 à 20% des rejets dans les cabinets qui saisissaient à la main.
+
+## Les cartes qui posent problème
+
+Toutes les cartes ne se lisent pas avec la même précision :
+
+**Cartes plastifiées avec hologramme** : l'hologramme peut créer des reflets qui perturbent la lecture. Photographiez sous un angle légèrement différent.
+
+**Cartes au format image** (screenshots de l'appli mutuelle) : qualité très variable. AudiBot gère ces cas mais avec une précision moindre que les cartes physiques.
+
+**Vieilles cartes abîmées** : les coins froissés ou les chiffres effacés posent des problèmes. Dans ce cas, vérifiez manuellement.
+
+**Cartes avec deux assurés** : certaines cartes couvrent deux personnes avec le même numéro principal mais des numéros d'adhérent différents. Vérifiez que vous avez le bon.
+
+## Le bon workflow
+
+1. Patient présente sa carte → vous la photographiez avec votre téléphone ou via l'interface AudiBot
+2. Les données s'affichent à l'écran pour vérification (2-3 secondes)
+3. Vous confirmez ou corrigez si nécessaire
+4. Les données alimentent directement le formulaire du portail
+
+Le gain de temps réel, sur un dossier bien préparé, est de l'ordre de **3 à 4 minutes par patient**. Sur 25 dossiers par mois, c'est 75 à 100 minutes économisées — juste sur cette étape.
+
+## Ce que vous devez toujours vérifier manuellement
+
+Même avec un bon OCR, certaines vérifications restent incontournables :
+
+- La validité du contrat à la date de remise de l'appareillage
+- La couverture spécifique audioprothèse (pas tous les contrats couvrent de la même façon)
+- Le plafond annuel s'il est atteint
+
+Ces informations ne sont pas sur la carte — elles nécessitent une consultation sur le portail ou un appel à la hotline.
+
+---
+
+*AudiBot intègre la lecture de carte mutuelle avec vérification automatique de la cohérence des données. [Essai gratuit 14 jours](/pricing)*
