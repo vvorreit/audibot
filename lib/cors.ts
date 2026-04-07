@@ -30,3 +30,29 @@ export function getPortalCorsHeaders(origin?: string | null) {
     "Access-Control-Allow-Headers": "Content-Type",
   };
 }
+
+/**
+ * CORS restreint pour les routes bilan (submit, document upload).
+ * Autorise uniquement audibot.fr, *.audibot.fr, et localhost en dev.
+ */
+export function getBilanCorsHeaders(origin?: string | null) {
+  const BILAN_DOMAINS = /^([\w-]+\.)?audibot\.fr$/;
+  let allowed = false;
+  if (origin) {
+    try {
+      const url = new URL(origin);
+      allowed =
+        BILAN_DOMAINS.test(url.hostname) ||
+        (IS_DEV && url.hostname === "localhost");
+    } catch {
+      allowed = false;
+    }
+  }
+  return {
+    "Access-Control-Allow-Origin": allowed && origin ? origin : "https://audibot.fr",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Vary": "Origin",
+    "Access-Control-Max-Age": "86400",
+  };
+}

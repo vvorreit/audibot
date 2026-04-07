@@ -8,8 +8,19 @@ export const EXT_CORS = {
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
 }
 
-export function optionsCors() {
-  return new NextResponse(null, { status: 204, headers: EXT_CORS })
+export function getExtCors(origin?: string | null) {
+  const allowed = !origin || origin.startsWith('chrome-extension://') || /^https?:\/\/([\w-]+\.)?audibot\.fr$/.test(origin)
+  return {
+    'Access-Control-Allow-Origin': allowed && origin ? origin : 'https://audibot.fr',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Vary': 'Origin',
+  }
+}
+
+export function optionsCors(req?: NextRequest) {
+  const origin = req?.headers.get('origin') ?? null
+  return new NextResponse(null, { status: 204, headers: getExtCors(origin) })
 }
 
 /** Extract syncToken from Authorization header or body/query */

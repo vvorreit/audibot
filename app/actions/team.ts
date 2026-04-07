@@ -7,14 +7,18 @@ import { getTransporter, smtpConfigured } from "@/lib/mailer";
 import { randomBytes } from "crypto";
 
 // Nombre de postes maximum par plan d'équipe
-export async function getTeamSeatsLimit(plan: string): Promise<number> {
-  switch (plan) {
-    case "EQUIPE":  return 5;
-    case "TEAM_5":  return 5; // rétrocompat
-    case "TEAM_3":  return 3; // rétrocompat
-    case "PRO":     return 3; // rétrocompat ancien plan PRO
-    default:        return 1; // FREE / ESSENTIEL → solo, pas d'invitation possible
-  }
+export async function getTeamSeatsLimit(plan: string, extraSeats = 0): Promise<number> {
+  const base = (() => {
+    switch (plan) {
+      case "EQUIPE":  return 5;
+      case "RESEAU":  return 10;
+      case "TEAM_5":  return 5; // rétrocompat
+      case "TEAM_3":  return 3; // rétrocompat
+      case "PRO":     return 3; // rétrocompat ancien plan PRO
+      default:        return 1; // FREE / ESSENTIEL → solo, pas d'invitation possible
+    }
+  })();
+  return base + extraSeats;
 }
 
 export async function createTeam(name: string) {

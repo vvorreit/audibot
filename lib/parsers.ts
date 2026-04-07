@@ -46,6 +46,8 @@ export interface CorrectionLentille {
 
 export interface OrdonnanceData {
   nomOphtalmologue: string;
+  rpps: string;
+  adeli: string;
   dateOrdonnance: string;
   dateValidite: string;
   nomPatient: string;
@@ -594,6 +596,8 @@ export function parseOrdonnance(text: string): OrdonnanceData {
 
   const result: Omit<OrdonnanceData, "fieldConfidence"> = {
     nomOphtalmologue,
+    rpps: "",
+    adeli: "",
     dateOrdonnance,
     dateValidite,
     nomPatient,
@@ -778,6 +782,8 @@ export function mergeMutuelle(primary: MutuelleData, secondary: MutuelleData): M
 export function mergeOrdonnance(primary: OrdonnanceData, secondary: OrdonnanceData): OrdonnanceData {
   const merged: Omit<OrdonnanceData, "fieldConfidence"> = {
     nomOphtalmologue: pick(primary.nomOphtalmologue, secondary.nomOphtalmologue),
+    rpps: pick(primary.rpps, secondary.rpps),
+    adeli: pick(primary.adeli, secondary.adeli),
     dateOrdonnance: pick(primary.dateOrdonnance, secondary.dateOrdonnance),
     dateValidite: pick(primary.dateValidite, secondary.dateValidite),
     nomPatient: pick(primary.nomPatient, secondary.nomPatient),

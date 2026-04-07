@@ -53,7 +53,7 @@ const EMPTY_OEIL = { sphere: "", cylindre: "", axe: "", addition: "" };
 const EMPTY_LENTILLE = { sphere: "", cylindre: "", axe: "", addition: "", rayonCourbure: "", diametre: "" };
 
 const EMPTY_ORDONNANCE: OrdonnanceData = {
-  nomOphtalmologue: "", dateOrdonnance: "", dateValidite: "",
+  nomOphtalmologue: "", rpps: "", adeli: "", dateOrdonnance: "", dateValidite: "",
   nomPatient: "", prenomPatient: "", dateNaissancePatient: "",
   distancePupillaire: "",
   typePrescription: "",
