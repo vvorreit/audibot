@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { EXT_CORS, optionsCors } from "@/lib/extensionAuth";
+import { optionsCors } from "@/lib/extensionAuth";
 
 export async function OPTIONS() { return optionsCors(); }
 
@@ -67,7 +67,8 @@ export async function GET() {
   return NextResponse.json(config, {
     headers: {
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": "https://audibot.fr",
+      "Vary": "Origin",
     },
   });
 }

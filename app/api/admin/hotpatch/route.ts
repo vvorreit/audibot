@@ -8,11 +8,13 @@ import { z } from "zod";
 import { parseBody } from "@/lib/validation";
 import { rateLimit } from "@/lib/rateLimit";
 
+const VALID_PATCH_TYPES = ["selector_override", "field_mapping", "css_fix", "script_toggle", "feature_flag"] as const;
+
 const createSchema = z.object({
   name: z.string().min(1).max(200),
-  type: z.string().min(1).max(50),
-  hostnames: z.array(z.string()).min(1),
-  data: z.record(z.string(), z.unknown()).optional(),
+  type: z.enum(VALID_PATCH_TYPES),
+  hostnames: z.array(z.string().max(200)).min(1).max(50),
+  data: z.record(z.string().max(100), z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
   description: z.string().max(500).optional(),
   priority: z.number().int().min(0).max(100).optional(),
 });
@@ -21,9 +23,9 @@ const updateSchema = z.object({
   id: z.string().min(1),
   active: z.boolean().optional(),
   name: z.string().min(1).max(200).optional(),
-  type: z.string().min(1).max(50).optional(),
-  hostnames: z.array(z.string()).min(1).optional(),
-  data: z.record(z.string(), z.unknown()).optional(),
+  type: z.enum(VALID_PATCH_TYPES).optional(),
+  hostnames: z.array(z.string().max(200)).min(1).max(50).optional(),
+  data: z.record(z.string().max(100), z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
   description: z.string().max(500).nullable().optional(),
   priority: z.number().int().min(0).max(100).optional(),
 });

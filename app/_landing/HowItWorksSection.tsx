@@ -17,7 +17,7 @@ export default function HowItWorksSection() {
           {[
             {
               step: "01",
-              title: "D&eacute;posez",
+              title: "D\u00E9posez",
               desc: "Glissez la prescription ORL ou la carte mutuelle (PDF/Photo) sur votre tableau de bord AudiBot — depuis votre PC ou directement depuis votre t&eacute;l&eacute;phone via QR code.",
               icon: FileText,
               color: "bg-indigo-600 shadow-indigo-100",
@@ -58,7 +58,7 @@ export default function HowItWorksSection() {
                     </span>
                   )}
                 </div>
-                <h4 className="text-xl font-black mb-3" dangerouslySetInnerHTML={{ __html: s.title }} />
+                <h4 className="text-xl font-black mb-3">{s.title}</h4>
                 <p className="text-slate-700 font-medium leading-relaxed text-sm flex-1">{s.desc}</p>
               </div>
             </div>

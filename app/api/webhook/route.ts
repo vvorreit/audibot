@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       const Sentry = await import("@sentry/nextjs");
       Sentry.captureException(error);
     }
-    return new NextResponse(`Webhook Error: ${errMsg}`, { status: 400 });
+    return new NextResponse("Webhook signature verification failed", { status: 400 });
   }
 
   try {

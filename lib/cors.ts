@@ -7,7 +7,6 @@ export function getCorsHeaders(origin?: string | null) {
   const allowed =
     origin?.startsWith("chrome-extension://") ||
     origin?.includes("audibot.fr") ||
-    origin?.includes("audibot.fr") ||
     (IS_DEV && origin?.includes("localhost"));
   return {
     "Access-Control-Allow-Origin": allowed && origin ? origin : `https://${brand.domain}`,
@@ -17,17 +16,22 @@ export function getCorsHeaders(origin?: string | null) {
 }
 
 /**
- * CORS ouverts pour les routes appelées depuis les portails mutuelles tiers.
+ * CORS pour les routes appelées depuis les portails mutuelles tiers.
  * Utilisé par : /api/bookmarklet/ping, /api/extension/parcours/save, /api/extension/log-injection
  * L'extension envoie ces requêtes depuis le contexte du portail (pas depuis audibot.fr).
+ * Autorise chrome-extension:// et audibot.fr uniquement — la sécurité est aussi assurée par syncToken / rate limiting.
  */
 export function getPortalCorsHeaders(origin?: string | null) {
-  // Autoriser toute origine pour ces routes spécifiques car elles viennent des portails mutuelles
-  // La sécurité est assurée par le syncToken / rate limiting — pas par CORS
+  const allowed = origin && (
+    origin.startsWith("chrome-extension://") ||
+    /^https?:\/\/([\w-]+\.)?audibot\.fr$/.test(origin) ||
+    (IS_DEV && origin.includes("localhost"))
+  );
   return {
-    "Access-Control-Allow-Origin": origin || "*",
+    "Access-Control-Allow-Origin": allowed ? origin : "https://audibot.fr",
     "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+    "Vary": "Origin",
   };
 }
 

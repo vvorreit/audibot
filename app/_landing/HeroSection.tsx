@@ -62,13 +62,13 @@ export default function HeroSection() {
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { value: "10s",    label: "Par dossier"              },
-            { value: "15 min", label: "&Eacute;conomis&eacute;es/dossier" },
-            { value: "∞",      label: "Smart Fill — tout portail"},
-            { value: "0",      label: "Donn&eacute;e stock&eacute;e"      },
+            { value: "15 min", label: "\u00C9conomis\u00E9es/dossier" },
+            { value: "\u221E",      label: "Smart Fill \u2014 tout portail"},
+            { value: "0",      label: "Donn\u00E9e stock\u00E9e"      },
           ].map((s) => (
             <div key={s.label} className="flex flex-col items-center gap-1">
               <span className="text-3xl md:text-4xl font-black text-slate-900">{s.value}</span>
-              <span className="text-2xs font-black uppercase tracking-widest text-slate-600" dangerouslySetInnerHTML={{ __html: s.label }} />
+              <span className="text-2xs font-black uppercase tracking-widest text-slate-600">{s.label}</span>
             </div>
           ))}
         </div>

@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
-import { authenticateExtension, EXT_CORS, optionsCors } from "@/lib/extensionAuth"
+import { authenticateExtension, getExtCors, optionsCors } from "@/lib/extensionAuth"
 
 export async function OPTIONS() { return optionsCors() }
 
@@ -30,10 +30,10 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    return NextResponse.json({ dossiers }, { headers: EXT_CORS })
+    return NextResponse.json({ dossiers }, { headers: getExtCors(req.headers.get('origin')) })
   } catch (e) {
     console.error("[tp-status]", e)
-    return NextResponse.json({ dossiers: [] }, { headers: EXT_CORS })
+    return NextResponse.json({ dossiers: [] }, { headers: getExtCors(req.headers.get('origin')) })
   }
 }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     const { dossiers } = body
     if (!Array.isArray(dossiers)) {
-      return NextResponse.json({ ok: false, error: "dossiers array requis" }, { status: 400, headers: EXT_CORS })
+      return NextResponse.json({ ok: false, error: "dossiers array requis" }, { status: 400, headers: getExtCors(req.headers.get('origin')) })
     }
 
     let created = 0
@@ -67,9 +67,9 @@ export async function POST(req: NextRequest) {
       created++
     }
 
-    return NextResponse.json({ ok: true, created }, { headers: EXT_CORS })
+    return NextResponse.json({ ok: true, created }, { headers: getExtCors(req.headers.get('origin')) })
   } catch (e) {
     console.error("[tp-status POST]", e)
-    return NextResponse.json({ ok: false }, { status: 500, headers: EXT_CORS })
+    return NextResponse.json({ ok: false }, { status: 500, headers: getExtCors(req.headers.get('origin')) })
   }
 }

@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
-import { authenticateExtension, EXT_CORS, optionsCors } from "@/lib/extensionAuth"
+import { authenticateExtension, getExtCors, optionsCors } from "@/lib/extensionAuth"
 
 export async function OPTIONS() { return optionsCors() }
 
@@ -25,9 +25,9 @@ export async function GET(req: NextRequest) {
       weights[row.field] = { multiplier: row.multiplier }
     }
 
-    return NextResponse.json({ weights }, { headers: EXT_CORS })
+    return NextResponse.json({ weights }, { headers: getExtCors(req.headers.get('origin')) })
   } catch (e) {
     console.error("[smart-fill/weights]", e)
-    return NextResponse.json({ weights: {} }, { headers: EXT_CORS })
+    return NextResponse.json({ weights: {} }, { headers: getExtCors(req.headers.get('origin')) })
   }
 }

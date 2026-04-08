@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
-import { authenticateExtension, EXT_CORS, optionsCors } from "@/lib/extensionAuth"
+import { authenticateExtension, getExtCors, optionsCors } from "@/lib/extensionAuth"
 
 export async function OPTIONS() { return optionsCors() }
 
@@ -37,10 +37,10 @@ export async function GET(req: NextRequest) {
       suggestion: getSuggestion(r.motif),
     }))
 
-    return NextResponse.json({ rejections }, { headers: EXT_CORS })
+    return NextResponse.json({ rejections }, { headers: getExtCors(req.headers.get('origin')) })
   } catch (e) {
     console.error("[rejections]", e)
-    return NextResponse.json({ rejections: [] }, { headers: EXT_CORS })
+    return NextResponse.json({ rejections: [] }, { headers: getExtCors(req.headers.get('origin')) })
   }
 }
 

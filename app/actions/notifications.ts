@@ -63,8 +63,11 @@ export async function markAllAsRead() {
   }
 }
 
-/** Utilisé par les crons — pas de session nécessaire */
-export async function createNotification(
+/**
+ * Utilisé par les crons et les API internes — pas de session nécessaire.
+ * NON exporté comme server action pour éviter tout appel client non autorisé.
+ */
+async function _createNotification(
   userId: string,
   type: string,
   title: string,
@@ -79,3 +82,6 @@ export async function createNotification(
     console.error("Erreur createNotification:", error);
   }
 }
+
+// Re-export pour usage interne (crons, API routes) — pas exposé comme server action
+export { _createNotification as createNotification };

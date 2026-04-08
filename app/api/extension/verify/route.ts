@@ -3,15 +3,10 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
+import { getExtCors, optionsCors } from "@/lib/extensionAuth";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
-
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: CORS });
+export async function OPTIONS(req: NextRequest) {
+  return optionsCors(req);
 }
 
 export async function GET(req: NextRequest) {
@@ -23,7 +18,7 @@ export async function GET(req: NextRequest) {
   if (!token) {
     return NextResponse.json(
       { ok: false, error: "Token manquant" },
-      { status: 401, headers: CORS },
+      { status: 401, headers: getExtCors(req.headers.get('origin')) },
     );
   }
 
@@ -31,7 +26,7 @@ export async function GET(req: NextRequest) {
   if (!allowed) {
     return NextResponse.json(
       { ok: false, error: "Trop de requêtes. Réessayez dans une minute." },
-      { status: 429, headers: CORS },
+      { status: 429, headers: getExtCors(req.headers.get('origin')) },
     );
   }
 
@@ -43,7 +38,7 @@ export async function GET(req: NextRequest) {
   if (!user) {
     return NextResponse.json(
       { ok: false, error: "Compte introuvable. Créez un compte sur audibot.fr" },
-      { status: 401, headers: CORS },
+      { status: 401, headers: getExtCors(req.headers.get('origin')) },
     );
   }
 
@@ -61,6 +56,6 @@ export async function GET(req: NextRequest) {
       name: user.name || user.email,
       rpaEnabled,
     },
-    { headers: CORS },
+    { headers: getExtCors(req.headers.get('origin')) },
   );
 }

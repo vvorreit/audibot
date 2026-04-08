@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
-import { EXT_CORS, optionsCors } from "@/lib/extensionAuth";
+import { getExtCors, optionsCors } from "@/lib/extensionAuth";
 
 export async function OPTIONS() { return optionsCors(); }
 
@@ -16,6 +16,7 @@ const PORTAILS_VALIDES = [
 ];
 
 export async function POST(req: Request) {
+  const cors = getExtCors(req.headers.get('origin'));
   try {
     const body = await req.json();
     const { syncToken, portail, numeroDossier, motif, dateRejet, montant, noemieCode, noemieLabel, noemieCorrection, genericDetection, rejetType } = body as {
@@ -25,23 +26,23 @@ export async function POST(req: Request) {
     };
 
     if (!syncToken || typeof syncToken !== "string") {
-      return NextResponse.json({ ok: false, error: "syncToken requis" }, { status: 400, headers: EXT_CORS });
+      return NextResponse.json({ ok: false, error: "syncToken requis" }, { status: 400, headers: cors });
     }
 
     const allowed = await rateLimit(`rejet-detecte:${syncToken}`, 50, 60_000);
     if (!allowed) {
-      return NextResponse.json({ ok: false, error: "Trop de requêtes." }, { status: 429, headers: EXT_CORS });
+      return NextResponse.json({ ok: false, error: "Trop de requêtes." }, { status: 429, headers: cors });
     }
 
     if (!portail || !PORTAILS_VALIDES.includes(portail)) {
-      return NextResponse.json({ ok: false, error: "portail invalide" }, { status: 400, headers: EXT_CORS });
+      return NextResponse.json({ ok: false, error: "portail invalide" }, { status: 400, headers: cors });
     }
 
     if (numeroDossier && numeroDossier.length > 100) {
-      return NextResponse.json({ ok: false, error: "numeroDossier trop long" }, { status: 400, headers: EXT_CORS });
+      return NextResponse.json({ ok: false, error: "numeroDossier trop long" }, { status: 400, headers: cors });
     }
     if (motif && motif.length > 100) {
-      return NextResponse.json({ ok: false, error: "motif trop long" }, { status: 400, headers: EXT_CORS });
+      return NextResponse.json({ ok: false, error: "motif trop long" }, { status: 400, headers: cors });
     }
 
     const user = await prisma.user.findUnique({
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
       select: { id: true },
     });
     if (!user) {
-      return NextResponse.json({ ok: false, error: "utilisateur introuvable" }, { status: 404, headers: EXT_CORS });
+      return NextResponse.json({ ok: false, error: "utilisateur introuvable" }, { status: 404, headers: cors });
     }
 
     let dossierId: string | null = null;
@@ -119,9 +120,9 @@ export async function POST(req: Request) {
       message: matched
         ? "Rejet detecte et associe a un dossier existant."
         : "Rejet detecte — aucun dossier correspondant trouve.",
-    }, { headers: EXT_CORS });
+    }, { headers: cors });
   } catch (err) {
     console.error("[api/extension/rejet-detecte] Erreur:", err);
-    return NextResponse.json({ ok: false, error: "Erreur serveur" }, { status: 500, headers: EXT_CORS });
+    return NextResponse.json({ ok: false, error: "Erreur serveur" }, { status: 500, headers: cors });
   }
 }

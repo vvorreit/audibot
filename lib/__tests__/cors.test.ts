@@ -41,30 +41,35 @@ describe("getCorsHeaders", () => {
 });
 
 describe("getPortalCorsHeaders", () => {
-  it("autorise n'importe quelle origin (retourne l'origin)", () => {
-    const origin = "https://portail-mutuelle-exemple.fr";
-    const headers = getPortalCorsHeaders(origin);
-    expect(headers["Access-Control-Allow-Origin"]).toBe(origin);
-  });
-
   it("autorise les origins chrome-extension://", () => {
     const origin = "chrome-extension://abcdefghijklmnopqrstuvwxyz123456";
     const headers = getPortalCorsHeaders(origin);
     expect(headers["Access-Control-Allow-Origin"]).toBe(origin);
   });
 
-  it("retourne * si origin est absent", () => {
-    const headers = getPortalCorsHeaders(undefined);
-    expect(headers["Access-Control-Allow-Origin"]).toBe("*");
+  it("autorise audibot.fr", () => {
+    const headers = getPortalCorsHeaders("https://audibot.fr");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
   });
 
-  it("retourne * si origin est null", () => {
+  it("refuse une origin tierce (fallback audibot.fr)", () => {
+    const origin = "https://portail-mutuelle-exemple.fr";
+    const headers = getPortalCorsHeaders(origin);
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
+  });
+
+  it("retourne audibot.fr si origin est absent", () => {
+    const headers = getPortalCorsHeaders(undefined);
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
+  });
+
+  it("retourne audibot.fr si origin est null", () => {
     const headers = getPortalCorsHeaders(null);
-    expect(headers["Access-Control-Allow-Origin"]).toBe("*");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
   });
 
   it("expose les bons methods et headers", () => {
-    const headers = getPortalCorsHeaders("https://portail-exemple.fr");
+    const headers = getPortalCorsHeaders("https://audibot.fr");
     expect(headers["Access-Control-Allow-Methods"]).toBe("POST, GET, OPTIONS");
     expect(headers["Access-Control-Allow-Headers"]).toBe("Content-Type");
   });

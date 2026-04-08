@@ -472,7 +472,7 @@ export default function Dashboard() {
 
       // Envoi direct à l'extension via bridge.js
       const parsed = JSON.parse(payload);
-      window.postMessage({ type: 'AUDIBOT_DATA', payload: parsed }, '*');
+      window.postMessage({ type: 'AUDIBOT_DATA', payload: parsed }, window.location.origin);
 
       window.dispatchEvent(new Event("audibot_data_copied"));
 

@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
-import { authenticateExtension, EXT_CORS, optionsCors } from "@/lib/extensionAuth"
+import { authenticateExtension, getExtCors, optionsCors } from "@/lib/extensionAuth"
 
 export async function OPTIONS() { return optionsCors() }
 
@@ -14,12 +14,12 @@ export async function GET(req: NextRequest) {
 
     const plan = (auth.user.plan || "").toUpperCase()
     if (plan !== "EQUIPE") {
-      return NextResponse.json({ ok: false, error: "Fonctionnalite reservee au plan Equipe" }, { status: 403, headers: EXT_CORS })
+      return NextResponse.json({ ok: false, error: "Fonctionnalite reservee au plan Equipe" }, { status: 403, headers: getExtCors(req.headers.get('origin')) })
     }
 
     const teamId = auth.user.teamId
     if (!teamId) {
-      return NextResponse.json({ activity: { fillsToday: 0, rejectsToday: 0, acceptanceRate: "—", activeMembers: 0 } }, { headers: EXT_CORS })
+      return NextResponse.json({ activity: { fillsToday: 0, rejectsToday: 0, acceptanceRate: "—", activeMembers: 0 } }, { headers: getExtCors(req.headers.get('origin')) })
     }
 
     const today = new Date()
@@ -76,11 +76,11 @@ export async function GET(req: NextRequest) {
         acceptanceRate,
         activeMembers: memberIds.length,
       },
-    }, { headers: EXT_CORS })
+    }, { headers: getExtCors(req.headers.get('origin')) })
   } catch (e) {
     console.error("[team-activity]", e)
     return NextResponse.json({
       activity: { fillsToday: 0, rejectsToday: 0, acceptanceRate: "—", activeMembers: 0 },
-    }, { headers: EXT_CORS })
+    }, { headers: getExtCors(req.headers.get('origin')) })
   }
 }

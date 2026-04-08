@@ -80,9 +80,9 @@ describe("extractToken", () => {
     expect(extractToken(req)).toBe("my-sync-token");
   });
 
-  it("extracts token from query parameter", () => {
+  it("ignores query parameter (removed for security)", () => {
     const req = makeReq({ queryToken: "query-token" });
-    expect(extractToken(req)).toBe("query-token");
+    expect(extractToken(req)).toBe("");
   });
 
   it("extracts token from body", () => {
@@ -168,7 +168,7 @@ describe("authenticateExtension", () => {
     await authenticateExtension(req);
     expect(mockFindUnique).toHaveBeenCalledWith({
       where: { syncToken: "lookup-token" },
-      select: { id: true, plan: true, teamId: true, isBanned: true },
+      select: { id: true, plan: true, teamId: true },
     });
   });
 });

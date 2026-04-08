@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
-import { authenticateExtension, EXT_CORS, optionsCors } from "@/lib/extensionAuth"
+import { authenticateExtension, getExtCors, optionsCors } from "@/lib/extensionAuth"
 
 export async function OPTIONS() { return optionsCors() }
 
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const { hostname, devis, url } = body
     if (!hostname || !devis) {
-      return NextResponse.json({ ok: false, error: "hostname et devis requis" }, { status: 400, headers: EXT_CORS })
+      return NextResponse.json({ ok: false, error: "hostname et devis requis" }, { status: 400, headers: getExtCors(req.headers.get('origin')) })
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    return NextResponse.json({ ok: true }, { headers: EXT_CORS })
+    return NextResponse.json({ ok: true }, { headers: getExtCors(req.headers.get('origin')) })
   } catch (e) {
     console.error("[devis]", e)
-    return NextResponse.json({ ok: false }, { status: 500, headers: EXT_CORS })
+    return NextResponse.json({ ok: false }, { status: 500, headers: getExtCors(req.headers.get('origin')) })
   }
 }

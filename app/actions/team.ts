@@ -167,6 +167,11 @@ export async function acceptInvite(token: string) {
     throw new Error("Invitation invalide ou expirée.");
   }
 
+  // Vérifier que l'email de l'invitation correspond à l'utilisateur connecté
+  if (invitation.email.toLowerCase() !== session.user.email.toLowerCase()) {
+    throw new Error("Cette invitation ne vous est pas destinée.");
+  }
+
   const userId = session.user.id;
 
   // Check seat limit before accepting

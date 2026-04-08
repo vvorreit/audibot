@@ -1,7 +1,5 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { auditLog } from "@/lib/adminAudit";
 import { checkAdmin } from "./auth";
@@ -9,10 +7,7 @@ import { checkAdmin } from "./auth";
 const VALID_PLANS = ["FREE", "ESSENTIEL", "PRO", "CABINET", "RESEAU", "EQUIPE"] as const;
 
 export async function setUserPlan(userId: string, plan: string) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Accès refusé.");
-  const admin = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true, role: true } });
-  if (admin?.role !== "ADMIN") throw new Error("Accès refusé.");
+  const admin = await checkAdmin();
 
   if (!VALID_PLANS.includes(plan as typeof VALID_PLANS[number])) {
     return { error: `Plan invalide. Valeurs acceptées : ${VALID_PLANS.join(", ")}` };
@@ -30,22 +25,16 @@ export async function setUserPlan(userId: string, plan: string) {
 }
 
 export async function toggleUserAdminRole(userId: string, currentRole: string) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Accès refusé.");
-  const self = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (self?.role !== "ADMIN") throw new Error("Accès refusé.");
-  if (self?.id === userId) throw new Error("Vous ne pouvez pas modifier votre propre rôle.");
+  const admin = await checkAdmin();
+  if (admin.id === userId) throw new Error("Vous ne pouvez pas modifier votre propre rôle.");
   const newRole = currentRole === "ADMIN" ? "USER" : "ADMIN";
   const updated = await prisma.user.update({ where: { id: userId }, data: { role: newRole }, select: { id: true, role: true, email: true } });
-  await auditLog({ userId: self.id, action: "user.role.change", target: userId, meta: { newRole, email: updated.email } });
+  await auditLog({ userId: admin.id, action: "user.role.change", target: userId, meta: { newRole, email: updated.email } });
   return updated;
 }
 
 export async function toggleUserProStatus(userId: string, currentStatus: boolean) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Accès refusé.");
-  const admin = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true, role: true } });
-  if (admin?.role !== "ADMIN") throw new Error("Accès refusé.");
+  const admin = await checkAdmin();
 
   const updated = await prisma.user.update({
     where: { id: userId },
@@ -61,7 +50,7 @@ export async function grantFreeMonths(
   months: number,
   note?: string
 ): Promise<{ ok: boolean; freeUntil: string; stripeCredit: boolean }> {
-  await checkAdmin();
+  const admin = await checkAdmin();
 
   if (!Number.isInteger(months) || months <= 0 || months > 24) {
     throw new Error("Le nombre de mois doit être un entier entre 1 et 24.");
@@ -105,18 +94,12 @@ export async function grantFreeMonths(
     }
   }
 
-  const session = await getServerSession(authOptions);
-  if (session?.user?.id) {
-    await auditLog({ userId: session.user.id, action: "user.free_months.grant", target: userId, meta: { months, note, freeUntil: newFreeUntil.toISOString(), stripeCredit, email: user.email } });
-  }
+  await auditLog({ userId: admin.id, action: "user.free_months.grant", target: userId, meta: { months, note, freeUntil: newFreeUntil.toISOString(), stripeCredit, email: user.email } });
   return { ok: true, freeUntil: newFreeUntil.toISOString(), stripeCredit };
 }
 
 export async function revokeFreeMonths(userId: string): Promise<void> {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Accès refusé.");
-  const admin = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true, role: true } });
-  if (admin?.role !== "ADMIN") throw new Error("Accès refusé.");
+  const admin = await checkAdmin();
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
   await prisma.user.update({
@@ -127,10 +110,7 @@ export async function revokeFreeMonths(userId: string): Promise<void> {
 }
 
 export async function deleteUserAdmin(userId: string): Promise<void> {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) throw new Error("Accès refusé.");
-  const admin = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true, role: true } });
-  if (admin?.role !== "ADMIN") throw new Error("Accès refusé.");
+  const admin = await checkAdmin();
   if (admin.id === userId) throw new Error("Impossible de supprimer son propre compte.");
 
   const user = await prisma.user.findUnique({
@@ -198,8 +178,14 @@ export async function unbanUserAdmin(userId: string) {
   await auditLog({ userId: admin.id, action: "user.unban", target: userId, meta: { email: user.email } });
 }
 
+const VALID_TEAM_ROLES = ["MEMBER", "ADMIN", "OWNER"] as const;
+
 export async function assignUserToTeam(userId: string, teamId: string, role: string = "MEMBER") {
   const admin = await checkAdmin();
+
+  if (!VALID_TEAM_ROLES.includes(role as typeof VALID_TEAM_ROLES[number])) {
+    throw new Error(`Rôle invalide. Valeurs acceptées : ${VALID_TEAM_ROLES.join(", ")}`);
+  }
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, teamId: true } });
   if (!user) throw new Error("Utilisateur introuvable");
