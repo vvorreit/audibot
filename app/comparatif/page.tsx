@@ -6,12 +6,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "OptiBot vs saisie manuelle — comparatif complet pour opticiens",
+  title: "AudiBot vs saisie manuelle — comparatif complet pour opticiens",
   description:
-    "Combien vous coûte vraiment la saisie manuelle du tiers payant ? Temps perdu, rejets, trésorerie bloquée… Comparatif chiffré OptiBot vs méthode traditionnelle.",
-  alternates: { canonical: "https://optibot.fr/comparatif" },
+    "Combien vous coûte vraiment la saisie manuelle du tiers payant ? Temps perdu, rejets, trésorerie bloquée… Comparatif chiffré AudiBot vs méthode traditionnelle.",
+  alternates: { canonical: "https://audibot.fr/comparatif" },
   openGraph: {
-    title: "OptiBot vs saisie manuelle — comparatif pour opticiens",
+    title: "AudiBot vs saisie manuelle — comparatif pour opticiens",
     description: "Calculez ce que vous perdez chaque mois à saisir manuellement vos dossiers tiers payant.",
     type: "website",
   },
@@ -40,18 +40,18 @@ const compareSchema = {
     },
     {
       "@type": "Question",
-      name: "Quelle est la différence entre OptiBot et la saisie manuelle ?",
+      name: "Quelle est la différence entre AudiBot et la saisie manuelle ?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "OptiBot réduit la saisie d'un dossier tiers payant de 10-15 minutes à moins de 30 secondes grâce à l'OCR local et au remplissage automatique des portails mutuelles. Le taux de rejet est également réduit car l'OCR élimine les erreurs de frappe humaines.",
+        text: "AudiBot réduit la saisie d'un dossier tiers payant de 10-15 minutes à moins de 30 secondes grâce à l'OCR local et au remplissage automatique des portails mutuelles. Le taux de rejet est également réduit car l'OCR élimine les erreurs de frappe humaines.",
       },
     },
     {
       "@type": "Question",
-      name: "OptiBot remplace-t-il une secrétaire pour le tiers payant ?",
+      name: "AudiBot remplace-t-il une secrétaire pour le tiers payant ?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "OptiBot automatise la saisie et le suivi des dossiers tiers payant, ce qui peut remplacer une part significative du travail administratif lié aux mutuelles. Une secrétaire à temps partiel (10h/semaine de TP) représente environ 1 500€/mois vs 39,90€ pour OptiBot Solo.",
+        text: "AudiBot automatise la saisie et le suivi des dossiers tiers payant, ce qui peut remplacer une part significative du travail administratif lié aux mutuelles. Une secrétaire à temps partiel (10h/semaine de TP) représente environ 1 500€/mois vs 39,90€ pour AudiBot Solo.",
       },
     },
   ],
@@ -61,62 +61,62 @@ const comparaisonRows = [
   {
     critere: "Temps par dossier",
     manuel: "8 à 15 min",
-    optibot: "< 30 secondes",
-    avantage: "optibot",
+    audibot: "< 30 secondes",
+    avantage: "audibot",
   },
   {
     critere: "Erreurs de saisie (inversions NSS, RPPS…)",
     manuel: "Fréquentes — fatigue, urgence",
-    optibot: "Quasi nulles — OCR + validation",
-    avantage: "optibot",
+    audibot: "Quasi nulles — OCR + validation",
+    avantage: "audibot",
   },
   {
     critere: "Taux de rejet moyen",
     manuel: "3 à 8% selon les cabinets",
-    optibot: "Réduit significativement",
-    avantage: "optibot",
+    audibot: "Réduit significativement",
+    avantage: "audibot",
   },
   {
     critere: "Suivi dossiers en temps réel",
     manuel: "Tableur Excel ou post-it",
-    optibot: "Dashboard centralisé + alertes",
-    avantage: "optibot",
+    audibot: "Dashboard centralisé + alertes",
+    avantage: "audibot",
   },
   {
     critere: "Détection automatique des rejets",
     manuel: "❌ Manuel — découverte tardive",
-    optibot: "✅ Alerte immédiate + motif",
-    avantage: "optibot",
+    audibot: "✅ Alerte immédiate + motif",
+    avantage: "audibot",
   },
   {
     critere: "Relances mutuelles",
     manuel: "Manuelle — souvent oubliée",
-    optibot: "Automatique selon règles configurées",
-    avantage: "optibot",
+    audibot: "Automatique selon règles configurées",
+    avantage: "audibot",
   },
   {
     critere: "Compatibilité portails mutuelles",
     manuel: "Tous (accès direct)",
-    optibot: "25+ portails + Smart Fill universel",
+    audibot: "25+ portails + Smart Fill universel",
     avantage: "neutre",
   },
   {
     critere: "Conformité RGPD données patients",
     manuel: "Données saisies sur les portails",
-    optibot: "OCR local — aucune donnée envoyée",
-    avantage: "optibot",
+    audibot: "OCR local — aucune donnée envoyée",
+    avantage: "audibot",
   },
   {
     critere: "Coût annuel (solo)",
     manuel: "0€ direct + ~6 000€ en temps perdu",
-    optibot: "479€/an (plan Solo)",
-    avantage: "optibot",
+    audibot: "479€/an (plan Solo)",
+    avantage: "audibot",
   },
   {
     critere: "Multi-postes",
     manuel: "Possible — mais multiplicatif",
-    optibot: "Plans Cabinet (3) et Réseau (5+)",
-    avantage: "optibot",
+    audibot: "Plans Cabinet (3) et Réseau (5+)",
+    avantage: "audibot",
   },
 ];
 
@@ -167,7 +167,7 @@ export default function ComparatifPage() {
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-sm">O</div>
-              <span className="text-lg font-bold tracking-tight uppercase text-slate-900">OptiBot</span>
+              <span className="text-lg font-bold tracking-tight uppercase text-slate-900">AudiBot</span>
             </Link>
             <Link href="/dashboard" className="px-5 py-2.5 bg-blue-600 text-white font-black rounded-xl text-xs hover:bg-blue-700 transition-all uppercase tracking-widest">
               Essai gratuit 14j
@@ -183,7 +183,7 @@ export default function ComparatifPage() {
               Comparatif
             </span>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-5">
-              OptiBot vs saisie manuelle —<br />
+              AudiBot vs saisie manuelle —<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                 ce que ça vous coûte vraiment
               </span>
@@ -219,7 +219,7 @@ export default function ComparatifPage() {
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left py-4 px-6 text-xs font-black text-slate-500 uppercase tracking-widest w-1/3">Critère</th>
                     <th className="py-4 px-5 text-center text-xs font-black text-red-500 uppercase tracking-widest">Saisie manuelle</th>
-                    <th className="py-4 px-5 text-center text-xs font-black text-blue-600 uppercase tracking-widest">OptiBot</th>
+                    <th className="py-4 px-5 text-center text-xs font-black text-blue-600 uppercase tracking-widest">AudiBot</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -228,14 +228,14 @@ export default function ComparatifPage() {
                       <td className={`py-4 px-6 text-sm font-bold text-slate-700 ${i % 2 === 1 ? "bg-slate-50/50" : "bg-white"}`}>{row.critere}</td>
                       <td className="py-4 px-5">
                         <div className="flex items-start justify-center gap-2">
-                          {row.avantage === "optibot" && <XCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />}
-                          <span className={`text-sm font-medium text-center ${row.avantage === "optibot" ? "text-slate-500" : "text-slate-700"}`}>{row.manuel}</span>
+                          {row.avantage === "audibot" && <XCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />}
+                          <span className={`text-sm font-medium text-center ${row.avantage === "audibot" ? "text-slate-500" : "text-slate-700"}`}>{row.manuel}</span>
                         </div>
                       </td>
                       <td className="py-4 px-5">
                         <div className="flex items-start justify-center gap-2">
-                          {row.avantage === "optibot" && <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />}
-                          <span className={`text-sm font-medium text-center ${row.avantage === "optibot" ? "text-slate-800 font-bold" : "text-slate-700"}`}>{row.optibot}</span>
+                          {row.avantage === "audibot" && <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />}
+                          <span className={`text-sm font-medium text-center ${row.avantage === "audibot" ? "text-slate-800 font-bold" : "text-slate-700"}`}>{row.audibot}</span>
                         </div>
                       </td>
                     </tr>
@@ -254,7 +254,7 @@ export default function ComparatifPage() {
                 <div className="grid md:grid-cols-3 gap-6 text-center mb-10">
                   {[
                     { label: "Saisie manuelle — coût annuel", value: "> 10 000€", sub: "temps + rejets + erreurs", color: "text-red-400" },
-                    { label: "OptiBot Solo — coût annuel", value: "479€", sub: "39,90€/mois × 12", color: "text-blue-400" },
+                    { label: "AudiBot Solo — coût annuel", value: "479€", sub: "39,90€/mois × 12", color: "text-blue-400" },
                     { label: "Économie nette", value: "~9 500€", sub: "dès la première année", color: "text-green-400" },
                   ].map(c => (
                     <div key={c.label} className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -298,7 +298,7 @@ export default function ComparatifPage() {
                 href="/dashboard"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 uppercase tracking-widest text-sm group"
               >
-                Essayer OptiBot gratuitement
+                Essayer AudiBot gratuitement
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link

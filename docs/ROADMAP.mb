@@ -1,4 +1,4 @@
-# OptiBot — ROADMAP Enrichie (Brainstorming Collectif)
+# AudiBot — ROADMAP Enrichie (Brainstorming Collectif)
 
 **Date de mise à jour** : 2026-03-25
 **Base** : Analyse Product Manager + Ingénieur Système senior (v0 originale)
@@ -97,7 +97,7 @@ Un cabinet moyen fait 80–150 remboursements mutuelles/mois. ESSENTIEL est donc
 | **Intégration groupements/franchises** (Krys, Optic 2000…) | Revenu | 🔴 Critique | Élevé |
 | **Rapport mensuel automatique PDF** | Rétention | 🟡 Moyen | Faible |
 
-Le dashboard ROI in-app est clé : si l'opticien voit "ce mois-ci, OptiBot vous a économisé 4h30 et récupéré 1 240€", le churn s'effondre et l'upsell se fait seul.
+Le dashboard ROI in-app est clé : si l'opticien voit "ce mois-ci, AudiBot vous a économisé 4h30 et récupéré 1 240€", le churn s'effondre et l'upsell se fait seul.
 
 ## Features à déprioritiser (ROI marketing faible)
 
@@ -186,7 +186,7 @@ L'extension doit disparaître visuellement au quotidien — elle s'active, fait 
 3. **Habitude** — historique + raccourcis créent le réflexe quotidien
 4. **Simplicité radicale** — une seule action principale par écran, jamais de choix superflu
 
-L'onboarding doit être une démo live sur un vrai dossier fictif, pas un tutoriel. Si l'opticien voit OptiBot remplir un formulaire en 8 secondes lors du setup, il est convaincu.
+L'onboarding doit être une démo live sur un vrai dossier fictif, pas un tutoriel. Si l'opticien voit AudiBot remplir un formulaire en 8 secondes lors du setup, il est convaincu.
 
 ---
 
@@ -208,7 +208,7 @@ L'onboarding doit être une démo live sur un vrai dossier fictif, pas un tutori
 **P0 — non-négociables pour l'adoption :**
 
 - **Wizard d'activation (3 étapes max)** : Install → Premier scan guidé → Confirmation "✅ 1ère fiche remplie en X secondes". Sans ça, l'onboarding P1 arrive trop tard.
-- **Email d'activation J+1 si 0 scan** : Trigger automatique. "Vous n'avez pas encore testé OptiBot — voici une démo 90s." Coût quasi-nul, impact énorme.
+- **Email d'activation J+1 si 0 scan** : Trigger automatique. "Vous n'avez pas encore testé AudiBot — voici une démo 90s." Coût quasi-nul, impact énorme.
 
 **P1 :**
 
@@ -290,11 +290,11 @@ L'onboarding doit être une démo live sur un vrai dossier fictif, pas un tutori
 
 ## Vision Data/ML
 
-**OptiBot doit devenir le "pilote automatique" du tiers-payant.**
+**AudiBot doit devenir le "pilote automatique" du tiers-payant.**
 
 ```
-Aujourd'hui : Opticien déclenche → OptiBot exécute
-Demain      : OptiBot anticipe → Opticien valide
+Aujourd'hui : Opticien déclenche → AudiBot exécute
+Demain      : AudiBot anticipe → Opticien valide
 ```
 
 **3 axes :**
@@ -328,7 +328,7 @@ Demain      : OptiBot anticipe → Opticien valide
 
 **P0 — Résilience sélecteurs**
 > Given un portail mutuelle a mis à jour son DOM,
-> When OptiBot tente de remplir un formulaire,
+> When AudiBot tente de remplir un formulaire,
 > Then il détecte l'échec, log l'erreur avec contexte (portail, champ), et notifie l'équipe sans bloquer l'opticien.
 
 **P0 — Onboarding (à remonter)**
@@ -453,4 +453,4 @@ dark mode, i18n, API publique, ML, referral.
 
 ---
 
-*Brainstorming collectif — 2026-03-25 · OptiBot Mission Contrôle*
+*Brainstorming collectif — 2026-03-25 · AudiBot Mission Contrôle*

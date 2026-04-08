@@ -42,7 +42,7 @@ export async function getChurnRetentionOffer(reason: ChurnReasonType): Promise<{
     return {
       offer: "free_month",
       eligible: true,
-      message: "On vous offre 1 mois gratuit pour vous laisser le temps de voir la valeur d'OptiBot.",
+      message: "On vous offre 1 mois gratuit pour vous laisser le temps de voir la valeur d'AudiBot.",
     };
   }
 
@@ -185,7 +185,7 @@ async function sendChurnNotificationEmail(opts: {
 
   try {
     await sendMail({
-      to: "contact@optibot.fr",
+      to: "contact@audibot.fr",
       subject: `[Churn] ${opts.plan} — Raison : ${reasonLabel} — Retained : ${opts.retained ? "oui" : "non"}`,
       html: `
 <!DOCTYPE html>

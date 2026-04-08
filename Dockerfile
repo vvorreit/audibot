@@ -19,9 +19,8 @@ ENV NODE_ENV=production
 ARG NEXT_PUBLIC_GA_ID
 ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 
-# Génération du client Prisma
+# DATABASE_URL placeholder pour prisma generate + next build
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
-RUN npx prisma generate
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
 

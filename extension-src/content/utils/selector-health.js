@@ -35,7 +35,7 @@ function reportSelectorHealth(portal, selectorName, found) {
 
 /**
  * Envoie le batch de pings au serveur via le background service worker.
- * Utilise le mecanisme OPTIBOT_PING existant pour eviter les problemes CORS.
+ * Utilise le mecanisme AUDIBOT_PING existant pour eviter les problemes CORS.
  */
 function flushHealthPings() {
   if (_healthFlushTimer) {
@@ -47,14 +47,14 @@ function flushHealthPings() {
 
   var pingsToSend = _healthPingQueue.splice(0);
 
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return; /* pas authentifie, on jette les pings */
 
     chrome.runtime.sendMessage({
-      type: "OPTIBOT_PING",
+      type: "AUDIBOT_PING",
       payloads: [{
-        url: "https://optibot.fr/api/extension/selector-health",
+        url: "https://audibot.fr/api/extension/selector-health",
         body: {
           syncToken: auth.syncToken,
           pings: pingsToSend,
@@ -104,16 +104,16 @@ function checkAndRepairSelectors(hostname) {
   var skipRate = stats.skipped / stats.total;
   if (skipRate < 0.3) return; /* Taux de skip acceptable */
 
-  console.warn("[OptiBot] Taux de skip eleve sur " + hostname + " (" + Math.round(skipRate * 100) + "%) — envoi snapshot DOM pour reparation");
+  console.warn("[AudiBot] Taux de skip eleve sur " + hostname + " (" + Math.round(skipRate * 100) + "%) — envoi snapshot DOM pour reparation");
 
   /* Capturer un snapshot DOM anonymise (sans valeurs de champs) */
   var snapshot = captureAnonymizedSnapshot();
 
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return;
 
-    fetch("https://optibot.fr/api/extension/selector-repair", {
+    fetch("https://audibot.fr/api/extension/selector-repair", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function checkAndRepairSelectors(hostname) {
         snapshot: snapshot,
         ts: Date.now()
       })
-    }).catch(function(err) { console.warn("[OptiBot] selector repair submission failed:", err); });
+    }).catch(function(err) { console.warn("[AudiBot] selector repair submission failed:", err); });
   });
 
   /* Reset stats apres envoi */

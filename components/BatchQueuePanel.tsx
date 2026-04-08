@@ -76,7 +76,7 @@ export default function BatchQueuePanel() {
 
   const loadBatches = useCallback(async () => {
     /* Lire les cles sauvegardees */
-    const keysRaw = localStorage.getItem("optibot_batch_keys");
+    const keysRaw = localStorage.getItem("audibot_batch_keys");
     if (!keysRaw) return;
     const keys: Record<string, string> = JSON.parse(keysRaw);
     const batchIds = Object.keys(keys);
@@ -97,7 +97,7 @@ export default function BatchQueuePanel() {
         } else {
           /* Batch entierement traite — nettoyer la cle */
           delete keys[bid];
-          localStorage.setItem("optibot_batch_keys", JSON.stringify(keys));
+          localStorage.setItem("audibot_batch_keys", JSON.stringify(keys));
         }
       } catch {
         /* batch pas accessible */
@@ -123,10 +123,10 @@ export default function BatchQueuePanel() {
       const keyB64 = uint8ArrayToBase64(rawKey);
 
       /* Sauvegarder la cle dans localStorage */
-      const keysRaw = localStorage.getItem("optibot_batch_keys");
+      const keysRaw = localStorage.getItem("audibot_batch_keys");
       const keys: Record<string, string> = keysRaw ? JSON.parse(keysRaw) : {};
       keys[batchId] = keyB64;
-      localStorage.setItem("optibot_batch_keys", JSON.stringify(keys));
+      localStorage.setItem("audibot_batch_keys", JSON.stringify(keys));
 
       const base = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const url = `${base}/scan/batch/${batchId}#${keyB64}`;
@@ -146,7 +146,7 @@ export default function BatchQueuePanel() {
   }
 
   async function processItem(batchId: string, item: BatchItem) {
-    const keysRaw = localStorage.getItem("optibot_batch_keys");
+    const keysRaw = localStorage.getItem("audibot_batch_keys");
     if (!keysRaw) return;
     const keys: Record<string, string> = JSON.parse(keysRaw);
     const key = keys[batchId];
@@ -157,7 +157,7 @@ export default function BatchQueuePanel() {
       const payload = await decryptBlob(item.blob, key);
       /* Injecter dans le dashboard */
       window.dispatchEvent(
-        new CustomEvent("optibot_scan_received", { detail: payload })
+        new CustomEvent("audibot_scan_received", { detail: payload })
       );
 
       /* Marquer comme traite */

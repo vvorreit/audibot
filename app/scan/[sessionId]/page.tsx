@@ -110,7 +110,7 @@ export default function MobileScanPage({ params }: { params: Promise<{ sessionId
   useEffect(() => {
     const metas: [string, string][] = [
       ["apple-mobile-web-app-capable", "yes"],
-      ["apple-mobile-web-app-title", "OptiBot Scan"],
+      ["apple-mobile-web-app-title", "AudiBot Scan"],
       ["theme-color", "#2563eb"],
     ];
     for (const [name, content] of metas) {
@@ -335,7 +335,7 @@ export default function MobileScanPage({ params }: { params: Promise<{ sessionId
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-xl">O</div>
-          <span className="text-xl font-black tracking-tight">OptiBot</span>
+          <span className="text-xl font-black tracking-tight">AudiBot</span>
         </div>
 
         {step === "init" && (

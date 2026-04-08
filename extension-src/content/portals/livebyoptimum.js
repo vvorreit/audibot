@@ -281,10 +281,10 @@ export default {
       if (!client.nom && !client.nss && equipements.length === 0) return false;
 
       return new Promise((resolve) => {
-        chrome.storage.local.get(['optibot_cache'], (result) => {
-          const existing = (result.optibot_cache || {}).current || {};
+        chrome.storage.local.get(['audibot_cache'], (result) => {
+          const existing = (result.audibot_cache || {}).current || {};
           chrome.storage.local.set({
-            optibot_cache: { current: { ...existing, ...client } }
+            audibot_cache: { current: { ...existing, ...client } }
           }, () => resolve(true));
         });
       });

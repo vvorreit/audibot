@@ -11,7 +11,7 @@ function initFieldFeedback() {
     var target = e.target;
     if (!target) return;
 
-    /* Vérifier si c'est un input/select/textarea potentiellement rempli par OptiBot */
+    /* Vérifier si c'est un input/select/textarea potentiellement rempli par AudiBot */
     var isFormField = target.matches('input, select, textarea, [contenteditable="true"]');
     if (!isFormField) return;
 
@@ -32,7 +32,7 @@ function showFeedbackMenu(x, y, targetEl) {
   _feedbackTargetEl = targetEl;
 
   var menu = document.createElement('div');
-  menu.id = 'optibot-feedback-menu';
+  menu.id = 'audibot-feedback-menu';
   menu.style.cssText = [
     'position:fixed',
     'z-index:2147483647',
@@ -50,7 +50,7 @@ function showFeedbackMenu(x, y, targetEl) {
 
   var btn = document.createElement('button');
   btn.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;background:none;border:none;color:white;cursor:pointer;border-radius:6px;text-align:left;';
-  btn.innerHTML = '<span style="font-size:16px">🐛</span><span>Signaler ce champ à OptiBot</span>';
+  btn.innerHTML = '<span style="font-size:16px">🐛</span><span>Signaler ce champ à AudiBot</span>';
   btn.addEventListener('mouseenter', function() { btn.style.background = '#334155'; });
   btn.addEventListener('mouseleave', function() { btn.style.background = 'none'; });
   btn.addEventListener('click', function(e) {
@@ -124,11 +124,11 @@ function sendFieldFeedback(el) {
   };
 
   /* Toast de confirmation immédiate */
-  showFeedbackToast('⏳ Signalement envoyé à OptiBot…');
+  showFeedbackToast('⏳ Signalement envoyé à AudiBot…');
 
   /* Envoyer via background (évite les restrictions CORS du content script) */
   chrome.runtime.sendMessage({
-    type: 'OPTIBOT_FIELD_FEEDBACK',
+    type: 'AUDIBOT_FIELD_FEEDBACK',
     payload: payload
   }, function(response) {
     if (response && response.ok) {
@@ -140,11 +140,11 @@ function sendFieldFeedback(el) {
 }
 
 function showFeedbackToast(message) {
-  var existing = document.getElementById('optibot-feedback-toast');
+  var existing = document.getElementById('audibot-feedback-toast');
   if (existing) existing.remove();
 
   var toast = document.createElement('div');
-  toast.id = 'optibot-feedback-toast';
+  toast.id = 'audibot-feedback-toast';
   toast.style.cssText = [
     'position:fixed',
     'bottom:24px',

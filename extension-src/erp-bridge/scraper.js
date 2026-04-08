@@ -1,4 +1,4 @@
-/* ── OptiBot — ERP Bridge: Smart scrape & patient page detection ─────── */
+/* ── AudiBot — ERP Bridge: Smart scrape & patient page detection ─────── */
 
 import { querySelectorAllDeep } from "./dom.js";
 import { matchFieldAgainst } from "./matching.js";
@@ -77,7 +77,7 @@ export async function smartScrape(adapter, getScrapingAliases) {
 
   var scanDuration = Math.round(performance.now() - scanStart);
   if (scanDuration > 500) {
-    console.info("[OptiBot] ERP scan: " + inputs.length + " fields in " + scanDuration + "ms");
+    console.info("[AudiBot] ERP scan: " + inputs.length + " fields in " + scanDuration + "ms");
   }
 
   /* Hook post-scrape */
@@ -161,7 +161,7 @@ export async function performScrape(adapter, getScrapingAliases) {
 
   await writeEncryptedCache(cacheObj);
 
-  chrome.runtime.sendMessage({ type: "OPTIBOT_COSIUM_SCRAPED", fields: check.fieldCount });
+  chrome.runtime.sendMessage({ type: "AUDIBOT_COSIUM_SCRAPED", fields: check.fieldCount });
   showToast("ERP \u2713 — " + check.fieldCount + " champs lus", "success", adapter);
 }
 
@@ -175,13 +175,13 @@ export function setupScrapeButton(adapter, getScrapingAliases) {
   if (_autoDetectionActive) return;
   _autoDetectionActive = true;
 
-  var BTN_ID = "optibot-erp-scrape-btn";
+  var BTN_ID = "audibot-erp-scrape-btn";
 
   function createButton() {
     if (document.getElementById(BTN_ID)) return;
     /* Ne pas créer le bouton si le portail a déjà son propre bouton Mémoriser
        (flag globalThis posé par le content script, ou DOM check en fallback) */
-    if (globalThis._optibotHasPortalSync || document.getElementById("optibot-sync-btn")) return;
+    if (globalThis._audibotHasPortalSync || document.getElementById("audibot-sync-btn")) return;
 
     var btn = document.createElement("button");
     btn.type = "button";
@@ -211,7 +211,7 @@ export function setupScrapeButton(adapter, getScrapingAliases) {
         btn.style.background = "#059669";
         setTimeout(function() { resetBtn(); }, 2500);
       } catch(e) {
-        console.warn("[OptiBot] ERP scrape failed:", e);
+        console.warn("[AudiBot] ERP scrape failed:", e);
         btn.textContent = "\u274C Erreur de lecture";
         btn.style.background = "#ef4444";
         setTimeout(function() { resetBtn(); }, 2000);

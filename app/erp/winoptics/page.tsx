@@ -3,10 +3,10 @@ import PortailDetailPage from "@/components/PortailDetailPage";
 import type { PortailDetailData } from "@/components/PortailDetailPage";
 
 export const metadata: Metadata = {
-  title: "OptiBot × Winoptics — Remplissage automatique ERP leader opticien",
+  title: "AudiBot × Winoptics — Remplissage automatique ERP leader opticien",
   description:
-    "Automatisez la saisie dans Winoptics avec OptiBot. Smart Fill universel disponible pour le logiciel ERP leader des opticiens en France.",
-  alternates: { canonical: "https://optibot.fr/erp/winoptics" },
+    "Automatisez la saisie dans Winoptics avec AudiBot. Smart Fill universel disponible pour le logiciel ERP leader des opticiens en France.",
+  alternates: { canonical: "https://audibot.fr/erp/winoptics" },
 };
 
 const data: PortailDetailData = {
@@ -14,7 +14,7 @@ const data: PortailDetailData = {
   type: "erp",
   domain: "winoptics.fr",
   networkDescription:
-    "Winoptics est le logiciel ERP leader pour les opticiens en France. OptiBot propose le Smart Fill universel pour automatiser vos saisies.",
+    "Winoptics est le logiciel ERP leader pour les opticiens en France. AudiBot propose le Smart Fill universel pour automatiser vos saisies.",
   portailUrl: "winoptics.fr",
   status: "Smart Fill disponible",
   filledFields: [

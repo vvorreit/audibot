@@ -6,8 +6,8 @@ import { performFill } from "./standard-fill/index.js";
 /* iframes cross-domain postMessage listener */
 export function initFrameListener() {
   window.addEventListener("message", function(e) {
-    if (!e.data || e.data.type !== "OPTIBOT_FILL_FRAME" || !e.data.payload) return;
-    if (globalThis.optiTrace) globalThis.optiTrace.log("IFRAME", "postMessage received: OPTIBOT_FILL_FRAME", { origin: e.origin });
+    if (!e.data || e.data.type !== "AUDIBOT_FILL_FRAME" || !e.data.payload) return;
+    if (globalThis.optiTrace) globalThis.optiTrace.log("IFRAME", "postMessage received: AUDIBOT_FILL_FRAME", { origin: e.origin });
     /* Valider l'origine : accepter same-origin + iframes enfants connues */
     if (e.origin !== window.location.origin) {
       var isKnownFrame = false;
@@ -21,7 +21,7 @@ export function initFrameListener() {
         } catch(err) {}
       }
       if (!isKnownFrame) {
-        console.warn("[OptiBot] postMessage rejet\u00E9 \u2014 iframe non reconnue :", e.origin);
+        console.warn("[AudiBot] postMessage rejet\u00E9 \u2014 iframe non reconnue :", e.origin);
         return;
       }
     }
@@ -41,7 +41,7 @@ export function initFrameListener() {
     });
     /* Accuse de reception vers la source */
     if (e.source) {
-      try { e.source.postMessage({ type: "OPTIBOT_FILL_FRAME_ACK", ok: true }, e.origin); } catch(err) {}
+      try { e.source.postMessage({ type: "AUDIBOT_FILL_FRAME_ACK", ok: true }, e.origin); } catch(err) {}
     }
   }, false);
 }

@@ -50,7 +50,7 @@ export default function PricingSection() {
         <p className="text-center text-sm text-slate-400 font-medium mb-14">
           La saisie manuelle coûte{" "}
           <span className="font-black text-red-500">15 000€/an</span> en temps perdu.
-          OptiBot commence à{" "}
+          AudiBot commence à{" "}
           <span className="font-black text-green-600">{isAnnual ? "33,92" : "39,90"}€/mois HT</span>.
         </p>
 

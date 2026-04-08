@@ -11,7 +11,7 @@ var _lastClickSelector = "";
 export async function onRecorderClick(e) {
   if (!recorderState || recorderState.paused) return;
   var el = e.target;
-  if (!el || el.id === "optibot-recorder-badge" || el.closest("#optibot-recorder-badge") || el.closest("#optibot-recorder-panel")) return;
+  if (!el || el.id === "audibot-recorder-badge" || el.closest("#audibot-recorder-badge") || el.closest("#audibot-recorder-panel")) return;
 
   /* Ignorer les champs de saisie (gérés par blur) */
   if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT") return;
@@ -54,7 +54,7 @@ export async function onRecorderClick(e) {
       lastStepAdded.waitFor = "input:not([type=hidden]), select, button[type=submit], form";
       saveRecorderState();
       showRPAToast("\uD83D\uDCC4 Nouvelle page \u2014 continuez votre saisie", "info");
-      var recBadge = document.getElementById("optibot-recorder-badge");
+      var recBadge = document.getElementById("audibot-recorder-badge");
       if (recBadge) {
         recBadge.innerHTML = '<span style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> Enregistrement (' + recorderState.etapes.length + ' \u00E9tapes)';
       }

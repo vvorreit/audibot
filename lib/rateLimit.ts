@@ -26,7 +26,7 @@ function getLimiter(limit: number, windowMs: number): Ratelimit | null {
         redis,
         limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
         analytics: false,
-        prefix: "optibot:rl",
+        prefix: "audibot:rl",
       })
     );
   }

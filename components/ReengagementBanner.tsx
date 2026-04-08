@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, ScanLine } from "lucide-react";
 
-const DISMISS_KEY = "optibot_reengagement_dismissed_at";
+const DISMISS_KEY = "audibot_reengagement_dismissed_at";
 
 interface Props {
   lastActiveAt: string | Date | null;
@@ -40,7 +40,7 @@ export default function ReengagementBanner({ lastActiveAt, clientCount, isPro, t
 
   const handleScan = () => {
     dismiss();
-    const dropzone = document.getElementById("optibot-fill-btn") || document.querySelector("[data-dropzone='mutuelle']");
+    const dropzone = document.getElementById("audibot-fill-btn") || document.querySelector("[data-dropzone='mutuelle']");
     if (dropzone) {
       dropzone.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -52,7 +52,7 @@ export default function ReengagementBanner({ lastActiveAt, clientCount, isPro, t
     <div className="bg-blue-50 border-b border-blue-100 px-4 py-3">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
         <p className="text-sm font-medium text-blue-800 flex-1">
-          Vous n&apos;avez pas utilis&eacute; OptiBot depuis <strong>{daysSince} jour{daysSince > 1 ? "s" : ""}</strong> &mdash; votre prochain client vous attend.
+          Vous n&apos;avez pas utilis&eacute; AudiBot depuis <strong>{daysSince} jour{daysSince > 1 ? "s" : ""}</strong> &mdash; votre prochain client vous attend.
         </p>
         <div className="flex items-center gap-2 shrink-0">
           <button

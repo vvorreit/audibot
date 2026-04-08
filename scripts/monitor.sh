@@ -1,6 +1,6 @@
 #!/bin/bash
-# monitor.sh — Surveillance infra OptiBot
-# Cron recommandé : */5 * * * * /app/optibot/scripts/monitor.sh >> /root/logs/monitor.log 2>&1
+# monitor.sh — Surveillance infra AudiBot
+# Cron recommandé : */5 * * * * /app/audibot/scripts/monitor.sh >> /root/logs/monitor.log 2>&1
 #
 # Vérifie :
 #   - État des 3 containers Docker
@@ -13,9 +13,9 @@ set -euo pipefail
 
 # ─── Config ────────────────────────────────────────────────────────────────────
 RESEND_API_KEY="${RESEND_API_KEY:-}"
-ALERT_EMAIL="${ALERT_EMAIL:-contact@optibot.fr}"
-FROM_EMAIL="${FROM_EMAIL:-alerts@optibot.fr}"
-APP_URL="${APP_URL:-https://optibot.fr}"
+ALERT_EMAIL="${ALERT_EMAIL:-contact@audibot.fr}"
+FROM_EMAIL="${FROM_EMAIL:-alerts@audibot.fr}"
+APP_URL="${APP_URL:-https://audibot.fr}"
 HOSTNAME_LABEL=$(hostname)
 
 # Seuils
@@ -24,7 +24,7 @@ RAM_CRIT_PCT=90
 DISK_WARN_PCT=80
 DISK_CRIT_PCT=90
 
-CONTAINERS=("optibot-app" "optibot-ocr" "optibot-db")
+CONTAINERS=("audibot-app" "audibot-ocr" "audibot-db")
 
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 ALERTS=()
@@ -112,7 +112,7 @@ if [ ${#ALERTS[@]} -gt 0 ]; then
   EMOJI="⚠️"
   [ "$SEVERITY" = "critical" ] && EMOJI="🚨"
 
-  SUBJECT="$EMOJI [OptiBot] Alerte infra — $HOSTNAME_LABEL"
+  SUBJECT="$EMOJI [AudiBot] Alerte infra — $HOSTNAME_LABEL"
   BODY="Timestamp: $TIMESTAMP\nServeur: $HOSTNAME_LABEL\n\nProblèmes détectés:\n"
   for ALERT in "${ALERTS[@]}"; do
     BODY+="• $ALERT\n"

@@ -136,12 +136,12 @@ export async function GET(req: Request) {
 
   ${bestHourHtml}
 
-  <p style="font-size:11px;color:#94a3b8;margin-top:32px;text-align:center;">Rapport automatique OptiBot — contact@optibot.fr</p>
+  <p style="font-size:11px;color:#94a3b8;margin-top:32px;text-align:center;">Rapport automatique AudiBot — contact@audibot.fr</p>
 </body></html>`;
 
     try {
       await sendMail({
-        to: "contact@optibot.fr",
+        to: "contact@audibot.fr",
         subject: `[Rapport] ${campaign.name} — ${openRate}% ouverture`,
         html,
       });

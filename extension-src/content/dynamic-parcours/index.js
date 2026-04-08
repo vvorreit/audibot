@@ -1,26 +1,26 @@
 /* ── Dynamic Parcours — loadDynamicParcours + injectDynamicParcours ────── */
 
 export function loadDynamicParcours() {
-  chrome.storage.local.get(['optibot_dynamic_parcours', 'optibot_auth'], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(['audibot_dynamic_parcours', 'audibot_auth'], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return;
-    var cached = result.optibot_dynamic_parcours;
+    var cached = result.audibot_dynamic_parcours;
     /* Utiliser le cache si moins de 30 min */
     if (cached && cached.ts && Date.now() - cached.ts < 1800000) {
       injectDynamicParcours(cached.handlers);
       return;
     }
-    fetch("https://optibot.fr/api/extension/parcours?handlers=true", {
+    fetch("https://audibot.fr/api/extension/parcours?handlers=true", {
       headers: { "Authorization": "Bearer " + auth.syncToken }
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
       chrome.storage.local.set({
-        optibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
+        audibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
       });
       injectDynamicParcours(data.handlers);
     })
-    .catch(function(err) { console.warn("[OptiBot] dynamic parcours fetch failed:", err); });
+    .catch(function(err) { console.warn("[AudiBot] dynamic parcours fetch failed:", err); });
   });
 }
 

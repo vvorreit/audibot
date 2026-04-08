@@ -3,9 +3,9 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-const DEFAULT_URL = "https://optibot.fr";
+const DEFAULT_URL = "https://audibot.fr";
 
-const ALLOWED_ORIGINS = ["https://optibot.fr", "https://audibot.fr"];
+const ALLOWED_ORIGINS = ["https://audibot.fr", "https://audibot.fr"];
 
 function isSafeRedirectUrl(url: string): boolean {
   try {

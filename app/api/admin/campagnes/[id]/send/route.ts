@@ -17,7 +17,7 @@ function personalizeHtml(html: string, token: string, firstName: string | null):
   const greeting = firstName || "Bonjour";
   let result = html.replace(/\[Prénom\]/gi, greeting);
   result = result.replace(
-    /href="(https?:\/\/[^"]*(?:optibot|audibot)\.fr[^"]*)"/gi,
+    /href="(https?:\/\/[^"]*(?:audibot)\.fr[^"]*)"/gi,
     (_match: string, url: string) => `href="${getTrackingLink(token, url)}"`,
   );
   const footer = getUnsubscribeFooter(token);

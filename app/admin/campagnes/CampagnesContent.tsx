@@ -98,7 +98,7 @@ function personalizeHtmlClient(html: string, token: string, firstName: string): 
   let result = html.replace(/\[Prénom\]/gi, greeting);
 
   result = result.replace(
-    /href="(https?:\/\/[^"]*(?:optibot|audibot)\.fr[^"]*)"/gi,
+    /href="(https?:\/\/[^"]*(?:audibot)\.fr[^"]*)"/gi,
     (_match, url) => `href="${url}"`,
   );
 
@@ -546,7 +546,7 @@ export default function CampagnesContent() {
         )}
 
         <textarea
-          placeholder={"Corps HTML du mail\nUtilisez [Prénom] pour personnaliser.\nLes liens optibot.fr seront automatiquement trackés."}
+          placeholder={"Corps HTML du mail\nUtilisez [Prénom] pour personnaliser.\nLes liens audibot.fr seront automatiquement trackés."}
           value={htmlBody}
           onChange={(e) => setHtmlBody(e.target.value)}
           rows={10}

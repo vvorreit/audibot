@@ -106,7 +106,7 @@ export function buildEmailContent(
   <pre style="white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;">${text}</pre>
   <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
   <p style="font-size:11px;color:#94a3b8;">
-    Email envoy\u00e9 automatiquement via OptiBot \u2014 contact@optibot.fr
+    Email envoy\u00e9 automatiquement via AudiBot \u2014 contact@audibot.fr
   </p>
 </body></html>`;
 
@@ -150,7 +150,7 @@ export async function sendRelanceEmail(
 
   const { subject, html: bodyHtml } = buildEmailContent(dossier, template);
 
-  const from = process.env.SMTP_FROM ?? "OptiBot <contact@optibot.fr>";
+  const from = process.env.SMTP_FROM ?? "AudiBot <contact@audibot.fr>";
 
   const transporter = getTransporter();
   await transporter.sendMail({

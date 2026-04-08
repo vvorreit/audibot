@@ -120,7 +120,7 @@ export default function AccountClient({ dpaStatus }: AccountClientProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `optibot-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `audibot-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -525,7 +525,7 @@ export default function AccountClient({ dpaStatus }: AccountClientProps) {
         <div className="bg-white rounded-card border border-slate-100 shadow-sm p-8">
           <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Mes données personnelles</h2>
           <p className="text-sm font-medium text-slate-500 mb-5">
-            Conformément à l&apos;<strong>article 20 du RGPD</strong>, vous pouvez télécharger l&apos;ensemble de vos données personnelles détenues par OptiBot au format JSON.
+            Conformément à l&apos;<strong>article 20 du RGPD</strong>, vous pouvez télécharger l&apos;ensemble de vos données personnelles détenues par AudiBot au format JSON.
           </p>
           <button
             onClick={handleExport}

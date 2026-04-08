@@ -36,7 +36,7 @@ describe("smtpConfigured", () => {
 describe("sendWelcomeEmail", () => {
   it("appelle sendMail avec le bon subject", async () => {
     vi.stubEnv("RESEND_API_KEY", "re_test_key");
-    vi.stubEnv("NEXTAUTH_URL", "https://app.optibot.fr");
+    vi.stubEnv("NEXTAUTH_URL", "https://app.audibot.fr");
 
     vi.resetModules();
     const { sendWelcomeEmail } = await import("@/lib/mailer");
@@ -45,7 +45,7 @@ describe("sendWelcomeEmail", () => {
 
     expect(mocks.emailsSend).toHaveBeenCalledWith(
       expect.objectContaining({
-        subject: "Bienvenue sur OptiBot",
+        subject: "Bienvenue sur AudiBot",
         to: ["alice@test.com"],
       })
     );
@@ -97,7 +97,7 @@ describe("sendWelcomeEmail", () => {
 
   it("sendWelcomeEmail sans nom → HTML sans prénom (ligne 81-82)", async () => {
     vi.stubEnv("RESEND_API_KEY", "re_test_key");
-    vi.stubEnv("NEXTAUTH_URL", "https://app.optibot.fr");
+    vi.stubEnv("NEXTAUTH_URL", "https://app.audibot.fr");
     vi.resetModules();
     const { sendWelcomeEmail } = await import("@/lib/mailer");
 
@@ -106,7 +106,7 @@ describe("sendWelcomeEmail", () => {
     expect(mocks.emailsSend).toHaveBeenCalledWith(
       expect.objectContaining({
         to: ["anon@test.com"],
-        subject: "Bienvenue sur OptiBot",
+        subject: "Bienvenue sur AudiBot",
       })
     );
     // HTML ne doit pas contenir de prénom (condition `name ? ` ${name}` : ""`)

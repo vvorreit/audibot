@@ -52,7 +52,7 @@ describe("sendContactEmail", () => {
     expect(mocks.sendMail).toHaveBeenCalledTimes(1);
     expect(mocks.sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
-        to: "contact@optibot.fr",
+        to: "contact@audibot.fr",
         replyTo: "jean@optique.fr",
         subject: "Nouveau Devis Franchise : Optique Paris",
       })

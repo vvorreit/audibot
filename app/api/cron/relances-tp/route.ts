@@ -39,7 +39,7 @@ export async function GET(req: Request) {
 
   let sent = 0;
   let errors = 0;
-  const appUrl = process.env.NEXTAUTH_URL || "https://app.optibot.fr";
+  const appUrl = process.env.NEXTAUTH_URL || "https://app.audibot.fr";
 
   const allActiveTemplates = await prisma.templateRelance.findMany({
     where: { actif: true },
@@ -78,7 +78,7 @@ export async function GET(req: Request) {
           if ((regle.action === "email" || regle.action === "both") && smtpConfigured() && dossier.user.email) {
             await sendMail({
               to: dossier.user.email,
-              subject: `OptiBot — Relance dossier ${dossier.reference} (J+${regle.delaiJours})`,
+              subject: `AudiBot — Relance dossier ${dossier.reference} (J+${regle.delaiJours})`,
               html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
@@ -97,7 +97,7 @@ export async function GET(req: Request) {
     Voir le dossier
   </a>
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot — contact@optibot.fr
+    AudiBot — contact@audibot.fr
   </p>
 </body></html>`,
             }).catch((err) => {

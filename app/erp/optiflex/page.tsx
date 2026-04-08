@@ -3,10 +3,10 @@ import PortailDetailPage from "@/components/PortailDetailPage";
 import type { PortailDetailData } from "@/components/PortailDetailPage";
 
 export const metadata: Metadata = {
-  title: "OptiBot × Optiflex — Remplissage automatique ERP opticiens indépendants",
+  title: "AudiBot × Optiflex — Remplissage automatique ERP opticiens indépendants",
   description:
-    "Automatisez la saisie dans Optiflex avec OptiBot. Smart Fill universel disponible pour l\u2019ERP des opticiens indépendants.",
-  alternates: { canonical: "https://optibot.fr/erp/optiflex" },
+    "Automatisez la saisie dans Optiflex avec AudiBot. Smart Fill universel disponible pour l\u2019ERP des opticiens indépendants.",
+  alternates: { canonical: "https://audibot.fr/erp/optiflex" },
 };
 
 const data: PortailDetailData = {
@@ -14,7 +14,7 @@ const data: PortailDetailData = {
   type: "erp",
   domain: "optiflex.fr",
   networkDescription:
-    "Optiflex est un ERP conçu pour les opticiens indépendants. OptiBot propose le Smart Fill universel pour automatiser vos saisies client.",
+    "Optiflex est un ERP conçu pour les opticiens indépendants. AudiBot propose le Smart Fill universel pour automatiser vos saisies client.",
   portailUrl: "optiflex.fr",
   status: "Smart Fill disponible",
   filledFields: [

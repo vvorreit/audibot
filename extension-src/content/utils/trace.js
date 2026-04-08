@@ -1,4 +1,4 @@
-/* ── OptiBot Diagnostic Trace Logger ────────────────────────────────────── */
+/* ── AudiBot Diagnostic Trace Logger ────────────────────────────────────── */
 /* Ring buffer de logs structurés pour le diagnostic à distance.            */
 /* Accessible via globalThis.optiTrace depuis tout le content script.      */
 
@@ -48,7 +48,7 @@ var optiTrace = {
     var extVersion = "?";
     try { extVersion = chrome.runtime.getManifest().version; } catch(e) {}
 
-    lines.push("═══ OptiBot Diagnostic Trace ═══");
+    lines.push("═══ AudiBot Diagnostic Trace ═══");
     lines.push("URL: " + window.location.href);
     lines.push("Hostname: " + window.location.hostname);
     lines.push("Timestamp: " + new Date().toISOString());
@@ -170,8 +170,8 @@ optiTrace.send = function(trigger, summary) {
   } catch(e) { /* silencieux */ }
 
   /* Récupérer le syncToken de manière asynchrone */
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return; /* pas connecté → on n'envoie pas */
 
     var payload = {
@@ -195,9 +195,9 @@ optiTrace.send = function(trigger, summary) {
     /* Envoyer via le background service worker pour éviter CORS */
     try {
       chrome.runtime.sendMessage({
-        type: "OPTIBOT_PING",
+        type: "AUDIBOT_PING",
         payloads: [{
-          url: "https://optibot.fr/api/extension/diagnostic",
+          url: "https://audibot.fr/api/extension/diagnostic",
           body: payload
         }]
       });

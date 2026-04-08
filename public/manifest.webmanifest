@@ -1,6 +1,6 @@
 {
-  "name": "OptiBot",
-  "short_name": "OptiBot",
+  "name": "AudiBot",
+  "short_name": "AudiBot",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#f8fafc",

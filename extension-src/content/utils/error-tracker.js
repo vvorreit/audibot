@@ -1,4 +1,4 @@
-/* ── OptiBot Error Tracker ──────────────────────────────────────────────── */
+/* ── AudiBot Error Tracker ──────────────────────────────────────────────── */
 /* Centralise le suivi des erreurs silencieuses dans l'extension.           */
 /* Les erreurs sont loguees localement et envoyees en batch au backend.     */
 
@@ -30,7 +30,7 @@ function flushErrors() {
   if (typeof globalThis.getSyncToken !== "function") return;
   globalThis.getSyncToken().then(function(token) {
     if (!token) return;
-    fetch("https://optibot.fr/api/extension/bot-step-log", {
+    fetch("https://audibot.fr/api/extension/bot-step-log", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
       body: JSON.stringify({ type: "extension_errors", errors: batch, ts: Date.now() })

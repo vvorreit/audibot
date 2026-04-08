@@ -55,9 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Lock d'inactivite ─────────────────────────────── */
   function renewLock() {
-    chrome.storage.local.set({ optibot_lock: { lockAt: Date.now() + INACTIVITY_MINUTES * 60 * 1000 } });
+    chrome.storage.local.set({ audibot_lock: { lockAt: Date.now() + INACTIVITY_MINUTES * 60 * 1000 } });
     /* Renouveler l'alarme dans le background */
-    chrome.runtime.sendMessage({ type: 'OPTIBOT_RENEW_LOCK' });
+    chrome.runtime.sendMessage({ type: 'AUDIBOT_RENEW_LOCK' });
   }
   document.addEventListener('click', renewLock);
   document.addEventListener('keydown', renewLock);
@@ -82,19 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
       + '<div style="font-size: 32px; margin-bottom: 12px;">&#128274;</div>'
       + '<p style="font-weight: bold; color: #dc2626; margin: 0 0 8px 0;">Compte requis</p>'
       + '<p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">' + error + '</p>'
-      + '<a href="https://optibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
-      + 'Ouvrir OptiBot &rarr;</a></div>';
+      + '<a href="https://audibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
+      + 'Ouvrir AudiBot &rarr;</a></div>';
   }
 
   function attemptUnlock() {
-    chrome.storage.local.get(['optibot_auth'], function(result) {
-      var auth = result.optibot_auth || {};
+    chrome.storage.local.get(['audibot_auth'], function(result) {
+      var auth = result.audibot_auth || {};
       var token = auth.syncToken;
       if (!token) {
-        showBlockedGlobal("Connectez-vous sur optibot.fr pour utiliser l'extension.");
+        showBlockedGlobal("Connectez-vous sur audibot.fr pour utiliser l'extension.");
         return;
       }
-      fetch('https://optibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token } })
+      fetch('https://audibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token } })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.ok) {
@@ -111,8 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── Verifier le lock AVANT tout ─────────────────── */
-  chrome.storage.local.get(['optibot_lock'], function(result) {
-    var lockData = result.optibot_lock || {};
+  chrome.storage.local.get(['audibot_lock'], function(result) {
+    var lockData = result.audibot_lock || {};
     var lockAt = lockData.lockAt || 0;
     if (lockAt > 0 && Date.now() > lockAt) {
       showLocked("Session verrouill\u00e9e apr\u00e8s inactivit\u00e9.");
@@ -127,23 +127,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function verifyAccount() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(['optibot_auth'], (result) => {
-        const auth = result.optibot_auth || {};
+      chrome.storage.local.get(['audibot_auth'], (result) => {
+        const auth = result.audibot_auth || {};
         const token = auth.syncToken || null;
         const expiresAt = auth.authExpiresAt || 0;
 
         if (!token) {
-          resolve({ ok: false, error: "Connectez-vous sur optibot.fr pour utiliser l'extension." });
+          resolve({ ok: false, error: "Connectez-vous sur audibot.fr pour utiliser l'extension." });
           return;
         }
 
         /* Verifier expiration locale (20h) avant d'appeler l'API */
         if (expiresAt && Date.now() > expiresAt) {
-          resolve({ ok: false, error: "Session expir\u00e9e. Ouvrez optibot.fr pour continuer." });
+          resolve({ ok: false, error: "Session expir\u00e9e. Ouvrez audibot.fr pour continuer." });
           return;
         }
 
-        fetch('https://optibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token } })
+        fetch('https://audibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token } })
           .then(function(r) { return r.json(); })
           .then(function(data) { resolve(data); })
           .catch(function() { resolve({ ok: false, error: "Impossible de v\u00e9rifier votre compte (r\u00e9seau)." }); });
@@ -157,8 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
       + '<div style="font-size: 32px; margin-bottom: 12px;">&#128274;</div>'
       + '<p style="font-weight: bold; color: #dc2626; margin: 0 0 8px 0;">Compte requis</p>'
       + '<p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">' + error + '</p>'
-      + '<a href="https://optibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
-      + 'Ouvrir OptiBot &rarr;</a></div>';
+      + '<a href="https://audibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
+      + 'Ouvrir AudiBot &rarr;</a></div>';
   }
 
   function showVerifiedBadge(plan, expiresAt) {
@@ -190,8 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     /* Lire expiresAt pour l'affichage du warning */
-    chrome.storage.local.get(['optibot_auth'], function(authResult) {
-      var auth = authResult.optibot_auth || {};
+    chrome.storage.local.get(['audibot_auth'], function(authResult) {
+      var auth = authResult.audibot_auth || {};
       showVerifiedBadge(result.plan, auth.authExpiresAt);
     });
     dataContainer.innerHTML = '<div class="no-data">Chargement des donn\u00e9es...</div>';
@@ -220,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
   async function renderData() {
     var cache = await readEncryptedCache();
     if (!cache) cache = {};
-    var optibot_auth_cache = await new Promise(function(resolve) {
-      chrome.storage.local.get(['optibot_auth'], function(r) { resolve(r.optibot_auth || {}); });
+    var audibot_auth_cache = await new Promise(function(resolve) {
+      chrome.storage.local.get(['audibot_auth'], function(r) { resolve(r.audibot_auth || {}); });
     });
     var data = cache.current;
 
@@ -310,14 +310,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="save-btn" data-key="${key}">Sauver</button>
                 <button class="cancel-btn">Annuler</button>
               ` : `
-                <button id="optibot-edit-patient" style="background:none;border:none;color:#2563eb;cursor:pointer;font-size:11px;font-weight:600;">Editer</button>
+                <button id="audibot-edit-patient" style="background:none;border:none;color:#2563eb;cursor:pointer;font-size:11px;font-weight:600;">Editer</button>
                 <button class="edit-btn" data-key="${key}">Modifier</button>
                 <button class="clear-btn" data-key="${key}">Effacer</button>
               `}
             </div>
           </div>
           <div class="tag">Mise \u00e0 jour : ${updatedAt}</div>
-          <div id="optibot-patient-data" class="data-list">
+          <div id="audibot-patient-data" class="data-list">
         `;
 
         sections.forEach(section => {
@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!parsedHostname) return;
 
             try {
-              var res = await fetch("https://optibot.fr/api/extension/parcours?hostname=" + encodeURIComponent(parsedHostname), { headers: { "Authorization": "Bearer " + syncToken } });
+              var res = await fetch("https://audibot.fr/api/extension/parcours?hostname=" + encodeURIComponent(parsedHostname), { headers: { "Authorization": "Bearer " + syncToken } });
               if (!res.ok) return;
               var resData = await res.json();
               var parcoursList = resData.parcours || [];
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnLaunch.style.cssText = "padding:5px 10px;background:#2563eb;color:white;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;";
                 btnLaunch.addEventListener("click", function() {
                   if (!tabId) return;
-                  chrome.tabs.sendMessage(tabId, { type: "OPTIBOT_LAUNCH_PARCOURS", parcoursId: p.id });
+                  chrome.tabs.sendMessage(tabId, { type: "AUDIBOT_LAUNCH_PARCOURS", parcoursId: p.id });
                   window.close();
                 });
 
@@ -544,10 +544,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       /* V3-4: Edit patient data */
-      var editBtn = document.getElementById("optibot-edit-patient");
+      var editBtn = document.getElementById("audibot-edit-patient");
       if (editBtn) {
         editBtn.onclick = function() {
-          var container = document.getElementById("optibot-patient-data");
+          var container = document.getElementById("audibot-patient-data");
           if (!container) return;
           var fields = [
             { key: "nom", label: "Nom" },
@@ -664,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = await navigator.clipboard.readText();
       const data = JSON.parse(text);
       if (!data.m && !data.o) {
-        if (importBtn) { importBtn.innerText = 'Rien \u00e0 importer'; setTimeout(() => { importBtn.innerText = 'Importer depuis OptiBot'; }, 2000); }
+        if (importBtn) { importBtn.innerText = 'Rien \u00e0 importer'; setTimeout(() => { importBtn.innerText = 'Importer depuis AudiBot'; }, 2000); }
         return;
       }
 
@@ -679,17 +679,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      if (importBtn) { importBtn.innerText = 'Import\u00e9 !'; setTimeout(() => { importBtn.innerText = 'Importer depuis OptiBot'; }, 2000); }
+      if (importBtn) { importBtn.innerText = 'Import\u00e9 !'; setTimeout(() => { importBtn.innerText = 'Importer depuis AudiBot'; }, 2000); }
       renderData();
     } catch(e) {
-      if (importBtn) { importBtn.innerText = 'Erreur'; setTimeout(() => { importBtn.innerText = 'Importer depuis OptiBot'; }, 2000); }
+      if (importBtn) { importBtn.innerText = 'Erreur'; setTimeout(() => { importBtn.innerText = 'Importer depuis AudiBot'; }, 2000); }
     }
   }
 
   /* Bouton d'import en haut de la popup */
   const importBtn = document.createElement('button');
   importBtn.id = 'import-btn';
-  importBtn.innerText = 'Importer depuis OptiBot';
+  importBtn.innerText = 'Importer depuis AudiBot';
   importBtn.style.cssText = 'width:100%;padding:10px;margin-bottom:12px;background:#2563eb;color:white;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:13px;';
   importBtn.addEventListener('click', importFromClipboard);
   dataContainer.parentElement.insertBefore(importBtn, dataContainer);
@@ -703,23 +703,23 @@ document.addEventListener('DOMContentLoaded', () => {
   recorderTitle.textContent = "⏺ Enregistrer un parcours";
 
   var btnRecord = document.createElement("button");
-  btnRecord.id = "optibot-btn-record";
+  btnRecord.id = "audibot-btn-record";
   btnRecord.textContent = "⏺ Démarrer l'enregistrement";
   btnRecord.style.cssText = "width:100%;padding:8px;background:#ef4444;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px;";
 
   var btnStop = document.createElement("button");
-  btnStop.id = "optibot-btn-stop";
+  btnStop.id = "audibot-btn-stop";
   btnStop.textContent = "⏹ Arrêter et sauvegarder";
   btnStop.style.cssText = "width:100%;padding:8px;background:#64748b;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:none;";
 
   var recorderStatus = document.createElement("div");
-  recorderStatus.id = "optibot-recorder-status";
+  recorderStatus.id = "audibot-recorder-status";
   recorderStatus.style.cssText = "font-size:10px;color:#6b7280;text-align:center;margin-top:4px;";
 
   btnRecord.addEventListener("click", function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       if (tabs[0] && tabs[0].id) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: "OPTIBOT_RECORDER_START" });
+        chrome.tabs.sendMessage(tabs[0].id, { type: "AUDIBOT_RECORDER_START" });
         btnRecord.style.display = "none";
         btnStop.style.display = "block";
         recorderStatus.textContent = "Enregistrement en cours...";
@@ -730,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btnStop.addEventListener("click", function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       if (tabs[0] && tabs[0].id) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: "OPTIBOT_RECORDER_STOP" });
+        chrome.tabs.sendMessage(tabs[0].id, { type: "AUDIBOT_RECORDER_STOP" });
         btnRecord.style.display = "block";
         btnStop.style.display = "none";
         recorderStatus.textContent = "Parcours sauvegardé — en attente de validation admin";
@@ -745,8 +745,8 @@ document.addEventListener('DOMContentLoaded', () => {
   dataContainer.parentElement.insertBefore(recorderSection, dataContainer);
 
   /* Vérifier l'état du recorder depuis le storage (survit aux navigations) */
-  chrome.storage.local.get(["optibot_recorder"], function(result) {
-    var saved = result.optibot_recorder;
+  chrome.storage.local.get(["audibot_recorder"], function(result) {
+    var saved = result.audibot_recorder;
     if (saved && saved.active) {
       btnRecord.style.display = "none";
       btnStop.style.display = "block";
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Auto-refresh quand le cache change (ex: clic Mémoriser sur la page) ── */
   chrome.storage.onChanged.addListener(function(changes, area) {
-    if (area === 'local' && changes.optibot_cache) {
+    if (area === 'local' && changes.audibot_cache) {
       renderData();
     }
   });
@@ -776,20 +776,20 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleThumb.style.transform = visible ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_buttons_visible'], (result) => {
-    const visible = result.optibot_buttons_visible !== false;
+  chrome.storage.local.get(['audibot_buttons_visible'], (result) => {
+    const visible = result.audibot_buttons_visible !== false;
     updateToggleUI(visible);
   });
 
   if (toggleCheckbox) {
     toggleCheckbox.addEventListener('change', () => {
       const visible = toggleCheckbox.checked;
-      chrome.storage.local.set({ optibot_buttons_visible: visible });
+      chrome.storage.local.set({ audibot_buttons_visible: visible });
       updateToggleUI(visible);
 
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, { type: 'OPTIBOT_TOGGLE_BUTTONS', visible });
+          chrome.tabs.sendMessage(tabs[0].id, { type: 'AUDIBOT_TOGGLE_BUTTONS', visible });
         }
       });
     });
@@ -807,8 +807,8 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleAutofillThumb.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_settings'], (result) => {
-    var settings = result.optibot_settings || {};
+  chrome.storage.local.get(['audibot_settings'], (result) => {
+    var settings = result.audibot_settings || {};
     /* Par défaut activé (true) */
     var enabled = settings.autofillOnLoad !== false;
     updateAutofillToggleUI(enabled);
@@ -816,10 +816,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (toggleAutofill) {
     toggleAutofill.addEventListener('change', () => {
-      chrome.storage.local.get(['optibot_settings'], (result) => {
-        var settings = result.optibot_settings || {};
+      chrome.storage.local.get(['audibot_settings'], (result) => {
+        var settings = result.audibot_settings || {};
         settings.autofillOnLoad = toggleAutofill.checked;
-        chrome.storage.local.set({ optibot_settings: settings });
+        chrome.storage.local.set({ audibot_settings: settings });
         updateAutofillToggleUI(toggleAutofill.checked);
       });
     });
@@ -837,18 +837,18 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleRejetThumb.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_rejet_consent'], (result) => {
-    const enabled = result.optibot_rejet_consent === true;
+  chrome.storage.local.get(['audibot_rejet_consent'], (result) => {
+    const enabled = result.audibot_rejet_consent === true;
     updateRejetToggleUI(enabled);
   });
 
   if (toggleRejet) {
     toggleRejet.addEventListener('change', () => {
       const enabled = toggleRejet.checked;
-      /* optibot_rejet_consent = consentement explicite de l'utilisateur */
+      /* audibot_rejet_consent = consentement explicite de l'utilisateur */
       chrome.storage.local.set({
-        optibot_rejet_consent: enabled,
-        optibot_rejet_enabled: enabled
+        audibot_rejet_consent: enabled,
+        audibot_rejet_enabled: enabled
       });
       updateRejetToggleUI(enabled);
     });
@@ -866,17 +866,17 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePreviewThumb.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_settings'], (result) => {
-    var settings = result.optibot_settings || {};
+  chrome.storage.local.get(['audibot_settings'], (result) => {
+    var settings = result.audibot_settings || {};
     updatePreviewToggleUI(settings.previewBeforeFill || false);
   });
 
   if (togglePreview) {
     togglePreview.addEventListener('change', () => {
-      chrome.storage.local.get(['optibot_settings'], (result) => {
-        var settings = result.optibot_settings || {};
+      chrome.storage.local.get(['audibot_settings'], (result) => {
+        var settings = result.audibot_settings || {};
         settings.previewBeforeFill = togglePreview.checked;
-        chrome.storage.local.set({ optibot_settings: settings });
+        chrome.storage.local.set({ audibot_settings: settings });
         updatePreviewToggleUI(togglePreview.checked);
       });
     });
@@ -888,14 +888,14 @@ document.addEventListener('DOMContentLoaded', () => {
     var list = document.getElementById("tp-tracker-list");
     if (!card || !list) return;
 
-    chrome.storage.local.get(["optibot_tp_history", "optibot_auth"], function(result) {
-      var auth = result.optibot_auth || {};
+    chrome.storage.local.get(["audibot_tp_history", "audibot_auth"], function(result) {
+      var auth = result.audibot_auth || {};
       if (!auth.syncToken) { card.style.display = "none"; return; }
 
       card.style.display = "block";
 
       /* Fetch TP status from backend */
-      fetch("https://optibot.fr/api/extension/tp-status", {
+      fetch("https://audibot.fr/api/extension/tp-status", {
         headers: { "Authorization": "Bearer " + auth.syncToken }
       })
       .then(function(r) { return r.json(); })
@@ -920,17 +920,17 @@ document.addEventListener('DOMContentLoaded', () => {
           list.appendChild(row);
         }
         /* Save locally for offline */
-        chrome.storage.local.set({ optibot_tp_history: { dossiers: dossiers, ts: Date.now() } });
+        chrome.storage.local.set({ audibot_tp_history: { dossiers: dossiers, ts: Date.now() } });
       })
       .catch(function(err) {
         /* Fallback to cached */
-        var cached = result.optibot_tp_history;
+        var cached = result.audibot_tp_history;
         if (cached && cached.dossiers) {
           list.textContent = cached.dossiers.length + " dossiers (cache)";
         } else {
           list.textContent = "Impossible de charger les dossiers.";
         }
-        console.warn("[OptiBot] TP tracker fetch failed:", err);
+        console.warn("[AudiBot] TP tracker fetch failed:", err);
       });
     });
   }
@@ -946,11 +946,11 @@ document.addEventListener('DOMContentLoaded', () => {
     var countBadge = document.getElementById("rejet-count");
     if (!card || !list) return;
 
-    chrome.storage.local.get(["optibot_auth"], function(result) {
-      var auth = result.optibot_auth || {};
+    chrome.storage.local.get(["audibot_auth"], function(result) {
+      var auth = result.audibot_auth || {};
       if (!auth.syncToken) return;
 
-      fetch("https://optibot.fr/api/extension/rejections", {
+      fetch("https://audibot.fr/api/extension/rejections", {
         headers: { "Authorization": "Bearer " + auth.syncToken }
       })
       .then(function(r) { return r.json(); })
@@ -989,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
           list.appendChild(item);
         }
       })
-      .catch(function(err) { console.warn("[OptiBot] rejection details fetch failed:", err); });
+      .catch(function(err) { console.warn("[AudiBot] rejection details fetch failed:", err); });
     });
   }
 
@@ -1004,11 +1004,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     card.style.display = "block";
 
-    chrome.storage.local.get(["optibot_auth"], function(result) {
-      var auth = result.optibot_auth || {};
+    chrome.storage.local.get(["audibot_auth"], function(result) {
+      var auth = result.audibot_auth || {};
       if (!auth.syncToken) return;
 
-      fetch("https://optibot.fr/api/extension/team-activity", {
+      fetch("https://audibot.fr/api/extension/team-activity", {
         headers: { "Authorization": "Bearer " + auth.syncToken }
       })
       .then(function(r) { return r.json(); })
@@ -1024,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(function(err) {
         stats.textContent = "Impossible de charger les donnees equipe.";
-        console.warn("[OptiBot] team dashboard fetch failed:", err);
+        console.warn("[AudiBot] team dashboard fetch failed:", err);
       });
     });
   }

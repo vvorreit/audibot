@@ -1,8 +1,8 @@
-/* OptiBot Bridge — ecoute les donnees copiees depuis le dashboard OptiBot
+/* AudiBot Bridge — ecoute les donnees copiees depuis le dashboard AudiBot
    et les sauvegarde chiffrees dans chrome.storage.local */
 
 /* Origines autorisées à envoyer des messages au bridge */
-var ALLOWED_ORIGINS = ['https://optibot.fr', 'https://app.optibot.fr'];
+var ALLOWED_ORIGINS = ['https://audibot.fr', 'https://app.audibot.fr'];
 
 window.addEventListener('message', async (event) => {
   if (event.source !== window) return;
@@ -10,10 +10,10 @@ window.addEventListener('message', async (event) => {
   if (event.origin && event.origin !== window.location.origin &&
       !ALLOWED_ORIGINS.includes(event.origin)) return;
 
-  /* Auth — stocker le syncToken dans optibot_auth (non chiffre, sert de cle) */
-  if (event.data && event.data.type === 'OPTIBOT_AUTH' && event.data.syncToken) {
+  /* Auth — stocker le syncToken dans audibot_auth (non chiffre, sert de cle) */
+  if (event.data && event.data.type === 'AUDIBOT_AUTH' && event.data.syncToken) {
     chrome.storage.local.set({
-      optibot_auth: {
+      audibot_auth: {
         syncToken: event.data.syncToken,
         plan: event.data.plan,
         isPro: event.data.isPro,
@@ -23,12 +23,12 @@ window.addEventListener('message', async (event) => {
       }
     });
     /* Renouveler le lock d'inactivite a chaque auth */
-    chrome.storage.local.set({ optibot_lock: { lockAt: Date.now() + 15 * 60 * 1000 } });
+    chrome.storage.local.set({ audibot_lock: { lockAt: Date.now() + 15 * 60 * 1000 } });
     return;
   }
 
   /* RPA Start — stocker les donnees CHIFFRÉES AVANT d'ouvrir l'onglet cible */
-  if (event.data && event.data.type === 'OPTIBOT_RPA_START') {
+  if (event.data && event.data.type === 'AUDIBOT_RPA_START') {
     var rpaTarget = event.data.target;
     var rpaUrls = {
       'wemind': 'https://pro.wemind.io/p/accueil',
@@ -43,24 +43,24 @@ window.addEventListener('message', async (event) => {
       var encryptedPayload = await encryptData(payload);
 
       if (!encryptedPayload) {
-        console.warn("[OptiBot Bridge] RPA annulé — chiffrement impossible.");
+        console.warn("[AudiBot Bridge] RPA annulé — chiffrement impossible.");
         return;
       }
 
       chrome.storage.local.set({
-        optibot_rpa: {
+        audibot_rpa: {
           target: rpaTarget,
           payload: encryptedPayload, /* chiffré AES-256-GCM */
           ts: Date.now()
         }
       }, function() {
-        chrome.runtime.sendMessage({ type: 'OPTIBOT_OPEN_TAB', url: rpaUrl });
+        chrome.runtime.sendMessage({ type: 'AUDIBOT_OPEN_TAB', url: rpaUrl });
       });
     })();
     return;
   }
 
-  if (!event.data || event.data.type !== 'OPTIBOT_DATA') return;
+  if (!event.data || event.data.type !== 'AUDIBOT_DATA') return;
 
   const { m, o } = event.data.payload || {};
   if (!m && !o) return;

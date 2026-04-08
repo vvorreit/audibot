@@ -10,8 +10,8 @@ var _remoteOverridesLoaded = false;
  * Appele une seule fois au demarrage du content script.
  */
 function loadRemoteSelectors(callback) {
-  chrome.storage.local.get(["optibot_selector_overrides"], function(result) {
-    var data = result.optibot_selector_overrides;
+  chrome.storage.local.get(["audibot_selector_overrides"], function(result) {
+    var data = result.audibot_selector_overrides;
     if (data && data.overrides) {
       _remoteOverrides = data.overrides;
     } else {

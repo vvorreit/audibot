@@ -5,9 +5,9 @@ export const INACTIVITY_MINUTES = 15;
 
 /* ── Lock d'inactivite ─────────────────────────────── */
 export function renewLock() {
-  chrome.storage.local.set({ optibot_lock: { lockAt: Date.now() + INACTIVITY_MINUTES * 60 * 1000 } });
+  chrome.storage.local.set({ audibot_lock: { lockAt: Date.now() + INACTIVITY_MINUTES * 60 * 1000 } });
   /* Renouveler l'alarme dans le background */
-  chrome.runtime.sendMessage({ type: 'OPTIBOT_RENEW_LOCK' });
+  chrome.runtime.sendMessage({ type: 'AUDIBOT_RENEW_LOCK' });
 }
 
 export function showLocked(message) {
@@ -30,21 +30,21 @@ export function showBlockedGlobal(error) {
     + '<div style="font-size: 32px; margin-bottom: 12px;">&#128274;</div>'
     + '<p style="font-weight: bold; color: #dc2626; margin: 0 0 8px 0;">Compte requis</p>'
     + '<p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">' + error + '</p>'
-    + '<a href="https://optibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
-    + 'Ouvrir OptiBot &rarr;</a></div>';
+    + '<a href="https://audibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
+    + 'Ouvrir AudiBot &rarr;</a></div>';
 }
 
 export function attemptUnlock() {
-  chrome.storage.local.get(['optibot_auth'], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(['audibot_auth'], function(result) {
+    var auth = result.audibot_auth || {};
     var token = auth.syncToken;
     if (!token) {
-      showBlockedGlobal("Connectez-vous sur optibot.fr pour utiliser l'extension.");
+      showBlockedGlobal("Connectez-vous sur audibot.fr pour utiliser l'extension.");
       return;
     }
     var controller = new AbortController();
     var timer = setTimeout(function() { controller.abort(); }, 10000);
-    fetch('https://optibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token }, signal: controller.signal })
+    fetch('https://audibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token }, signal: controller.signal })
       .then(function(r) { clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function(data) {
         if (data.ok) {
@@ -63,25 +63,25 @@ export function attemptUnlock() {
 
 export async function verifyAccount() {
   return new Promise((resolve) => {
-    chrome.storage.local.get(['optibot_auth'], (result) => {
-      const auth = result.optibot_auth || {};
+    chrome.storage.local.get(['audibot_auth'], (result) => {
+      const auth = result.audibot_auth || {};
       const token = auth.syncToken || null;
       const expiresAt = auth.authExpiresAt || 0;
 
       if (!token) {
-        resolve({ ok: false, error: "Connectez-vous sur optibot.fr pour utiliser l'extension." });
+        resolve({ ok: false, error: "Connectez-vous sur audibot.fr pour utiliser l'extension." });
         return;
       }
 
       /* Verifier expiration locale (20h) avant d'appeler l'API */
       if (expiresAt && Date.now() > expiresAt) {
-        resolve({ ok: false, error: "Session expir\u00e9e. Ouvrez optibot.fr pour continuer." });
+        resolve({ ok: false, error: "Session expir\u00e9e. Ouvrez audibot.fr pour continuer." });
         return;
       }
 
       var ctrl = new AbortController();
       var t = setTimeout(function() { ctrl.abort(); }, 10000);
-      fetch('https://optibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token }, signal: ctrl.signal })
+      fetch('https://audibot.fr/api/extension/verify', { headers: { "Authorization": "Bearer " + token }, signal: ctrl.signal })
         .then(function(r) { clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
         .then(function(data) { resolve(data); })
         .catch(function() { clearTimeout(t); resolve({ ok: false, error: "Impossible de v\u00e9rifier votre compte (r\u00e9seau)." }); });
@@ -95,8 +95,8 @@ export function showBlocked(error) {
     + '<div style="font-size: 32px; margin-bottom: 12px;">&#128274;</div>'
     + '<p style="font-weight: bold; color: #dc2626; margin: 0 0 8px 0;">Compte requis</p>'
     + '<p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">' + error + '</p>'
-    + '<a href="https://optibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
-    + 'Ouvrir OptiBot &rarr;</a></div>';
+    + '<a href="https://audibot.fr/dashboard" target="_blank" style="display:inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 13px;">'
+    + 'Ouvrir AudiBot &rarr;</a></div>';
 }
 
 export function showVerifiedBadge(plan, expiresAt) {
@@ -124,7 +124,7 @@ export function showStats(stats) {
   var h2 = document.querySelector('h2');
   if (!h2) return;
   var statsDiv = document.createElement('div');
-  statsDiv.id = 'optibot-stats-bar';
+  statsDiv.id = 'audibot-stats-bar';
   statsDiv.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
 
   var minSaved = stats.minutesSaved || 0;
@@ -170,8 +170,8 @@ export function showStats(stats) {
  * @param {() => void} startPopup - callback to run when lock is OK
  */
 export function checkLockAndStart(startPopup) {
-  chrome.storage.local.get(['optibot_lock'], function(result) {
-    var lockData = result.optibot_lock || {};
+  chrome.storage.local.get(['audibot_lock'], function(result) {
+    var lockData = result.audibot_lock || {};
     var lockAt = lockData.lockAt || 0;
     if (lockAt > 0 && Date.now() > lockAt) {
       showLocked("Session verrouill\u00e9e apr\u00e8s inactivit\u00e9.");

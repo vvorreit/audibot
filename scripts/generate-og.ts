@@ -12,7 +12,7 @@ const svg = `<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2
     </linearGradient>
   </defs>
   <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/>
-  <text x="600" y="280" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="120" font-weight="bold" fill="white">OptiBot</text>
+  <text x="600" y="280" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="120" font-weight="bold" fill="white">AudiBot</text>
   <text x="600" y="380" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" fill="rgba(255,255,255,0.85)">Automatisation tiers-payant pour opticiens</text>
 </svg>`;
 

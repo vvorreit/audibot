@@ -1,8 +1,8 @@
 /**
- * Tests de non-régression des parsers OptiBot.
+ * Tests de non-régression des parsers AudiBot.
  *
  * Les fixtures (lib/__tests__/fixtures/*.txt) sont extraites des vrais PDFs du
- * dossier optibot-data/ via la même logique Y-grouping que extractTextFromPDFNative().
+ * dossier audibot-data/ via la même logique Y-grouping que extractTextFromPDFNative().
  * Ils représentent exactement le texte que les parsers reçoivent en production.
  *
  * Pour régénérer les fixtures :

@@ -3,10 +3,10 @@ import PortailDetailPage from "@/components/PortailDetailPage";
 import type { PortailDetailData } from "@/components/PortailDetailPage";
 
 export const metadata: Metadata = {
-  title: "OptiBot × iGestion — Remplissage automatique ERP opticien",
+  title: "AudiBot × iGestion — Remplissage automatique ERP opticien",
   description:
-    "Automatisez la saisie dans iGestion avec OptiBot. Smart Fill détecte et remplit automatiquement les champs patient — nom, prénom, NSS, DDN, correction — en un clic.",
-  alternates: { canonical: "https://optibot.fr/erp/igestion" },
+    "Automatisez la saisie dans iGestion avec AudiBot. Smart Fill détecte et remplit automatiquement les champs patient — nom, prénom, NSS, DDN, correction — en un clic.",
+  alternates: { canonical: "https://audibot.fr/erp/igestion" },
 };
 
 const data: PortailDetailData = {
@@ -14,7 +14,7 @@ const data: PortailDetailData = {
   type: "erp",
   domain: "igestion.fr",
   networkDescription:
-    "iGestion est l'un des logiciels de gestion les plus utilisés par les opticiens indépendants en France. OptiBot s'intègre via Smart Fill pour remplir automatiquement les fiches patient.",
+    "iGestion est l'un des logiciels de gestion les plus utilisés par les opticiens indépendants en France. AudiBot s'intègre via Smart Fill pour remplir automatiquement les fiches patient.",
   portailUrl: "igestion.fr",
   status: "Smart Fill disponible",
   filledFields: [

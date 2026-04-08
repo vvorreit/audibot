@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 
   if (alerts.length > 0) {
     await sendMail({
-      to: "contact@optibot.fr",
+      to: "contact@audibot.fr",
       subject: `[ALERTE] Smart Fill — ${alerts.length} portail(s) sous 60% de succès`,
       html: `<ul>${alerts.map((a) => `<li><strong>${a.site}</strong> : ${a.rate}% (${a.success}/${a.total})</li>`).join("")}</ul>`,
     }).catch(() => {});

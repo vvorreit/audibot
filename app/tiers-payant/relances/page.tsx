@@ -331,7 +331,7 @@ export default function RelancesPage() {
                               try {
                                 const data = await getRelancePortalData(d.dossierId);
                                 const relancePayload = JSON.stringify({
-                                  type: "OPTIBOT_RELANCE",
+                                  type: "AUDIBOT_RELANCE",
                                   reference: data.reference,
                                   mutuelle: data.mutuelle,
                                   montant: data.montant,

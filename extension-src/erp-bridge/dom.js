@@ -1,4 +1,4 @@
-/* ── OptiBot — ERP Bridge: DOM utilities ─────────────────────────────── */
+/* ── AudiBot — ERP Bridge: DOM utilities ─────────────────────────────── */
 /* Deep query (Shadow DOM + iframes), normalisation, signal collection.   */
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -22,7 +22,7 @@ export function querySelectorAllDeep(selector, root, depth) {
       try {
         var iDoc = iframes[fi].contentDocument || (iframes[fi].contentWindow && iframes[fi].contentWindow.document);
         if (iDoc) results = results.concat(querySelectorAllDeep(selector, iDoc, depth + 1));
-      } catch(e) { console.info("[OptiBot] iframe cross-origin ignorée :", iframes[fi].src || "(no src)"); }
+      } catch(e) { console.info("[AudiBot] iframe cross-origin ignorée :", iframes[fi].src || "(no src)"); }
     }
   }
   return results;

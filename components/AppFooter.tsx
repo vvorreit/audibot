@@ -36,8 +36,8 @@ export default function AppFooter() {
           {/* Logo + baseline */}
           <div className="col-span-2 sm:col-span-1 flex flex-col gap-3">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <Image src="/icon.png" alt="OptiBot" width={28} height={28} className="rounded-lg" />
-              <span className="text-sm font-black text-slate-800 uppercase tracking-tight">OptiBot</span>
+              <Image src="/icon.png" alt="AudiBot" width={28} height={28} className="rounded-lg" />
+              <span className="text-sm font-black text-slate-800 uppercase tracking-tight">AudiBot</span>
             </Link>
             <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-[160px]">
               L&apos;assistant robotisé des opticiens français.
@@ -69,13 +69,13 @@ export default function AppFooter() {
         {/* Séparateur */}
         <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="text-xs text-slate-400 font-medium">
-            © {year} OptiBot — Pour les opticiens français
+            © {year} AudiBot — Pour les opticiens français
           </span>
           <button
             onClick={() => {
-              localStorage.removeItem("optibot_cookie_consent");
-              localStorage.removeItem("optibot_analytics_consent");
-              localStorage.removeItem("optibot_marketing_consent");
+              localStorage.removeItem("audibot_cookie_consent");
+              localStorage.removeItem("audibot_analytics_consent");
+              localStorage.removeItem("audibot_marketing_consent");
               window.location.reload();
             }}
             className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"

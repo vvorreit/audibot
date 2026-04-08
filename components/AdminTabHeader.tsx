@@ -4,14 +4,14 @@ import { usePathname } from "next/navigation";
 import { Suspense } from "react";
 
 const TAB_HEADERS: Record<string, { title: string; subtitle: string }> = {
-  "/admin/analytics": { title: "Analytiques",       subtitle: "Vue globale de l'activité OptiBot" },
+  "/admin/analytics": { title: "Analytiques",       subtitle: "Vue globale de l'activité AudiBot" },
   "/admin/users":     { title: "Utilisateurs",       subtitle: "Gestion des comptes opticiens" },
   "/admin/teams":     { title: "Équipes",            subtitle: "Gestion des comptes multi-utilisateurs" },
   "/admin/extension": { title: "Extension",          subtitle: "Santé, sélecteurs et usage de l'extension" },
   "/admin/ocr":       { title: "OCR & Qualité",      subtitle: "Performance de la reconnaissance de documents" },
   "/admin/rpa":       { title: "RPA Monitor",        subtitle: "Suivi des automatisations RPA en temps réel" },
   "/admin/franchise": { title: "Franchise",          subtitle: "Leads et partenariats réseau" },
-  "/admin/inbox":     { title: "Inbox",              subtitle: "Messages reçus sur contact@optibot.fr" },
+  "/admin/inbox":     { title: "Inbox",              subtitle: "Messages reçus sur contact@audibot.fr" },
   "/admin/audit":            { title: "Logs d'audit",         subtitle: "Traçabilité des actions administrateurs" },
   "/admin/campagnes":        { title: "Campagnes email",      subtitle: "Envoi et suivi des campagnes" },
   "/admin/churn":            { title: "Churn & Retention",    subtitle: "Analyse des résiliations" },

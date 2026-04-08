@@ -51,7 +51,7 @@ export default function StatusPage() {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-sm">O</div>
-              <span className="text-lg font-black tracking-tight text-slate-900">OptiBot</span>
+              <span className="text-lg font-black tracking-tight text-slate-900">AudiBot</span>
             </Link>
             <h1 className="text-3xl font-black text-slate-900">Statut des services</h1>
           </div>

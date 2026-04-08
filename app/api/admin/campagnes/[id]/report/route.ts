@@ -201,7 +201,7 @@ export async function GET(
   ${bestHourHtml}
 
   <p style="font-size:11px;color:#94a3b8;margin-top:40px;text-align:center;border-top:1px solid #e2e8f0;padding-top:16px;">
-    Rapport genere par OptiBot — contact@optibot.fr<br>
+    Rapport genere par AudiBot — contact@audibot.fr<br>
     Appuyez sur Ctrl+P pour exporter en PDF
   </p>
 </body>

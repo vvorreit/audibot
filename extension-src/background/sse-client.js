@@ -1,4 +1,4 @@
-/* OptiBot — SSE Client : connexion bidirectionnelle via fetch + ReadableStream */
+/* AudiBot — SSE Client : connexion bidirectionnelle via fetch + ReadableStream */
 /* Chrome MV3 service workers ne supportent pas EventSource.                   */
 
 import { isActiveDomain, API_BASE } from './config.js';
@@ -10,9 +10,9 @@ var _sseConnected = false;
 var SSE_RETRY_DELAYS = [5000, 10000, 30000, 60000]; /* backoff exponentiel */
 
 export function connectSSE() {
-  chrome.storage.local.get(["optibot_auth", "optibot_lock"], function(result) {
-    var auth = result.optibot_auth || {};
-    var lock = result.optibot_lock || {};
+  chrome.storage.local.get(["audibot_auth", "audibot_lock"], function(result) {
+    var auth = result.audibot_auth || {};
+    var lock = result.audibot_lock || {};
 
     /* Ne pas connecter si pas authentifie ou verrouille */
     if (!auth.syncToken) return;
@@ -67,7 +67,7 @@ export function connectSSE() {
 
             read();
           }).catch(function(err) {
-            console.warn("[OptiBot] SSE read error:", err);
+            console.warn("[AudiBot] SSE read error:", err);
             if (_sseConnected) scheduleSSEReconnect();
           });
         }
@@ -75,7 +75,7 @@ export function connectSSE() {
         read();
       })
       .catch(function(err) {
-        console.warn("[OptiBot] SSE connection error:", err);
+        console.warn("[AudiBot] SSE connection error:", err);
         if (_sseConnected) scheduleSSEReconnect();
       });
   });
@@ -120,9 +120,9 @@ function handleSSEEvent(payload) {
   /* Dispatcher l'evenement a tous les onglets actifs */
   chrome.tabs.query({}, function(tabs) {
     tabs.forEach(function(tab) {
-      if (tab.url && (isActiveDomain(tab.url) || (function(u) { try { var h = new URL(u).hostname; return h === "optibot.fr" || h.endsWith(".optibot.fr"); } catch(e) { return false; } })(tab.url))) {
+      if (tab.url && (isActiveDomain(tab.url) || (function(u) { try { var h = new URL(u).hostname; return h === "audibot.fr" || h.endsWith(".audibot.fr"); } catch(e) { return false; } })(tab.url))) {
         chrome.tabs.sendMessage(tab.id, {
-          type: "OPTIBOT_SSE_EVENT",
+          type: "AUDIBOT_SSE_EVENT",
           payload: payload,
         }, function() {
           if (chrome.runtime.lastError) {} /* silencieux */

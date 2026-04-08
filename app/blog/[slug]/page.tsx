@@ -18,15 +18,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: post.title,
     description: post.description,
     alternates: {
-      canonical: `https://optibot.fr/blog/${slug}`,
+      canonical: `https://audibot.fr/blog/${slug}`,
     },
     openGraph: {
       type: "article",
-      url: `https://optibot.fr/blog/${slug}`,
+      url: `https://audibot.fr/blog/${slug}`,
       title: post.title,
       description: post.description,
       publishedTime: post.date,
-      authors: ["OptiBot"],
+      authors: ["AudiBot"],
       images: [{ url: "/icon.png", width: 800, height: 600, alt: post.title }],
     },
     twitter: {
@@ -55,10 +55,10 @@ export default async function BlogPostPage({ params }: PageProps) {
     "headline": post.title,
     "description": post.description,
     "datePublished": post.date,
-    "author": { "@type": "Organization", "name": "OptiBot", "url": "https://optibot.fr" },
-    "publisher": { "@type": "Organization", "name": "OptiBot", "url": "https://optibot.fr", "logo": { "@type": "ImageObject", "url": "https://optibot.fr/icon.png" } },
-    "url": `https://optibot.fr/blog/${slug}`,
-    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://optibot.fr/blog/${slug}` },
+    "author": { "@type": "Organization", "name": "AudiBot", "url": "https://audibot.fr" },
+    "publisher": { "@type": "Organization", "name": "AudiBot", "url": "https://audibot.fr", "logo": { "@type": "ImageObject", "url": "https://audibot.fr/icon.png" } },
+    "url": `https://audibot.fr/blog/${slug}`,
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://audibot.fr/blog/${slug}` },
   };
 
   return (
@@ -68,9 +68,9 @@ export default async function BlogPostPage({ params }: PageProps) {
       <nav className="fixed w-full z-[100] bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/icon.png" alt="OptiBot logo" width={36} height={36} className="rounded-xl shadow-sm" />
+            <Image src="/icon.png" alt="AudiBot logo" width={36} height={36} className="rounded-xl shadow-sm" />
             <span className="text-xl font-bold tracking-tight uppercase text-slate-900">
-              OptiBot
+              AudiBot
             </span>
           </Link>
           <Link
@@ -147,7 +147,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <section className="py-20 px-6 bg-slate-50 border-t border-slate-100">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-black tracking-tight mb-4">
-            Essayez OptiBot gratuitement
+            Essayez AudiBot gratuitement
           </h2>
           <p className="text-slate-500 font-medium mb-8">
             Automatisez votre saisie tiers payant et récupérez du temps pour vos

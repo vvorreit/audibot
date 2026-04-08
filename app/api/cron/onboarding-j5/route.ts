@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const BASE_URL = process.env.NEXTAUTH_URL || "https://optibot.fr";
+  const BASE_URL = process.env.NEXTAUTH_URL || "https://audibot.fr";
   const now = new Date();
   const from = new Date(now.getTime() - 121 * 60 * 60 * 1000);
   const to   = new Date(now.getTime() - 119 * 60 * 60 * 1000);
@@ -55,7 +55,7 @@ export async function GET(req: Request) {
           unsubscribeEmail: user.email,
           content: `
             ${h1(`${firstName ? `${firstName}, on` : "On"} a vu que vous étiez bloqué 🙋`)}
-            ${bodyText(`Vous avez créé votre compte OptiBot il y a 5 jours. La prochaine étape pour vous : <strong>${blockingStep}</strong>.`)}
+            ${bodyText(`Vous avez créé votre compte AudiBot il y a 5 jours. La prochaine étape pour vous : <strong>${blockingStep}</strong>.`)}
             ${bodyText(`C'est souvent une question de configuration initiale — nos utilisateurs qui franchissent cette étape économisent en moyenne <strong>1h30 par jour</strong>.`)}
             ${infoBox(`<strong>Vous êtes bloqué quelque part ?</strong><br>Répondez directement à cet email — notre équipe vous répond en moins d'une heure, en français.`)}
             ${ctaButton("Reprendre la configuration", nextUrl)}

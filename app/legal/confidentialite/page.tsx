@@ -21,17 +21,17 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Responsable du traitement</h2>
             <p className="text-slate-600 leading-relaxed">
-              Le responsable du traitement des données personnelles collectées via le site optibot.fr est :<br /><br />
+              Le responsable du traitement des données personnelles collectées via le site audibot.fr est :<br /><br />
               <strong>Vorreiter Activities</strong><br />
               SIRET : 92252355000023<br />
-              Email : <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              Email : <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">2. Principe de &quot;Privacy-by-Design&quot;</h2>
             <p className="text-slate-600 leading-relaxed">
-              OptiBot a été conçu pour respecter scrupuleusement le secret médical et la vie privée de vos patients.
+              AudiBot a été conçu pour respecter scrupuleusement le secret médical et la vie privée de vos patients.
               <strong> Aucune donnée de santé identifiable n&apos;est stockée sur nos serveurs.</strong> Les documents sont traités
               en mémoire volatile et immédiatement purgés après chaque analyse.
             </p>
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Traitement des documents — Architecture</h2>
             <p className="text-slate-600 leading-relaxed mb-3">
-              OptiBot propose deux modes de traitement des documents (ordonnances, cartes mutuelles) :
+              AudiBot propose deux modes de traitement des documents (prescriptions ORL, cartes mutuelles) :
             </p>
             <ul className="list-disc pl-6 text-slate-600 space-y-3">
               <li>
@@ -57,7 +57,7 @@ export default function PrivacyPage() {
               </li>
             </ul>
             <p className="text-slate-600 leading-relaxed mt-3">
-              <strong>OptiBot n&apos;utilise aucune API d&apos;intelligence artificielle tierce.</strong> Le moteur de
+              <strong>AudiBot n&apos;utilise aucune API d&apos;intelligence artificielle tierce.</strong> Le moteur de
               reconnaissance optique (PaddleOCR) est auto-hébergé, sans connexion sortante vers des services
               tiers, avec modèles pré-chargés localement.
             </p>
@@ -119,7 +119,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">5. Cookies et traceurs</h2>
             <p className="text-slate-600 leading-relaxed">
-              OptiBot utilise Google Analytics pour mesurer l&apos;audience du site. Ce service dépose des cookies sur votre appareil <strong>uniquement après votre consentement explicite</strong>, recueilli via notre bandeau de cookies lors de votre première visite.
+              AudiBot utilise Google Analytics pour mesurer l&apos;audience du site. Ce service dépose des cookies sur votre appareil <strong>uniquement après votre consentement explicite</strong>, recueilli via notre bandeau de cookies lors de votre première visite.
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
               Vous pouvez retirer votre consentement à tout moment en cliquant sur « Gérer mes cookies » en bas de page, ou via les paramètres de votre navigateur.
@@ -183,7 +183,7 @@ export default function PrivacyPage() {
               <li><strong>Limitation</strong> — restreindre temporairement un traitement</li>
             </ul>
             <p className="text-slate-600 leading-relaxed mt-4">
-              Pour exercer ces droits, contactez-nous à : <strong>contact@optibot.fr</strong>. Nous nous engageons à répondre dans un délai maximum de <strong>30 jours</strong>.
+              Pour exercer ces droits, contactez-nous à : <strong>contact@audibot.fr</strong>. Nous nous engageons à répondre dans un délai maximum de <strong>30 jours</strong>.
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
               Si vous estimez que vos droits ne sont pas respectés, vous avez le droit d&apos;introduire une réclamation auprès de la <strong>Commission Nationale de l&apos;Informatique et des Libertés (CNIL)</strong> :{" "}

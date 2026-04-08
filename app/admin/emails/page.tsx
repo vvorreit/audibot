@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import EmailsClient from "./EmailsClient";
 
-export const metadata = { title: "Emails — Admin OptiBot" };
+export const metadata = { title: "Emails — Admin AudiBot" };
 
 export default async function AdminEmailsPage() {
   try {

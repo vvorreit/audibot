@@ -29,11 +29,11 @@ docker compose up -d --no-deps app
 
 ## Architecture multi-produits
 
-OptiBot est le **repo principal** (source of truth).
+AudiBot est le **repo principal** (source of truth).
 AudiBot (`~/coffeeProject/audibot`) et DentiBot (`~/coffeeProject/dentiBot`) sont des forks.
 
 ```
-OptiBot (source)
+AudiBot (source)
     ├── AudiBot (fork — audioprothésistes)
     └── DentiBot (fork — chirurgiens-dentistes)
 ```
@@ -42,7 +42,7 @@ OptiBot (source)
 
 ## Règle de synchronisation
 
-**Toute modification non-métier sur OptiBot DOIT être propagée sur AudiBot et DentiBot.**
+**Toute modification non-métier sur AudiBot DOIT être propagée sur AudiBot et DentiBot.**
 
 ### Ce qui DOIT être synchronisé (infra / générique)
 
@@ -68,7 +68,7 @@ OptiBot (source)
 
 ## Procédure de synchronisation
 
-Après chaque commit non-métier sur OptiBot :
+Après chaque commit non-métier sur AudiBot :
 
 ```bash
 # 1. Identifier les fichiers modifiés
@@ -76,17 +76,17 @@ git diff HEAD~1 --name-only
 
 # 2. Copier vers AudiBot
 cd ~/coffeeProject/audibot
-git checkout -b sync/optibot-YYYY-MM-DD
-# Copier les fichiers concernés depuis OptiBot
-cp ~/coffeeProject/optiBot/FICHIER_MODIFIE ./FICHIER_MODIFIE
-git add . && git commit -m "sync: propagate [description] from OptiBot"
+git checkout -b sync/audibot-YYYY-MM-DD
+# Copier les fichiers concernés depuis AudiBot
+cp ~/coffeeProject/audiBot/FICHIER_MODIFIE ./FICHIER_MODIFIE
+git add . && git commit -m "sync: propagate [description] from AudiBot"
 git push
 
 # 3. Copier vers DentiBot
 cd ~/coffeeProject/dentiBot
-git checkout -b sync/optibot-YYYY-MM-DD
-cp ~/coffeeProject/optiBot/FICHIER_MODIFIE ./FICHIER_MODIFIE
-git add . && git commit -m "sync: propagate [description] from OptiBot"
+git checkout -b sync/audibot-YYYY-MM-DD
+cp ~/coffeeProject/audiBot/FICHIER_MODIFIE ./FICHIER_MODIFIE
+git add . && git commit -m "sync: propagate [description] from AudiBot"
 git push
 ```
 
@@ -127,20 +127,20 @@ prisma/schema.prisma   ← modèles communs uniquement
 ## Convention de commit pour les syncs
 
 ```
-sync: [description courte] from OptiBot
+sync: [description courte] from AudiBot
 ```
 
 Exemple :
 ```
-sync: fix open redirect in track/click from OptiBot
-sync: admin inbox IMAP from OptiBot
-sync: add AdminNav shared component from OptiBot
+sync: fix open redirect in track/click from AudiBot
+sync: admin inbox IMAP from AudiBot
+sync: add AdminNav shared component from AudiBot
 ```
 
 ---
 
 ## Responsabilité
 
-L'IA qui effectue une modification sur OptiBot est responsable de la propagation immédiate sur AudiBot et DentiBot avant de clore la tâche.
+L'IA qui effectue une modification sur AudiBot est responsable de la propagation immédiate sur AudiBot et DentiBot avant de clore la tâche.
 
 **Ne jamais clore une tâche infra sans avoir synchronisé les 3 repos.**

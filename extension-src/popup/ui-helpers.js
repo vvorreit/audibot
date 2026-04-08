@@ -33,10 +33,10 @@ export function initCollapsiblesAndToggles() {
 
 /* ── Indicateur offline ──────────────────────────────────────── */
 export function showOfflineBanner() {
-  var existing = document.getElementById('optibot-offline-banner');
+  var existing = document.getElementById('audibot-offline-banner');
   if (existing) return;
   var banner = document.createElement('div');
-  banner.id = 'optibot-offline-banner';
+  banner.id = 'audibot-offline-banner';
   banner.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 10px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;margin-bottom:8px;font-size:11px;color:#dc2626;font-weight:600;';
   banner.innerHTML = '\uD83D\uDD34 Hors ligne \u2014 mode cache';
   var container = document.body.querySelector('.container') || document.body;
@@ -44,7 +44,7 @@ export function showOfflineBanner() {
 }
 
 export function hideOfflineBanner() {
-  var banner = document.getElementById('optibot-offline-banner');
+  var banner = document.getElementById('audibot-offline-banner');
   if (banner) banner.remove();
 }
 
@@ -69,20 +69,20 @@ export function initToggleButtons() {
     toggleThumb.style.transform = visible ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_buttons_visible'], (result) => {
-    const visible = result.optibot_buttons_visible !== false;
+  chrome.storage.local.get(['audibot_buttons_visible'], (result) => {
+    const visible = result.audibot_buttons_visible !== false;
     updateToggleUI(visible);
   });
 
   if (toggleCheckbox) {
     toggleCheckbox.addEventListener('change', () => {
       const visible = toggleCheckbox.checked;
-      chrome.storage.local.set({ optibot_buttons_visible: visible });
+      chrome.storage.local.set({ audibot_buttons_visible: visible });
       updateToggleUI(visible);
 
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, { type: 'OPTIBOT_TOGGLE_BUTTONS', visible });
+          chrome.tabs.sendMessage(tabs[0].id, { type: 'AUDIBOT_TOGGLE_BUTTONS', visible });
         }
       });
     });
@@ -102,8 +102,8 @@ export function initToggleAutofill() {
     toggleAutofillThumb.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_settings'], (result) => {
-    var settings = result.optibot_settings || {};
+  chrome.storage.local.get(['audibot_settings'], (result) => {
+    var settings = result.audibot_settings || {};
     /* Par d\u00e9faut activ\u00e9 (true) */
     var enabled = settings.autofillOnLoad !== false;
     updateAutofillToggleUI(enabled);
@@ -111,10 +111,10 @@ export function initToggleAutofill() {
 
   if (toggleAutofill) {
     toggleAutofill.addEventListener('change', () => {
-      chrome.storage.local.get(['optibot_settings'], (result) => {
-        var settings = result.optibot_settings || {};
+      chrome.storage.local.get(['audibot_settings'], (result) => {
+        var settings = result.audibot_settings || {};
         settings.autofillOnLoad = toggleAutofill.checked;
-        chrome.storage.local.set({ optibot_settings: settings });
+        chrome.storage.local.set({ audibot_settings: settings });
         updateAutofillToggleUI(toggleAutofill.checked);
       });
     });
@@ -134,18 +134,18 @@ export function initToggleRejet() {
     toggleRejetThumb.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_rejet_consent'], (result) => {
-    const enabled = result.optibot_rejet_consent === true;
+  chrome.storage.local.get(['audibot_rejet_consent'], (result) => {
+    const enabled = result.audibot_rejet_consent === true;
     updateRejetToggleUI(enabled);
   });
 
   if (toggleRejet) {
     toggleRejet.addEventListener('change', () => {
       const enabled = toggleRejet.checked;
-      /* optibot_rejet_consent = consentement explicite de l'utilisateur */
+      /* audibot_rejet_consent = consentement explicite de l'utilisateur */
       chrome.storage.local.set({
-        optibot_rejet_consent: enabled,
-        optibot_rejet_enabled: enabled
+        audibot_rejet_consent: enabled,
+        audibot_rejet_enabled: enabled
       });
       updateRejetToggleUI(enabled);
     });
@@ -165,17 +165,17 @@ export function initTogglePreview() {
     togglePreviewThumb.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
   }
 
-  chrome.storage.local.get(['optibot_settings'], (result) => {
-    var settings = result.optibot_settings || {};
+  chrome.storage.local.get(['audibot_settings'], (result) => {
+    var settings = result.audibot_settings || {};
     updatePreviewToggleUI(settings.previewBeforeFill || false);
   });
 
   if (togglePreview) {
     togglePreview.addEventListener('change', () => {
-      chrome.storage.local.get(['optibot_settings'], (result) => {
-        var settings = result.optibot_settings || {};
+      chrome.storage.local.get(['audibot_settings'], (result) => {
+        var settings = result.audibot_settings || {};
         settings.previewBeforeFill = togglePreview.checked;
-        chrome.storage.local.set({ optibot_settings: settings });
+        chrome.storage.local.set({ audibot_settings: settings });
         updatePreviewToggleUI(togglePreview.checked);
       });
     });

@@ -1,5 +1,5 @@
 # Analyse d'Impact relative à la Protection des Données (AIPD / DPIA)
-## OptiBot — Traitement des données de santé via OCR
+## AudiBot — Traitement des données de santé via OCR
 ### Version 1.0 — Mars 2026 — CONFIDENTIEL — USAGE INTERNE UNIQUEMENT
 
 ---
@@ -10,7 +10,7 @@ Conformément à l'Article 35 du RGPD et aux lignes directrices de la CNIL, une 
 pour tout traitement susceptible d'engendrer un risque élevé pour les droits et libertés des personnes,
 notamment pour le traitement de données de santé (Article 9 RGPD).
 
-**OptiBot traite des données de santé** via OCR de documents médicaux (ordonnances, cartes de mutuelle) :
+**AudiBot traite des données de santé** via OCR de documents médicaux (ordonnances, cartes de mutuelle) :
 numéro de sécurité sociale, données de prescription optique, informations de couverture maladie.
 
 ---
@@ -19,11 +19,11 @@ numéro de sécurité sociale, données de prescription optique, informations de
 
 | Élément | Détail |
 |---|---|
-| **Responsable de traitement** | OptiBot SAS |
+| **Responsable de traitement** | AudiBot SAS |
 | **Finalité** | Assistance à la saisie pour opticiens — pré-remplissage de formulaires mutuelles via OCR |
 | **Base légale** | Intérêt légitime professionnel (Art. 6.1.f) + consentement de l'opticien (Art. 9.2.a) |
 | **Catégories de données** | NSS, nom, prénom, date de naissance, données d'ordonnance optique, données mutuelle |
-| **Personnes concernées** | Patients des opticiens utilisateurs d'OptiBot |
+| **Personnes concernées** | Patients des opticiens utilisateurs d'AudiBot |
 | **Volume estimé** | Traitement local — pas de stockage centralisé des données patient |
 | **Durée de conservation** | Session locale uniquement (TTL 24h dans l'extension, jamais en base de données) |
 | **Sous-traitants** | Voir Registre des Traitements |
@@ -50,9 +50,9 @@ numéro de sécurité sociale, données de prescription optique, informations de
 - Sessions chiffrées JWT côté serveur
 
 ### 3.4 Droits des personnes concernées
-- Les patients n'interagissent pas directement avec OptiBot
+- Les patients n'interagissent pas directement avec AudiBot
 - Les opticiens (responsables de traitement vis-à-vis de leurs patients) peuvent effacer les données locales à tout moment
-- Aucune donnée patient persistée côté serveur → pas de données à exporter/supprimer côté OptiBot
+- Aucune donnée patient persistée côté serveur → pas de données à exporter/supprimer côté AudiBot
 
 ---
 
@@ -92,8 +92,8 @@ Cette DPIA doit être révisée :
 
 | Rôle | Nom | Date | Signature |
 |---|---|---|---|
-| Responsable de traitement | Vincent Vorreiter — contact@optibot.fr | Mars 2026 | |
-| DPO (si désigné) | Non désigné (moins de 250 salariés) — contact@optibot.fr | Mars 2026 | |
+| Responsable de traitement | Vincent Vorreiter — contact@audibot.fr | Mars 2026 | |
+| DPO (si désigné) | Non désigné (moins de 250 salariés) — contact@audibot.fr | Mars 2026 | |
 
 ---
 

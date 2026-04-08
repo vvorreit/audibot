@@ -3,10 +3,10 @@ import PortailDetailPage from "@/components/PortailDetailPage";
 import type { PortailDetailData } from "@/components/PortailDetailPage";
 
 export const metadata: Metadata = {
-  title: "OptiBot × AG2R La Mondiale — Tiers payant optique automatisé",
+  title: "AudiBot × AG2R La Mondiale — Tiers payant optique automatisé",
   description:
-    "Remplissez automatiquement vos demandes tiers payant AG2R La Mondiale avec OptiBot. Smart Fill universel disponible pour les opticiens.",
-  alternates: { canonical: "https://optibot.fr/mutuelles/ag2r-la-mondiale" },
+    "Remplissez automatiquement vos demandes tiers payant AG2R La Mondiale avec AudiBot. Smart Fill universel disponible pour les opticiens.",
+  alternates: { canonical: "https://audibot.fr/mutuelles/ag2r-la-mondiale" },
 };
 
 const data: PortailDetailData = {
@@ -14,7 +14,7 @@ const data: PortailDetailData = {
   type: "mutuelle",
   domain: "ag2rlamondiale.fr",
   networkDescription:
-    "AG2R La Mondiale est un groupe majeur d\u2019assurance et de protection sociale pour les entreprises et les TNS. OptiBot simplifie la saisie tiers payant pour les opticiens.",
+    "AG2R La Mondiale est un groupe majeur d\u2019assurance et de protection sociale pour les entreprises et les TNS. AudiBot simplifie la saisie tiers payant pour les opticiens.",
   portailUrl: "ag2rlamondiale.fr / portail pro",
   status: "Smart Fill disponible",
   filledFields: ["NSS", "Nom", "Prénom"],

@@ -40,7 +40,7 @@ export async function GET(req: Request) {
     try {
       await sendMail({
         to: lead.email,
-        subject: "OptiBot — on prépare votre démo",
+        subject: "AudiBot — on prépare votre démo",
         html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
@@ -53,16 +53,16 @@ export async function GET(req: Request) {
   <p style="font-size:14px;line-height:1.6;color:#475569;">
     Pour accélérer les choses, vous pouvez directement planifier un créneau de 30 min avec nous :
   </p>
-  <a href="mailto:contact@optibot.fr?subject=Demo%20OptiBot%20Franchise%20-%20${encodeURIComponent(lead.company)}"
+  <a href="mailto:contact@audibot.fr?subject=Demo%20AudiBot%20Franchise%20-%20${encodeURIComponent(lead.company)}"
      style="display:inline-block;margin:24px 0;padding:14px 32px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;border-radius:12px;text-decoration:none;">
     Répondre pour planifier la démo
   </a>
   <p style="font-size:13px;color:#64748b;line-height:1.6;">
-    On vous montrera comment OptiBot s'intègre dans votre réseau, les stats agrégées multi-magasins,
+    On vous montrera comment AudiBot s'intègre dans votre réseau, les stats agrégées multi-magasins,
     et le déploiement accompagné. <strong>Temps estimé : 30 min.</strong>
   </p>
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot — contact@optibot.fr
+    AudiBot — contact@audibot.fr
   </p>
 </body></html>`,
       });

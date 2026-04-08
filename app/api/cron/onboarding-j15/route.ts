@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const BASE_URL = process.env.NEXTAUTH_URL || "https://optibot.fr";
+  const BASE_URL = process.env.NEXTAUTH_URL || "https://audibot.fr";
   const now = new Date();
   // Inscrits il y a 14-15 jours (essai de 14 jours expiré)
   const from = new Date(now.getTime() - 361 * 60 * 60 * 1000); // ~15j
@@ -51,18 +51,18 @@ export async function GET(req: Request) {
         to: user.email,
         subject: hasUsed
           ? `Votre essai s'est terminé — et vous avez économisé ${timeSavedStr}`
-          : "Votre essai OptiBot s'est terminé hier",
+          : "Votre essai AudiBot s'est terminé hier",
         html: emailWrapper({
           unsubscribeEmail: user.email,
           content: hasUsed ? `
             ${h1(`${firstName ? `${firstName}, votre` : "Votre"} essai est terminé — mais vos résultats restent 📊`)}
             ${infoBox(`En ${scans} dossier${scans > 1 ? "s" : ""} traité${scans > 1 ? "s" : ""}, vous avez économisé <strong>${timeSavedStr} de saisie manuelle</strong>. Sur un an, ça représente <strong>${Math.round(timeSaved * 52 / 60)}h</strong> récupérées.`)}
             ${bodyText(`Pour continuer à économiser ce temps, choisissez le plan qui correspond à votre activité. Sans engagement — annulable à tout moment.`)}
-            ${ctaButton("Continuer avec OptiBot →", `${BASE_URL}/dashboard`)}
+            ${ctaButton("Continuer avec AudiBot →", `${BASE_URL}/dashboard`)}
             ${smallText(`Essai expirté — accès lecture seule. <a href="${BASE_URL}/dashboard" style="color:#2563eb;text-decoration:underline;">Voir les plans →</a>`)}
           ` : `
             ${h1(`${firstName ? `${firstName}, votre` : "Votre"} essai gratuit est terminé`)}
-            ${bodyText(`Vous avez créé votre compte OptiBot il y a 14 jours mais vous n'avez pas eu l'occasion de le tester complètement.`)}
+            ${bodyText(`Vous avez créé votre compte AudiBot il y a 14 jours mais vous n'avez pas eu l'occasion de le tester complètement.`)}
             ${bodyText(`Nos utilisateurs qui complètent la configuration économisent en moyenne <strong>1h30 par jour</strong>. Ça prend 5 minutes à mettre en place.`)}
             ${infoBox(`💡 Si vous avez eu un problème d'installation ou une question, répondez à cet email — notre équipe vous aide gratuitement, même après l'essai.`)}
             ${ctaButton("Voir les plans — à partir de 39,90€/mois", `${BASE_URL}/dashboard`)}

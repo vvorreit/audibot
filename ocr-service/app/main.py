@@ -1,4 +1,4 @@
-"""FastAPI — Service OCR PaddleOCR pour OptiBot.
+"""FastAPI — Service OCR PaddleOCR pour AudiBot.
 
 Aucun fichier temporaire sur disque (RGPD).
 Aucune connexion sortante (modèles pré-téléchargés au build Docker).
@@ -19,7 +19,7 @@ from .preprocessing import preprocess
 from .postprocessing import postprocess
 from .ocr_engine import recognize, get_ocr
 
-logger = logging.getLogger("optibot-ocr")
+logger = logging.getLogger("audibot-ocr")
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 Mo
 
@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="OptiBot OCR Service",
+    title="AudiBot OCR Service",
     version="2.0.0",
     docs_url=None,
     redoc_url=None,

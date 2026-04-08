@@ -98,7 +98,7 @@ export default function ScanPage() {
           es.close();
           setState("success");
           // Injecter dans le dashboard
-          window.dispatchEvent(new CustomEvent("optibot_scan_received", { detail: payload }));
+          window.dispatchEvent(new CustomEvent("audibot_scan_received", { detail: payload }));
           // Fermer après 2s
           setTimeout(() => setState("idle"), 2000);
         } catch {

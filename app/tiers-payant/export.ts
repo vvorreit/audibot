@@ -118,7 +118,7 @@ export async function exportDossiersPDFHtml(filters: ExportFilters): Promise<str
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Export Tiers Payant — OptiBot</title>
+  <title>Export Tiers Payant — AudiBot</title>
   <style>
     @page { size: A4 landscape; margin: 1.5cm; }
     * { box-sizing: border-box; font-family: Arial, sans-serif; }

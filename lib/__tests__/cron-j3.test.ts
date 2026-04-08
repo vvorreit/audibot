@@ -28,7 +28,7 @@ function makeRequest(secret: string): Request {
 beforeEach(() => {
   vi.clearAllMocks();
   process.env.CRON_SECRET = "test-secret";
-  process.env.NEXTAUTH_URL = "https://app.optibot.fr";
+  process.env.NEXTAUTH_URL = "https://app.audibot.fr";
 });
 
 describe("cron onboarding-j3", () => {
@@ -45,7 +45,7 @@ describe("cron onboarding-j3", () => {
     expect(mocks.sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
         to: "user@test.com",
-        subject: "OptiBot — avez-vous testé le bot ?",
+        subject: "AudiBot — avez-vous testé le bot ?",
       })
     );
   });

@@ -1,4 +1,4 @@
-/* ── OptiBot Pre-Submit Validation Module ───────────────────────────────── */
+/* ── AudiBot Pre-Submit Validation Module ───────────────────────────────── */
 /* Hooks into form submission to validate fields before they are sent.      */
 
 import { runAllValidations } from "./validators.js";
@@ -150,7 +150,7 @@ function attachSubmitListeners(portail) {
   try {
     buttons = document.querySelectorAll(selectors);
   } catch (err) {
-    console.warn("[OptiBot] Invalid submit selector:", err);
+    console.warn("[AudiBot] Invalid submit selector:", err);
     buttons = document.querySelectorAll(SUBMIT_SELECTORS["_default"]);
   }
 
@@ -170,7 +170,7 @@ function attachSubmitListeners(portail) {
 /* ── Load rejection patterns ───────────────────────────────────────────── */
 
 export function loadRejetPatterns(hostname) {
-  var cacheKey = "optibot_rejet_patterns";
+  var cacheKey = "audibot_rejet_patterns";
   try {
     var cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -182,11 +182,11 @@ export function loadRejetPatterns(hostname) {
   } catch (e) { /* ignore parse errors */ }
 
   /* Fetch from API */
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return;
 
-    fetch("https://optibot.fr/api/extension/rejet-patterns?hostname=" + encodeURIComponent(hostname), {
+    fetch("https://audibot.fr/api/extension/rejet-patterns?hostname=" + encodeURIComponent(hostname), {
       headers: { "Authorization": "Bearer " + auth.syncToken },
     })
     .then(function(r) { return r.json(); })
@@ -196,7 +196,7 @@ export function loadRejetPatterns(hostname) {
       } catch (e) { /* storage full, ignore */ }
     })
     .catch(function(err) {
-      console.warn("[OptiBot] rejet-patterns fetch failed:", err);
+      console.warn("[AudiBot] rejet-patterns fetch failed:", err);
     });
   });
 }

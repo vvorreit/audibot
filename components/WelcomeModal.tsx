@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ScanLine, Copy, MousePointerClick, X } from "lucide-react";
 
-const STORAGE_KEY = "optibot_welcome_seen";
+const STORAGE_KEY = "audibot_welcome_seen";
 
 export default function WelcomeModal() {
   const [show, setShow] = useState(false);
@@ -78,7 +78,7 @@ export default function WelcomeModal() {
 
         <div className="text-center mb-8">
           <span className="text-6xl block mb-4">🎉</span>
-          <h2 id="welcome-modal-title" className="text-2xl font-black text-slate-900 mb-2">Bienvenue sur OptiBot !</h2>
+          <h2 id="welcome-modal-title" className="text-2xl font-black text-slate-900 mb-2">Bienvenue sur AudiBot !</h2>
           <p className="text-slate-500 font-medium">Voici comment gagner du temps dès aujourd&apos;hui</p>
         </div>
 

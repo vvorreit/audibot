@@ -14,7 +14,7 @@ vi.stubGlobal("readEncryptedCache", vi.fn().mockResolvedValue(null));
 vi.stubGlobal("smartFillField", vi.fn().mockResolvedValue(true));
 vi.stubGlobal("ultraFill", vi.fn());
 vi.stubGlobal("smartSelectOption", vi.fn().mockReturnValue(true));
-vi.stubGlobal("markFilledByOptiBot", vi.fn());
+vi.stubGlobal("markFilledByAudiBot", vi.fn());
 vi.stubGlobal("findElementBySelectors", vi.fn().mockResolvedValue(null));
 vi.stubGlobal("waitForElement", vi.fn().mockResolvedValue(null));
 vi.stubGlobal("logRPA", vi.fn());

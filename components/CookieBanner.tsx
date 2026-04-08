@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { Shield, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-const CONSENT_KEY = "optibot_cookie_consent";
-const ANALYTICS_KEY = "optibot_analytics_consent";
-const MARKETING_KEY = "optibot_marketing_consent";
+const CONSENT_KEY = "audibot_cookie_consent";
+const ANALYTICS_KEY = "audibot_analytics_consent";
+const MARKETING_KEY = "audibot_marketing_consent";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -27,7 +27,7 @@ export default function CookieBanner() {
     localStorage.setItem(CONSENT_KEY, "accepted");
     localStorage.setItem(ANALYTICS_KEY, "granted");
     localStorage.setItem(MARKETING_KEY, "granted");
-    window.dispatchEvent(new Event("optibot_consent_accepted"));
+    window.dispatchEvent(new Event("audibot_consent_accepted"));
     setVisible(false);
   }
 
@@ -35,7 +35,7 @@ export default function CookieBanner() {
     localStorage.setItem(CONSENT_KEY, analytics || marketing ? "partial" : "declined");
     localStorage.setItem(ANALYTICS_KEY, analytics ? "granted" : "denied");
     localStorage.setItem(MARKETING_KEY, marketing ? "granted" : "denied");
-    if (analytics) window.dispatchEvent(new Event("optibot_consent_accepted"));
+    if (analytics) window.dispatchEvent(new Event("audibot_consent_accepted"));
     setVisible(false);
   }
 
@@ -62,7 +62,7 @@ export default function CookieBanner() {
               Respect de votre vie privée
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Nous utilisons des cookies pour améliorer OptiBot. Vos données patients ne sont{" "}
+              Nous utilisons des cookies pour améliorer AudiBot. Vos données patients ne sont{" "}
               <strong>jamais</strong> concernées.{" "}
               <Link href="/legal/confidentialite" className="text-blue-600 hover:underline font-semibold">
                 Politique de confidentialité

@@ -8,4 +8,4 @@ Disallow: /auth/
 Disallow: /onboarding/
 Disallow: /tiers-payant/
 
-Sitemap: https://optibot.fr/sitemap.xml
+Sitemap: https://audibot.fr/sitemap.xml

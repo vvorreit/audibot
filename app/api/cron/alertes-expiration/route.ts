@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   }
 
   const now = new Date();
-  const appUrl = process.env.NEXTAUTH_URL || "https://app.optibot.fr";
+  const appUrl = process.env.NEXTAUTH_URL || "https://app.audibot.fr";
   let created = 0;
   let emailsSent = 0;
 
@@ -76,7 +76,7 @@ export async function GET(req: Request) {
         try {
           await sendMail({
             to: dossier.user.email,
-            subject: `OptiBot — Ordonnance ${dossier.reference} expire dans ${joursAvant} jours`,
+            subject: `AudiBot — Ordonnance ${dossier.reference} expire dans ${joursAvant} jours`,
             html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
@@ -96,7 +96,7 @@ export async function GET(req: Request) {
      style="display:inline-block;margin:24px 0;padding:12px 28px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;border-radius:12px;text-decoration:none;">
     Voir les alertes
   </a>
-  <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">OptiBot — contact@optibot.fr</p>
+  <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">AudiBot — contact@audibot.fr</p>
 </body></html>`,
           });
           await prisma.alerteExpiration.updateMany({

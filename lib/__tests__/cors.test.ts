@@ -2,14 +2,14 @@ import { describe, it, expect } from "vitest";
 import { getCorsHeaders, getPortalCorsHeaders } from "@/lib/cors";
 
 describe("getCorsHeaders", () => {
-  it("autorise une origin optibot.fr", () => {
-    const headers = getCorsHeaders("https://optibot.fr");
-    expect(headers["Access-Control-Allow-Origin"]).toBe("https://optibot.fr");
+  it("autorise une origin audibot.fr", () => {
+    const headers = getCorsHeaders("https://audibot.fr");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
   });
 
-  it("autorise un sous-domaine optibot.fr", () => {
-    const headers = getCorsHeaders("https://app.optibot.fr");
-    expect(headers["Access-Control-Allow-Origin"]).toBe("https://app.optibot.fr");
+  it("autorise un sous-domaine audibot.fr", () => {
+    const headers = getCorsHeaders("https://app.audibot.fr");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://app.audibot.fr");
   });
 
   it("autorise une extension Chrome (chrome-extension://)", () => {
@@ -18,23 +18,23 @@ describe("getCorsHeaders", () => {
     expect(headers["Access-Control-Allow-Origin"]).toBe(origin);
   });
 
-  it("retourne optibot.fr pour une origin tierce non autorisée", () => {
+  it("retourne audibot.fr pour une origin tierce non autorisée", () => {
     const headers = getCorsHeaders("https://example-tiers.com");
-    expect(headers["Access-Control-Allow-Origin"]).toBe("https://optibot.fr");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
   });
 
-  it("retourne optibot.fr si origin est null", () => {
+  it("retourne audibot.fr si origin est null", () => {
     const headers = getCorsHeaders(null);
-    expect(headers["Access-Control-Allow-Origin"]).toBe("https://optibot.fr");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
   });
 
-  it("retourne optibot.fr si origin est undefined", () => {
+  it("retourne audibot.fr si origin est undefined", () => {
     const headers = getCorsHeaders(undefined);
-    expect(headers["Access-Control-Allow-Origin"]).toBe("https://optibot.fr");
+    expect(headers["Access-Control-Allow-Origin"]).toBe("https://audibot.fr");
   });
 
   it("expose les bons methods et headers", () => {
-    const headers = getCorsHeaders("https://optibot.fr");
+    const headers = getCorsHeaders("https://audibot.fr");
     expect(headers["Access-Control-Allow-Methods"]).toBe("POST, GET, OPTIONS");
     expect(headers["Access-Control-Allow-Headers"]).toBe("Content-Type");
   });

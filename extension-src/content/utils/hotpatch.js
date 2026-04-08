@@ -1,4 +1,4 @@
-/* ── OptiBot Hot-Patch System ───────────────────────────────────────────── */
+/* ── AudiBot Hot-Patch System ───────────────────────────────────────────── */
 /* Charge et exécute des patches JS depuis le serveur pour corriger des      */
 /* problèmes sans mettre à jour l'extension.                                */
 /*                                                                          */
@@ -20,8 +20,8 @@ var _appliedPatches = {};
 function loadAndApplyHotPatches() {
   var hostname = window.location.hostname.replace("www.", "").toLowerCase();
 
-  chrome.storage.local.get(["optibot_hotpatches"], function(result) {
-    var data = result.optibot_hotpatches;
+  chrome.storage.local.get(["audibot_hotpatches"], function(result) {
+    var data = result.audibot_hotpatches;
     if (!data || !data.patches || !Array.isArray(data.patches)) return;
 
     var patches = data.patches;
@@ -72,14 +72,14 @@ function applyPatch(patch) {
         var portal = patch.data.portal;
         var sels = patch.data.selectors;
         /* Injecter dans le système d'overrides existant */
-        chrome.storage.local.get(["optibot_selector_overrides"], function(result) {
-          var overrides = (result.optibot_selector_overrides || {}).overrides || {};
+        chrome.storage.local.get(["audibot_selector_overrides"], function(result) {
+          var overrides = (result.audibot_selector_overrides || {}).overrides || {};
           if (!overrides[portal]) overrides[portal] = {};
           for (var key in sels) {
             overrides[portal][key] = sels[key];
           }
           chrome.storage.local.set({
-            optibot_selector_overrides: {
+            audibot_selector_overrides: {
               overrides: overrides,
               version: Date.now(),
               ts: Date.now()
@@ -114,7 +114,7 @@ function applyPatch(patch) {
     case "config_override":
       /* patch.data = { key: "CHUNK_SIZE", value: 20 } */
       if (patch.data && patch.data.key && patch.data.value !== undefined) {
-        globalThis["optibot_config_" + patch.data.key] = patch.data.value;
+        globalThis["audibot_config_" + patch.data.key] = patch.data.value;
       }
       break;
 

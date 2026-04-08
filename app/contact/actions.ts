@@ -43,11 +43,11 @@ export async function sendContactEmail(formData: FormData) {
   try {
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
-      to: "contact@optibot.fr",
+      to: "contact@audibot.fr",
       replyTo: emailRaw,
       subject: `Nouveau Devis Franchise : ${company}`,
       html: `
-        <h1>Nouvelle demande de devis OptiBot</h1>
+        <h1>Nouvelle demande de devis AudiBot</h1>
         <p><strong>Nom :</strong> ${name}</p>
         <p><strong>Enseigne :</strong> ${company}</p>
         <p><strong>Email :</strong> ${email}</p>

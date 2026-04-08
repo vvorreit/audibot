@@ -11,7 +11,7 @@ const TYPES: { value: RequestType; label: string; desc: string; icon: React.Reac
   {
     value: "suggestion",
     label: "Suggestion",
-    desc: "Une idée pour améliorer OptiBot",
+    desc: "Une idée pour améliorer AudiBot",
     icon: <Lightbulb className="w-5 h-5" />,
     color: "blue",
   },

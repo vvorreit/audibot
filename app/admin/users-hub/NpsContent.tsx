@@ -43,7 +43,7 @@ export default function NpsContent() {
           <p className="text-2xs font-black uppercase tracking-widest text-green-400 mb-1">Promoteurs</p>
           <p className="text-3xl font-black text-green-600">{data.promoters}</p>
           <p className="text-xs text-slate-400 font-semibold mb-2">{data.total > 0 ? Math.round(data.promoters / data.total * 100) : 0}% — score 9-10</p>
-          <p className="text-2xs text-slate-400 font-medium">Recommanderont OptiBot activement. À solliciter pour des témoignages.</p>
+          <p className="text-2xs text-slate-400 font-medium">Recommanderont AudiBot activement. À solliciter pour des témoignages.</p>
         </div>
         <div className="bg-white p-6 rounded-card shadow-sm border border-slate-100">
           <p className="text-2xs font-black uppercase tracking-widest text-amber-400 mb-1">Passifs</p>

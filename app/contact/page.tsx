@@ -46,7 +46,7 @@ export default function ContactPage() {
                 <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-blue-400">
                   <Mail className="w-5 h-5" />
                 </div>
-                contact@optibot.fr
+                contact@audibot.fr
               </div>
             </div>
           </div>

@@ -31,7 +31,7 @@ export default async function BlogPage() {
           <Link href="/" className="flex items-center gap-3">
             <Image src="/icon.png" alt="AudiBot logo" width={36} height={36} className="rounded-xl shadow-sm" />
             <span className="text-xl font-bold tracking-tight uppercase text-slate-900">
-              OptiBot
+              AudiBot
             </span>
           </Link>
           <Link

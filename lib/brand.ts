@@ -47,8 +47,8 @@ const BRANDS: Record<string, BrandConfig> = {
     supportEmail: "contact@audibot.fr",
     appUrl: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://audibot.fr",
     colors: {
-      primary: "#059669", // Vert émeraude
-      secondary: "#10b981",
+      primary: "#4f46e5", // Indigo
+      secondary: "#6366f1",
     },
     lexicon: {
       profession: "Audioprothésiste",
@@ -63,6 +63,6 @@ const BRANDS: Record<string, BrandConfig> = {
 };
 
 export const getBrand = (): BrandConfig => {
-  const brandId = process.env.NEXT_PUBLIC_BRAND_ID || "optibot";
-  return BRANDS[brandId] || BRANDS.optibot;
+  const brandId = process.env.NEXT_PUBLIC_BRAND_ID || "audibot";
+  return BRANDS[brandId] || BRANDS.audibot;
 };

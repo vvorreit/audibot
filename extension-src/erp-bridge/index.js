@@ -1,4 +1,4 @@
-/* ── OptiBot — ERP Bridge ─────────────────────────────────────────────── */
+/* ── AudiBot — ERP Bridge ─────────────────────────────────────────────── */
 /* Injecte dynamiquement sur l'URL ERP configuree par l'utilisateur.      */
 /* Auto-detecte l'ERP et active l'adaptateur correspondant.               */
 /*                                                                         */
@@ -14,6 +14,6 @@ import { initBridge } from "./core.js";
 var hostname = window.location.hostname.replace("www.", "");
 var adapter = detectAdapter(hostname, document);
 
-console.info("[OptiBot] ERP Bridge actif — adaptateur : " + adapter.displayName + " (" + adapter.name + ")");
+console.info("[AudiBot] ERP Bridge actif — adaptateur : " + adapter.displayName + " (" + adapter.name + ")");
 
 initBridge(adapter);

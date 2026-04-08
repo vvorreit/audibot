@@ -1,4 +1,4 @@
-/* OptiBot — Bandeau de correction apres re-soumission.
+/* AudiBot — Bandeau de correction apres re-soumission.
    Affiche un rappel visuel du motif de rejet et highlight le champ a verifier.
    Si le cache est vide, affiche un avertissement rouge invitant a scanner la carte.
    Exports: showCorrectionBanner. ~100 lignes */
@@ -34,7 +34,7 @@ function highlightField(correctionField) {
       if (el.offsetParent === null) continue; /* skip hidden */
       el.style.outline = "3px solid #f97316";
       el.style.boxShadow = "0 0 0 4px rgba(249,115,22,0.25)";
-      el.title = "OptiBot \u2014 Champ \u00E0 v\u00E9rifier suite au rejet";
+      el.title = "AudiBot \u2014 Champ \u00E0 v\u00E9rifier suite au rejet";
       /* Scroller vers le champ */
       if (i === 0) el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -49,7 +49,7 @@ function highlightField(correctionField) {
  */
 export function showCorrectionBanner(motif, correctionField, correctionHint, noCacheWarning) {
   /* Eviter les doublons */
-  if (document.getElementById("optibot-resubmit-banner")) return;
+  if (document.getElementById("audibot-resubmit-banner")) return;
 
   var isWarning = !!noCacheWarning;
   var bgGradient = isWarning
@@ -57,7 +57,7 @@ export function showCorrectionBanner(motif, correctionField, correctionHint, noC
     : "linear-gradient(135deg,#f97316,#ea580c)"; /* orange normal */
 
   var banner = document.createElement("div");
-  banner.id = "optibot-resubmit-banner";
+  banner.id = "audibot-resubmit-banner";
   banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:2147483647;background:" + bgGradient + ";color:white;padding:12px 20px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);";
 
   var icon = document.createElement("span");

@@ -75,7 +75,7 @@ export async function processRelances(): Promise<RelanceResult> {
 
   let sent = 0;
   let errors = 0;
-  const appUrl = process.env.NEXTAUTH_URL || "https://optibot.fr";
+  const appUrl = process.env.NEXTAUTH_URL || "https://audibot.fr";
 
   for (const [userId, userData] of Array.from(byUser.entries())) {
     try {
@@ -124,7 +124,7 @@ export async function processRelances(): Promise<RelanceResult> {
 
         await sendMail({
           to: userData.email,
-          subject: `OptiBot \u2014 Relance tiers payant (${count} dossier${count > 1 ? "s" : ""} en attente)`,
+          subject: `AudiBot \u2014 Relance tiers payant (${count} dossier${count > 1 ? "s" : ""} en attente)`,
           html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
@@ -154,7 +154,7 @@ export async function processRelances(): Promise<RelanceResult> {
     Voir mes dossiers
   </a>
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot \u2014 contact@optibot.fr
+    AudiBot \u2014 contact@audibot.fr
   </p>
 </body></html>`,
         }).catch((err) => {

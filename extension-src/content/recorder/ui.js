@@ -3,19 +3,19 @@
 /* ── Panneau guidé latéral (avec suppression d'étapes + undo) ─────────── */
 
 export function showRecorderPanel() {
-  if (document.getElementById("optibot-recorder-panel")) return;
+  if (document.getElementById("audibot-recorder-panel")) return;
   var panel = document.createElement("div");
-  panel.id = "optibot-recorder-panel";
+  panel.id = "audibot-recorder-panel";
   panel.style.cssText = "position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:2147483646;background:white;border-radius:12px 0 0 12px;box-shadow:-4px 0 20px rgba(0,0,0,0.15);width:280px;font-family:sans-serif;display:flex;flex-direction:column;max-height:70vh;";
 
   /* Header */
   var header = document.createElement("div");
   header.style.cssText = "padding:14px 16px 10px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;";
-  header.innerHTML = '<div style="font-size:14px;font-weight:700;color:#ef4444;">\u23FA OptiBot \u2014 Enregistrement</div>';
+  header.innerHTML = '<div style="font-size:14px;font-weight:700;color:#ef4444;">\u23FA AudiBot \u2014 Enregistrement</div>';
 
   /* Bouton Undo */
   var undoBtn = document.createElement("button");
-  undoBtn.id = "optibot-recorder-undo";
+  undoBtn.id = "audibot-recorder-undo";
   undoBtn.style.cssText = "padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:white;color:#6b7280;font-size:11px;cursor:pointer;opacity:0.5;";
   undoBtn.textContent = "\u21A9 Annuler";
   undoBtn.title = "Supprimer la derni\u00E8re \u00E9tape (Ctrl+Z)";
@@ -25,16 +25,16 @@ export function showRecorderPanel() {
 
   /* Body (scrollable list) */
   var body = document.createElement("div");
-  body.id = "optibot-recorder-panel-body";
+  body.id = "audibot-recorder-panel-body";
   body.style.cssText = "flex:1;overflow-y:auto;padding:8px 12px;";
   panel.appendChild(body);
 
   /* Footer */
   var footer = document.createElement("div");
-  footer.id = "optibot-recorder-panel-footer";
+  footer.id = "audibot-recorder-panel-footer";
   footer.style.cssText = "padding:10px 16px;border-top:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;";
   var counter = document.createElement("span");
-  counter.id = "optibot-recorder-panel-counter";
+  counter.id = "audibot-recorder-panel-counter";
   counter.style.cssText = "font-size:12px;color:#6b7280;";
   counter.textContent = "0 \u00E9tapes";
   var stopBtn = document.createElement("button");
@@ -81,9 +81,9 @@ export function deleteStep(index) {
 
 export function updateRecorderPanel() {
   if (!recorderState) return;
-  var body = document.getElementById("optibot-recorder-panel-body");
-  var counter = document.getElementById("optibot-recorder-panel-counter");
-  var undoBtn = document.getElementById("optibot-recorder-undo");
+  var body = document.getElementById("audibot-recorder-panel-body");
+  var counter = document.getElementById("audibot-recorder-panel-counter");
+  var undoBtn = document.getElementById("audibot-recorder-undo");
   if (!body) return;
 
   var etapes = recorderState.etapes;
@@ -118,7 +118,7 @@ export function updateRecorderPanel() {
 
       var row = document.createElement("div");
       row.style.cssText = "display:flex;align-items:center;gap:6px;padding:4px 0;font-size:12px;position:relative;";
-      row.className = "optibot-recorder-step-row";
+      row.className = "audibot-recorder-step-row";
 
       /* Numéro d'étape */
       var num = document.createElement("span");
@@ -191,8 +191,8 @@ export function updateRecorderPanel() {
 /* ── Highlight visuel des champs capturés ──────────────────────────────── */
 
 export function highlightRecordedField(el, variable) {
-  if (!el || el.getAttribute("data-optibot-recorded")) return;
-  el.setAttribute("data-optibot-recorded", "true");
+  if (!el || el.getAttribute("data-audibot-recorded")) return;
+  el.setAttribute("data-audibot-recorded", "true");
 
   var isKnown = variable && variable.indexOf("{{") === 0;
   el.style.outline = isKnown ? "2px solid #10b981" : "2px solid #f59e0b";
@@ -201,7 +201,7 @@ export function highlightRecordedField(el, variable) {
   /* Badge absolu au-dessus du champ */
   var rect = el.getBoundingClientRect();
   var badge = document.createElement("span");
-  badge.className = "optibot-recorder-field-badge";
+  badge.className = "audibot-recorder-field-badge";
   badge.style.cssText = "position:absolute;z-index:2147483645;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;font-family:sans-serif;pointer-events:none;white-space:nowrap;";
   if (isKnown) {
     badge.style.background = "#d1fae5";
@@ -221,13 +221,13 @@ export function highlightRecordedField(el, variable) {
 }
 
 export function removeRecorderHighlights() {
-  var marked = document.querySelectorAll("[data-optibot-recorded]");
+  var marked = document.querySelectorAll("[data-audibot-recorded]");
   for (var i = 0; i < marked.length; i++) {
     marked[i].style.outline = "";
     marked[i].style.backgroundColor = "";
-    marked[i].removeAttribute("data-optibot-recorded");
+    marked[i].removeAttribute("data-audibot-recorded");
   }
-  var badges = document.querySelectorAll(".optibot-recorder-field-badge");
+  var badges = document.querySelectorAll(".audibot-recorder-field-badge");
   for (var j = 0; j < badges.length; j++) {
     badges[j].remove();
   }
@@ -236,7 +236,7 @@ export function removeRecorderHighlights() {
 /* ── Wizard — saute l'étape 2 si tous les champs sont auto-détectés ──── */
 
 export function showRecorderWizard(etapes, hostname) {
-  var existing = document.getElementById("optibot-recorder-modal-overlay");
+  var existing = document.getElementById("audibot-recorder-modal-overlay");
   if (existing) existing.remove();
 
   var currentStep = 1;
@@ -282,7 +282,7 @@ export function showRecorderWizard(etapes, hostname) {
 
   /* Overlay */
   var overlay = document.createElement("div");
-  overlay.id = "optibot-recorder-modal-overlay";
+  overlay.id = "audibot-recorder-modal-overlay";
   overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2147483647;display:flex;align-items:center;justify-content:center;font-family:sans-serif;";
 
   var card = document.createElement("div");
@@ -476,7 +476,7 @@ export function showRecorderWizard(etapes, hostname) {
 
     var sendBtn = document.createElement("button");
     sendBtn.style.cssText = "width:100%;padding:12px;border:none;border-radius:8px;background:#3b82f6;color:white;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;";
-    sendBtn.textContent = "Envoyer \u00E0 OptiBot";
+    sendBtn.textContent = "Envoyer \u00E0 AudiBot";
     sendBtn.addEventListener("click", function() {
       overlay.remove();
       sendRecorderParcours(etapes, hostname, nomPortail);
@@ -491,7 +491,7 @@ export function showRecorderWizard(etapes, hostname) {
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
-      a.download = "optibot-parcours-" + hostname + ".json";
+      a.download = "audibot-parcours-" + hostname + ".json";
       a.click();
       URL.revokeObjectURL(url);
     });

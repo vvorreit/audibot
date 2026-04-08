@@ -1,4 +1,4 @@
-# Monitoring OptiBot — Guide complet
+# Monitoring AudiBot — Guide complet
 
 ## Stack recommandée (100% gratuit)
 
@@ -15,7 +15,7 @@
 
 1. Créer un compte sur https://uptimerobot.com
 2. "Add New Monitor" → HTTP(s)
-3. URL : `https://optibot.fr/api/health`
+3. URL : `https://audibot.fr/api/health`
 4. Fréquence : 5 minutes
 5. Alert Contact : votre email
 6. "Create Monitor"
@@ -33,7 +33,7 @@ UptimeRobot alerte automatiquement par email si down > 2 minutes.
 4. Ajouter dans les variables d'env sur le serveur :
 
 ```bash
-# Dans /app/optibot/.env ou via docker-compose environment
+# Dans /app/audibot/.env ou via docker-compose environment
 SENTRY_DSN=https://xxx@ooo.ingest.sentry.io/yyy
 NEXT_PUBLIC_SENTRY_DSN=https://xxx@ooo.ingest.sentry.io/yyy
 ```
@@ -52,7 +52,7 @@ NEXT_PUBLIC_SENTRY_DSN=https://xxx@ooo.ingest.sentry.io/yyy
 curl https://my-netdata.io/kickstart.sh | bash
 
 # Accès dashboard local (tunnel SSH)
-ssh -L 19999:localhost:19999 root@optibot
+ssh -L 19999:localhost:19999 root@audibot
 # Ouvrir http://localhost:19999
 ```
 
@@ -69,7 +69,7 @@ Alertes intégrées : CPU > 80%, RAM > 90%, disk > 85% → email/Slack/webhook.
 ## 4. Script monitor.sh (cron toutes les 5 min)
 
 Le script `scripts/monitor.sh` vérifie :
-- État des 3 containers Docker (optibot-app, optibot-ocr, optibot-db)
+- État des 3 containers Docker (audibot-app, audibot-ocr, audibot-db)
 - RAM (warning > 75%, critique > 90%)
 - Disque (warning > 80%, critique > 90%)
 - Endpoint `/api/health` (HTTP 200 attendu)
@@ -78,8 +78,8 @@ Le script `scripts/monitor.sh` vérifie :
 
 ```bash
 # Copier le script
-cp /app/optibot/scripts/monitor.sh /usr/local/bin/optibot-monitor
-chmod +x /usr/local/bin/optibot-monitor
+cp /app/audibot/scripts/monitor.sh /usr/local/bin/audibot-monitor
+chmod +x /usr/local/bin/audibot-monitor
 
 # Créer le dossier de logs
 mkdir -p /root/logs
@@ -90,27 +90,27 @@ crontab -e
 
 Ajouter cette ligne dans le crontab :
 ```
-*/5 * * * * RESEND_API_KEY=votre_clé ALERT_EMAIL=contact@optibot.fr APP_URL=https://optibot.fr /usr/local/bin/optibot-monitor >> /root/logs/monitor.log 2>&1
+*/5 * * * * RESEND_API_KEY=votre_clé ALERT_EMAIL=contact@audibot.fr APP_URL=https://audibot.fr /usr/local/bin/audibot-monitor >> /root/logs/monitor.log 2>&1
 ```
 
-Ou créer un fichier `/etc/optibot-monitor.env` :
+Ou créer un fichier `/etc/audibot-monitor.env` :
 ```bash
 RESEND_API_KEY=re_xxxxx
-ALERT_EMAIL=contact@optibot.fr
-FROM_EMAIL=alerts@optibot.fr
-APP_URL=https://optibot.fr
+ALERT_EMAIL=contact@audibot.fr
+FROM_EMAIL=alerts@audibot.fr
+APP_URL=https://audibot.fr
 ```
 
 Et le crontab :
 ```
-*/5 * * * * . /etc/optibot-monitor.env && /usr/local/bin/optibot-monitor >> /root/logs/monitor.log 2>&1
+*/5 * * * * . /etc/audibot-monitor.env && /usr/local/bin/audibot-monitor >> /root/logs/monitor.log 2>&1
 ```
 
 ### Vérification manuelle
 
 ```bash
 # Tester le script
-RESEND_API_KEY=re_xxx ALERT_EMAIL=ton@email.fr APP_URL=https://optibot.fr /usr/local/bin/optibot-monitor
+RESEND_API_KEY=re_xxx ALERT_EMAIL=ton@email.fr APP_URL=https://audibot.fr /usr/local/bin/audibot-monitor
 
 # Voir les logs
 tail -f /root/logs/monitor.log

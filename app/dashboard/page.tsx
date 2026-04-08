@@ -144,7 +144,7 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [welcomeSeen, setWelcomeSeen] = useState(false);
   useEffect(() => {
-    setWelcomeSeen(!!localStorage.getItem("optibot_welcome_seen"));
+    setWelcomeSeen(!!localStorage.getItem("audibot_welcome_seen"));
   }, []);
   useEffect(() => {
     if (!userData?.createdAt) return;
@@ -182,7 +182,7 @@ export default function Dashboard() {
     if (!userData?.syncToken) return;
     const rpaEnabled = userData.isPro || ["PRO","CABINET","RESEAU","EQUIPE"].includes(userData.plan) || userData.role === "ADMIN";
     window.postMessage({
-      type: "OPTIBOT_AUTH",
+      type: "AUDIBOT_AUTH",
       syncToken: userData.syncToken,
       plan: userData.plan,
       isPro: userData.isPro,
@@ -194,7 +194,7 @@ export default function Dashboard() {
   /* Fix 1 — Auto-check step 1 quand l'extension confirme via postMessage */
   useEffect(() => {
     const handler = (event: MessageEvent) => {
-      if (event.data?.type === "OPTIBOT_AUTH" && (userData?.onboardingStep ?? 0) < 1) {
+      if (event.data?.type === "AUDIBOT_AUTH" && (userData?.onboardingStep ?? 0) < 1) {
         updateOnboardingStep(1);
         setUserData(prev => prev ? { ...prev, onboardingStep: 1 } : null);
         track("onboarding_step_completed", { step: 1 });
@@ -211,7 +211,7 @@ export default function Dashboard() {
     const refreshIfNeeded = () => {
       const rpaEnabled = userData.isPro || ["PRO","CABINET","RESEAU","EQUIPE"].includes(userData.plan) || userData.role === "ADMIN";
       window.postMessage({
-        type: "OPTIBOT_AUTH",
+        type: "AUDIBOT_AUTH",
         syncToken: userData.syncToken,
         plan: userData.plan,
         isPro: userData.isPro,
@@ -285,8 +285,8 @@ export default function Dashboard() {
       if (detail?.mutuelle) setMutuelle(detail.mutuelle);
       if (detail?.ordonnance) setOrdonnance(detail.ordonnance);
     };
-    window.addEventListener("optibot_scan_received", handler);
-    return () => window.removeEventListener("optibot_scan_received", handler);
+    window.addEventListener("audibot_scan_received", handler);
+    return () => window.removeEventListener("audibot_scan_received", handler);
   }, []);
 
   const [showScanModal, setShowScanModal] = useState(false);
@@ -472,9 +472,9 @@ export default function Dashboard() {
 
       // Envoi direct à l'extension via bridge.js
       const parsed = JSON.parse(payload);
-      window.postMessage({ type: 'OPTIBOT_DATA', payload: parsed }, '*');
+      window.postMessage({ type: 'AUDIBOT_DATA', payload: parsed }, '*');
 
-      window.dispatchEvent(new Event("optibot_data_copied"));
+      window.dispatchEvent(new Event("audibot_data_copied"));
 
       // Onboarding step 3 (copié)
       if ((userData?.onboardingStep ?? 0) < 3) {
@@ -643,7 +643,7 @@ export default function Dashboard() {
             </div>
             <h2 className="text-2xl font-black text-slate-900 mb-2">Votre premier client en 30 secondes</h2>
             <p className="text-slate-500 font-medium text-sm mb-8 max-w-md mx-auto">
-              Scannez une carte mutuelle ou une ordonnance. OptiBot extrait les données instantanément.
+              Scannez une carte mutuelle ou une ordonnance. AudiBot extrait les données instantanément.
             </p>
             <label className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 active:scale-95 transition-all text-sm uppercase tracking-widest shadow-xl shadow-blue-200 cursor-pointer">
               <ScanLine className="w-5 h-5" />
@@ -812,7 +812,7 @@ export default function Dashboard() {
                     Pour l&apos;installer dès maintenant, contactez-nous.
                   </p>
                   <a
-                    href="mailto:contact@optibot.fr?subject=Installation extension OptiBot"
+                    href="mailto:contact@audibot.fr?subject=Installation extension AudiBot"
                     className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-xl hover:bg-amber-700 transition-colors"
                   >
                     Demander l&apos;accès anticipé
@@ -975,7 +975,7 @@ export default function Dashboard() {
               <a href="/legal/cgv" className="text-blue-600 underline" target="_blank">
                 Conditions Générales de Vente v1.1
               </a>{" "}
-              d&apos;OptiBot.
+              d&apos;AudiBot.
             </span>
           </label>
           <div className="flex gap-3">

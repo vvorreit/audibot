@@ -1,9 +1,9 @@
 /* ── RPA Logging ─────────────────────────────────────────────────────────── */
 
 export function logRPA(mutuelle, etape, statut, erreur) {
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var syncToken = (result.optibot_auth && result.optibot_auth.syncToken) || null;
-    fetch("https://optibot.fr/api/extension/rpa-log", {
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var syncToken = (result.audibot_auth && result.audibot_auth.syncToken) || null;
+    fetch("https://audibot.fr/api/extension/rpa-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -14,14 +14,14 @@ export function logRPA(mutuelle, etape, statut, erreur) {
         erreur: erreur || null,
         url: window.location.href
       })
-    }).catch(function(err) { console.warn("[OptiBot] rpa-log failed:", err); });
+    }).catch(function(err) { console.warn("[AudiBot] rpa-log failed:", err); });
   });
 }
 
 // ── RPA Toast ───────────────────────────────────────────────────────────
 
 export function showRPAToast(message, type) {
-  var existing = document.getElementById('optibot-rpa-toast');
+  var existing = document.getElementById('audibot-rpa-toast');
   if (existing) existing.remove();
 
   var colors = {
@@ -33,7 +33,7 @@ export function showRPAToast(message, type) {
   var c = colors[type] || colors.info;
 
   var toast = document.createElement('div');
-  toast.id = 'optibot-rpa-toast';
+  toast.id = 'audibot-rpa-toast';
   toast.textContent = message;
   toast.style.cssText = [
     'position: fixed; bottom: 80px; right: 20px; z-index: 9999999;',

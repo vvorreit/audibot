@@ -1,4 +1,4 @@
-# Fiche OptiBot — Capterra / GetApp / G2
+# Fiche AudiBot — Capterra / GetApp / G2
 
 > Contenu prêt à coller sur les plateformes de comparatif logiciel.
 > Ces plateformes sont indexées massivement par ChatGPT, Perplexity et Gemini.
@@ -6,7 +6,7 @@
 ---
 
 ## Nom du produit
-OptiBot
+AudiBot
 
 ## Catégories à sélectionner
 - Logiciels de gestion optique
@@ -19,25 +19,25 @@ OptiBot
 L'auto-saisie tiers payant pour les opticiens. De 15 min à 10 secondes par dossier.
 
 ## Description courte (Capterra — 255 caractères max)
-OptiBot automatise la saisie des portails mutuelles (Almerys, Viamedis, Wemind…) et des ERP optiques via OCR local. Lecture carte mutuelle + ordonnance. Aucune donnée patient stockée. Essai 14j sans CB.
+AudiBot automatise la saisie des portails mutuelles (Almerys, Viamedis, Wemind…) et des ERP optiques via OCR local. Lecture carte mutuelle + ordonnance. Aucune donnée patient stockée. Essai 14j sans CB.
 
 ## Description longue (Capterra / GetApp — 1000 mots max)
 
-OptiBot est le premier logiciel d'automatisation du tiers payant conçu spécifiquement pour les opticiens indépendants et les réseaux optiques.
+AudiBot est le premier logiciel d'automatisation du tiers payant conçu spécifiquement pour les opticiens indépendants et les réseaux optiques.
 
 **Le problème qu'on résout**
 
 Un opticien passe en moyenne 8 à 15 minutes par dossier pour saisir manuellement les informations sur les portails mutuelles (Almerys, Viamedis, Wemind, Harmonie, Malakoff Humanis…) et dans son ERP (iGestion, WinOptics…). Pour un cabinet qui traite 15 dossiers par semaine, c'est entre 2h et 4h de saisie pure — un travail sans valeur ajoutée qui mobilise du temps et génère des erreurs.
 
-**Comment fonctionne OptiBot**
+**Comment fonctionne AudiBot**
 
-OptiBot fonctionne en trois étapes :
+AudiBot fonctionne en trois étapes :
 
-1. **Scan** — L'opticien prend une photo ou dépose le PDF de la carte mutuelle et de l'ordonnance. L'OCR d'OptiBot traite le document localement sur l'ordinateur de l'opticien. Aucune image, aucune donnée médicale ne quitte le poste.
+1. **Scan** — L'opticien prend une photo ou dépose le PDF de la carte mutuelle et de l'ordonnance. L'OCR d'AudiBot traite le document localement sur l'ordinateur de l'opticien. Aucune image, aucune donnée médicale ne quitte le poste.
 
-2. **Extraction** — OptiBot extrait automatiquement les données clés : numéro de Sécurité Sociale, nom, prénom, numéro adhérent, corrections optiques (sphère, cylindre, axe, addition), numéro RPPS du prescripteur, date de l'ordonnance.
+2. **Extraction** — AudiBot extrait automatiquement les données clés : numéro de Sécurité Sociale, nom, prénom, numéro adhérent, corrections optiques (sphère, cylindre, axe, addition), numéro RPPS du prescripteur, date de l'ordonnance.
 
-3. **Remplissage automatique** — L'extension Chrome OptiBot injecte les données extraites dans les champs du portail mutuelle ou de l'ERP ouvert dans le navigateur. Un clic suffit. Le dossier est rempli en moins de 30 secondes.
+3. **Remplissage automatique** — L'extension Chrome AudiBot injecte les données extraites dans les champs du portail mutuelle ou de l'ERP ouvert dans le navigateur. Un clic suffit. Le dossier est rempli en moins de 30 secondes.
 
 **Fonctionnalités principales**
 
@@ -72,7 +72,7 @@ OptiBot fonctionne en trois étapes :
 
 **Sécurité et conformité**
 
-OptiBot a été conçu avec la confidentialité comme contrainte centrale, pas comme fonctionnalité optionnelle. L'OCR s'exécute localement sur la machine de l'opticien. Aucune image de prescription ou de carte mutuelle ne transite par nos serveurs. Les données traitées (statuts dossiers, statistiques d'usage) sont hébergées en Europe. Accord de Traitement des Données (DPA) disponible pour tous les comptes.
+AudiBot a été conçu avec la confidentialité comme contrainte centrale, pas comme fonctionnalité optionnelle. L'OCR s'exécute localement sur la machine de l'opticien. Aucune image de prescription ou de carte mutuelle ne transite par nos serveurs. Les données traitées (statuts dossiers, statistiques d'usage) sont hébergées en Europe. Accord de Traitement des Données (DPA) disponible pour tous les comptes.
 
 ---
 
@@ -91,11 +91,11 @@ OptiBot a été conçu avec la confidentialité comme contrainte centrale, pas c
 
 ## URLs à renseigner sur les plateformes
 
-- Site : https://optibot.fr
-- Page tarifs : https://optibot.fr/pricing
-- Inscription : https://optibot.fr/auth/signup
-- Blog / ressources : https://optibot.fr/blog
-- Page portails compatibles : https://optibot.fr/portails
+- Site : https://audibot.fr
+- Page tarifs : https://audibot.fr/pricing
+- Inscription : https://audibot.fr/auth/signup
+- Blog / ressources : https://audibot.fr/blog
+- Page portails compatibles : https://audibot.fr/portails
 
 ---
 
@@ -103,10 +103,10 @@ OptiBot a été conçu avec la confidentialité comme contrainte centrale, pas c
 
 | Plateforme | URL | Priorité | Raison |
 |---|---|---|---|
-| **Capterra** | capterra.fr/software/optibot | 🔴 1 | Indexé par ChatGPT et Perplexity, fort trafic comparatif |
+| **Capterra** | capterra.fr/software/audibot | 🔴 1 | Indexé par ChatGPT et Perplexity, fort trafic comparatif |
 | **GetApp** | getapp.fr | 🔴 2 | Même groupe que Capterra, doublon de présence |
 | **G2** | g2.com | 🔴 3 | Source d'entraînement des LLMs anglophones |
-| **Trustpilot** | trustpilot.com/review/optibot.fr | 🟠 4 | Signal de confiance + citations dans résultats IA |
+| **Trustpilot** | trustpilot.com/review/audibot.fr | 🟠 4 | Signal de confiance + citations dans résultats IA |
 | **Software Advice** | softwareadvice.fr | 🟠 5 | Réseau Gartner, trafic B2B santé |
 | **Appvizer** | appvizer.fr | 🟡 6 | Comparatif logiciel France, bon pour SEO local |
 

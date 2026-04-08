@@ -31,12 +31,12 @@ export default {
         ultraFill(el, formatted);
       };
 
-      console.info("[OptiBot Almerys] formulaire — hasNSS:", !!nss, "hasDob:", !!dob, "hasNom:", !!nom);
+      console.info("[AudiBot Almerys] formulaire — hasNSS:", !!nss, "hasDob:", !!dob, "hasNom:", !!nom);
 
       /* Page recherche beneficiaire */
       var nomBenef = findElementTracked(PORTAL_KEY, "nom_beneficiaire", '#nom_beneficiaire');
       if (nomBenef) {
-        console.info("[OptiBot Almerys] Page recherche beneficiaire detectee");
+        console.info("[AudiBot Almerys] Page recherche beneficiaire detectee");
         ultraFill(nomBenef, nom.toUpperCase());
         ultraFill(findElementTracked(PORTAL_KEY, "nss_beneficiaire", '#nss_beneficiaire'), nss);
         filled = true;
@@ -45,7 +45,7 @@ export default {
       /* Popup iframe recherche beneficiaire (champs crit_) */
       var critNNI = findElementTracked(PORTAL_KEY, "crit_numInsee", 'input[name="crit_numInsee"]');
       if (critNNI) {
-        console.info("[OptiBot Almerys] Popup recherche beneficiaire detectee");
+        console.info("[AudiBot Almerys] Popup recherche beneficiaire detectee");
         var effectiveNSS = getOuvrantDroitNSS(nss, dob, personnes);
         ultraFill(critNNI, effectiveNSS.replace(/\D/g, "").slice(0, 13));
         ultraFill(findElementTracked(PORTAL_KEY, "crit_nomBenef", 'input[name="crit_nomBenef"]'), nom.toUpperCase());
@@ -56,34 +56,34 @@ export default {
 
       /* Page PEC Optique — NNI beneficiaire */
       var nniEl = findElementTracked(PORTAL_KEY, "numInsee", 'input[name="numInsee"]');
-      console.info("[OptiBot Almerys] numInsee trouve:", !!nniEl, nniEl ? "readOnly=" + nniEl.readOnly : "");
+      console.info("[AudiBot Almerys] numInsee trouve:", !!nniEl, nniEl ? "readOnly=" + nniEl.readOnly : "");
       if (nniEl && !nniEl.readOnly) {
         var effectiveNSS = getOuvrantDroitNSS(nss, dob, personnes);
-        console.info("[OptiBot Almerys] Fill NNI: [REDACTED]");
+        console.info("[AudiBot Almerys] Fill NNI: [REDACTED]");
         ultraFill(nniEl, effectiveNSS.replace(/\D/g, "").slice(0, 13));
         filled = true;
       }
 
       /* Page PEC Optique — prescription */
       var dateOrdoEl = findElementTracked(PORTAL_KEY, "dateOrdonnanceEdit", 'input[name="dateOrdonnanceEdit"]');
-      console.info("[OptiBot Almerys] dateOrdonnanceEdit trouve:", !!dateOrdoEl, dateOrdoEl ? "disabled=" + dateOrdoEl.disabled : "");
+      console.info("[AudiBot Almerys] dateOrdonnanceEdit trouve:", !!dateOrdoEl, dateOrdoEl ? "disabled=" + dateOrdoEl.disabled : "");
       if (dateOrdoEl) {
         /* Date d'ordonnance (seulement si le champ est vide et pas disabled) */
         if (!dateOrdoEl.disabled && !dateOrdoEl.value) {
           var dateOrdo = o.dateOrdonnance || (c.prescription && c.prescription.datePrescription) || "";
-          console.info("[OptiBot Almerys] Fill date ordo: [REDACTED]");
+          console.info("[AudiBot Almerys] Fill date ordo: [REDACTED]");
           if (dateOrdo) fillDate(dateOrdoEl, dateOrdo);
         }
 
         /* Date de demande = aujourd'hui */
         var dateDemandeEl = findElementTracked(PORTAL_KEY, "dateDemandeEdit", 'input[name="dateDemandeEdit"]');
-        console.info("[OptiBot Almerys] dateDemandeEdit trouve:", !!dateDemandeEl, dateDemandeEl ? "disabled=" + dateDemandeEl.disabled : "");
+        console.info("[AudiBot Almerys] dateDemandeEdit trouve:", !!dateDemandeEl, dateDemandeEl ? "disabled=" + dateDemandeEl.disabled : "");
         if (dateDemandeEl && !dateDemandeEl.disabled && !dateDemandeEl.value) {
           var today = new Date();
           var dd = String(today.getDate()).padStart(2, '0');
           var mm = String(today.getMonth() + 1).padStart(2, '0');
           var yyyy = today.getFullYear();
-          console.info("[OptiBot Almerys] Fill date demande:", dd + mm + yyyy);
+          console.info("[AudiBot Almerys] Fill date demande:", dd + mm + yyyy);
           fillDate(dateDemandeEl, dd + mm + yyyy);
         }
 
@@ -138,7 +138,7 @@ export default {
 
       var prescEl = findElementTracked(PORTAL_KEY, "numAMPrescripteur", '[name="' + PREFIX + 'numAMPrescripteur"]');
       if (prescEl) {
-        console.info("[OptiBot Almerys] Page 2 equipements detectee");
+        console.info("[AudiBot Almerys] Page 2 equipements detectee");
 
         /* Prescripteur RPPS/ADELI */
         var rpps = (o && o.rpps) || (c.prescription && c.prescription.rpps) || "";

@@ -134,7 +134,7 @@ var _progressOverlay = null;
 function showProgressOverlay(current, total, label) {
   if (!_progressOverlay) {
     _progressOverlay = document.createElement("div");
-    _progressOverlay.id = "optibot-replay-progress";
+    _progressOverlay.id = "audibot-replay-progress";
     _progressOverlay.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:12px 20px;font-family:sans-serif;min-width:280px;";
     document.body.appendChild(_progressOverlay);
   }
@@ -201,7 +201,7 @@ export async function runStep(etape, cache) {
     }
     /* Learning : marquer le champ pour la boucle d'apprentissage */
     var varKey = (etape.variable || "").replace(/\{|\}/g, "") || etape.label || "";
-    markFilledByOptiBot(el, varKey);
+    markFilledByAudiBot(el, varKey);
     await frameworkDelay(80);
   } else if (etape.action === "click") {
     el.click();
@@ -214,7 +214,7 @@ export async function runStep(etape, cache) {
     }
     /* Learning : marquer le champ pour la boucle d'apprentissage */
     var varKeyS = (etape.variable || "").replace(/\{|\}/g, "") || etape.label || "";
-    markFilledByOptiBot(el, varKeyS);
+    markFilledByAudiBot(el, varKeyS);
     await frameworkDelay(80);
   }
 
@@ -294,10 +294,10 @@ export async function startReplay(parcours, cache) {
   logRPA(parcours.hostname || "parcours", "replay_complete", "succes", filled + " champs en " + elapsed + "s");
   getSyncToken().then(function(syncToken) {
     if (syncToken) {
-      fetch("https://optibot.fr/api/extension/log-injection", {
+      fetch("https://audibot.fr/api/extension/log-injection", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ syncToken: syncToken, site: parcours.hostname, success: true, fieldsCount: filled, ts: Date.now() })
-      }).catch(function(err) { console.warn("[OptiBot] log-injection failed:", err); });
+      }).catch(function(err) { console.warn("[AudiBot] log-injection failed:", err); });
     }
   });
   replayState = null;
@@ -308,7 +308,7 @@ export async function tryDynamicReplay() {
   var syncToken = await getSyncToken();
   if (!syncToken) return false;
   try {
-    var res = await fetch("https://optibot.fr/api/extension/parcours?hostname=" + encodeURIComponent(hostname), { headers: { "Authorization": "Bearer " + syncToken } });
+    var res = await fetch("https://audibot.fr/api/extension/parcours?hostname=" + encodeURIComponent(hostname), { headers: { "Authorization": "Bearer " + syncToken } });
     if (!res.ok) return false;
     var data = await res.json();
     if (!data.parcours || data.parcours.length === 0) return false;

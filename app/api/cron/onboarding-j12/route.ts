@@ -38,12 +38,12 @@ export async function GET(req: Request) {
 
     const hasUsed = user.clientCount > 0;
     const subject = hasUsed
-      ? "OptiBot — votre essai se termine dans 48h"
-      : "OptiBot — 48h pour tester, on vous guide";
+      ? "AudiBot — votre essai se termine dans 48h"
+      : "AudiBot — 48h pour tester, on vous guide";
 
     const bodyUsed = `
       <p style="font-size:14px;line-height:1.6;color:#475569;">
-        Vous avez déjà traité <strong>${user.clientCount} dossier${user.clientCount > 1 ? "s" : ""}</strong> avec OptiBot.
+        Vous avez déjà traité <strong>${user.clientCount} dossier${user.clientCount > 1 ? "s" : ""}</strong> avec AudiBot.
         Votre essai se termine dans <strong>48 heures</strong>.
       </p>
       <p style="font-size:14px;line-height:1.6;color:#475569;">
@@ -51,13 +51,13 @@ export async function GET(req: Request) {
       </p>
       <a href="${process.env.NEXTAUTH_URL}/pricing"
          style="display:inline-block;margin:24px 0;padding:14px 32px;background:#2563eb;color:#fff;font-size:15px;font-weight:800;border-radius:12px;text-decoration:none;">
-        Continuer avec OptiBot — dès 39,90€/mois
+        Continuer avec AudiBot — dès 39,90€/mois
       </a>
       <p style="font-size:13px;color:#64748b;margin-top:8px;">Sans engagement. Annulable à tout moment.</p>`;
 
     const bodyNotUsed = `
       <p style="font-size:14px;line-height:1.6;color:#475569;">
-        Votre essai gratuit se termine dans <strong>48 heures</strong> et vous n'avez pas encore testé OptiBot en conditions réelles.
+        Votre essai gratuit se termine dans <strong>48 heures</strong> et vous n'avez pas encore testé AudiBot en conditions réelles.
       </p>
       <p style="font-size:14px;line-height:1.6;color:#475569;">
         Il suffit d'un seul dossier pour voir la différence. Votre premier scan prend moins de 2 minutes.
@@ -79,10 +79,10 @@ export async function GET(req: Request) {
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:0 auto;padding:32px 16px;color:#1e293b;">
-  <h1 style="font-size:20px;font-weight:800;margin-bottom:8px;">${hasUsed ? "Votre essai se termine bientôt" : "Il vous reste 48h pour tester OptiBot"}</h1>
+  <h1 style="font-size:20px;font-weight:800;margin-bottom:8px;">${hasUsed ? "Votre essai se termine bientôt" : "Il vous reste 48h pour tester AudiBot"}</h1>
   ${hasUsed ? bodyUsed : bodyNotUsed}
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot — contact@optibot.fr ·
+    AudiBot — contact@audibot.fr ·
     <a href="${process.env.NEXTAUTH_URL}/api/unsubscribe?email=${encodeURIComponent(user.email)}" style="color:#94a3b8;">Se désabonner</a>
   </p>
 </body></html>`,

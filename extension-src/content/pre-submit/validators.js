@@ -1,4 +1,4 @@
-/* ── OptiBot Pre-Submit Validators ──────────────────────────────────────── */
+/* ── AudiBot Pre-Submit Validators ──────────────────────────────────────── */
 /* Static validation functions for form data before submission.             */
 /* Each returns { valid, type, message, fix? } or null if OK.              */
 

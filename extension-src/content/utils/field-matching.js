@@ -7,8 +7,8 @@ var _learnedWeights = null;
 
 export function loadLearnedWeights() {
   var hostname = window.location.hostname;
-  chrome.storage.local.get(["optibot_learned_weights"], function(result) {
-    var cached = result.optibot_learned_weights;
+  chrome.storage.local.get(["audibot_learned_weights"], function(result) {
+    var cached = result.audibot_learned_weights;
     if (cached && cached.ts && Date.now() - cached.ts < 3600000) {
       _learnedWeights = cached.weights || {};
       return;
@@ -17,15 +17,15 @@ export function loadLearnedWeights() {
     if (typeof getSyncToken === "function") {
       getSyncToken().then(function(token) {
         if (!token) return;
-        fetch("https://optibot.fr/api/extension/smart-fill/weights?hostname=" + encodeURIComponent(hostname), {
+        fetch("https://audibot.fr/api/extension/smart-fill/weights?hostname=" + encodeURIComponent(hostname), {
           headers: { "Authorization": "Bearer " + token }
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           _learnedWeights = data.weights || {};
-          chrome.storage.local.set({ optibot_learned_weights: { weights: _learnedWeights, ts: Date.now() } });
+          chrome.storage.local.set({ audibot_learned_weights: { weights: _learnedWeights, ts: Date.now() } });
         })
-        .catch(function(err) { console.warn("[OptiBot] learned weights fetch failed:", err); });
+        .catch(function(err) { console.warn("[AudiBot] learned weights fetch failed:", err); });
       });
     }
   });

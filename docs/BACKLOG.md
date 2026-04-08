@@ -1,4 +1,4 @@
-# BACKLOG OptiBot
+# BACKLOG AudiBot
 
 > Idées et évolutions validées mais non prioritaires.
 > Priorisation RICE à réviser à chaque sprint planning.
@@ -18,7 +18,7 @@ Aujourd'hui `InjectionLog` ne distingue pas le mode utilisé — Smart Fill, Bot
 
 **User Story**
 
-> En tant qu'admin OptiBot,  
+> En tant qu'admin AudiBot,  
 > je veux voir les KPIs d'usage par mode (Smart Fill, Bot, Recorder) dans l'onglet Extension,  
 > afin de savoir quelles features génèrent de la valeur et lesquelles sont ignorées.
 
@@ -57,18 +57,18 @@ Cosium est le logiciel de gestion le plus répandu chez les opticiens FR (~30% d
 1. Lire les données du dossier Cosium ouvert → pré-remplir les portails mutuelles
 2. Récupérer l'accord PEC (numéro, montant) et l'injecter dans Cosium
 
-Les deux sont faisables 100% dans le navigateur via l'extension Chrome — sans données patient côté serveur (philosophie OptiBot respectée).
+Les deux sont faisables 100% dans le navigateur via l'extension Chrome — sans données patient côté serveur (philosophie AudiBot respectée).
 
 **User Stories**
 
 **US-01 — Lecture Cosium → portail mutuelle**
 > En tant qu'opticien sur Cosium,  
 > je veux cliquer sur "🤖 Remplir" depuis Cosium avec un dossier ouvert,  
-> afin qu'OptiBot lise automatiquement les données du dossier et ouvre le portail mutuelle pré-rempli.
+> afin qu'AudiBot lise automatiquement les données du dossier et ouvre le portail mutuelle pré-rempli.
 
 **US-02 — Récupération accord PEC → Cosium**
 > En tant qu'opticien ayant obtenu un accord PEC sur le portail mutuelle,  
-> je veux qu'OptiBot injecte automatiquement le numéro et montant de l'accord dans le dossier Cosium ouvert,  
+> je veux qu'AudiBot injecte automatiquement le numéro et montant de l'accord dans le dossier Cosium ouvert,  
 > afin de ne pas avoir à ressaisir ces informations manuellement.
 
 **Critères d'acceptation**
@@ -76,18 +76,18 @@ Les deux sont faisables 100% dans le navigateur via l'extension Chrome — sans 
 ```gherkin
 Scenario: Lecture dossier Cosium
   Given j'ai un dossier patient ouvert dans Cosium
-  And OptiBot est installé
-  When je clique sur le bouton "🤖 Remplir" injecté par OptiBot dans l'interface Cosium
-  Then OptiBot lit : nom patient, NSS, mutuelle, correction optique depuis les champs Cosium
+  And AudiBot est installé
+  When je clique sur le bouton "🤖 Remplir" injecté par AudiBot dans l'interface Cosium
+  Then AudiBot lit : nom patient, NSS, mutuelle, correction optique depuis les champs Cosium
   And ouvre le portail mutuelle dans un nouvel onglet avec les champs pré-remplis
 
 Scenario: Injection accord PEC dans Cosium
   Given j'ai obtenu un accord PEC sur le portail Almerys/Wemind
   And le dossier Cosium correspondant est ouvert dans un autre onglet
-  When OptiBot détecte la réponse PEC (numéro accord, montant, date)
+  When AudiBot détecte la réponse PEC (numéro accord, montant, date)
   Then un bouton "→ Injecter dans Cosium" apparaît
   When je clique dessus
-  Then OptiBot injecte les données PEC dans le dossier Cosium ouvert
+  Then AudiBot injecte les données PEC dans le dossier Cosium ouvert
 ```
 
 **Notes techniques**
@@ -99,7 +99,7 @@ Scenario: Injection accord PEC dans Cosium
 - Documenter les sélecteurs Cosium (peuvent varier selon la version)
 
 **Go-to-Market**
-- Argument clé : "OptiBot lit Cosium et y écrit — zéro ressaisie bout en bout"
+- Argument clé : "AudiBot lit Cosium et y écrit — zéro ressaisie bout en bout"
 - Cible immédiate : prospect 3 magasins Cosium identifié
 - Salon Silmo / MIDO : démo Cosium = démo qui convertit
 
@@ -161,7 +161,7 @@ Scenario: Annulation après fin d'engagement
 
 ## 🌍 Expansion Géographique
 
-### [GEO-01] OptiBot Belgique
+### [GEO-01] AudiBot Belgique
 
 **Priorité :** Medium — après 50 clients payants FR prouvés  
 **Effort estimé :** 2 semaines  
@@ -183,7 +183,7 @@ Scenario: Annulation après fin d'engagement
 
 ---
 
-### [GEO-02] OptiBot Suisse Romande
+### [GEO-02] AudiBot Suisse Romande
 
 **Priorité :** Low — Phase 3 après Belgique prouvée  
 **Effort estimé :** 3 semaines (romand uniquement) / 3 mois (marché complet)  
@@ -205,9 +205,9 @@ Scenario: Annulation après fin d'engagement
 
 ### [VERT-01] DentiBot — Chirurgiens-dentistes
 
-**Priorité :** High — à lancer après 50 clients OptiBot payants  
+**Priorité :** High — à lancer après 50 clients AudiBot payants  
 **Effort estimé :** 7 semaines MVP  
-**Déclencheur :** OptiBot stable + ressources dev disponibles  
+**Déclencheur :** AudiBot stable + ressources dev disponibles  
 **Potentiel MRR réaliste :** 150 000€/mois (modèle usage)
 
 ---
@@ -312,7 +312,7 @@ Scenario: Dépassement de quota
 
 #### Analyse technique
 
-**Différences vs OptiBot :**
+**Différences vs AudiBot :**
 - OCR adapté feuilles de soins dentaires (format différent des ordonnances optiques)
 - Codes CCAM (~50 codes prothèses courants à mapper)
 - Numéro de dent (14, 26...) à extraire et saisir
@@ -339,7 +339,7 @@ devisJoint      Boolean
 
 - **Cible primaire :** Secrétaires médicales libérales (ADML, FFASM, LinkedIn)
 - **Cible secondaire :** Dentistes chefs de cabinet (CNSD, ADF, Salon ADF Paris novembre)
-- **Cold email :** Même pattern OptiBot — base dentistes disponible (RPPS/INFOGREFFE)
+- **Cold email :** Même pattern AudiBot — base dentistes disponible (RPPS/INFOGREFFE)
 - **Partenariats :** Intégration Logos, Desmos, Julie (distribution via marketplace)
 - **Argument décisif :** "Vos secrétaires économisent 5h/semaine. Vous ne rejetez plus aucun dossier."
 
@@ -354,7 +354,7 @@ devisJoint      Boolean
 **Analyse**
 - ~3 500 orthopédistes-orthésistes en France (LPPR — Liste des Produits et Prestations Remboursables)
 - Appareillages : prothèses, orthèses, fauteuils, corsets = remboursements très élevés (500-5 000€/dossier)
-- Tiers-payant systématique — portails mutuelles identiques à OptiBot
+- Tiers-payant systématique — portails mutuelles identiques à AudiBot
 - Prescription médicale obligatoire → workflow en 2 temps (accord préalable + livraison)
 - Logiciels métier : Actimage, Orthosoft — ne font pas la saisie portail mutuelle
 - ROI exceptionnel : 1 fauteuil roulant électrique sauvé = 2 000-4 000€ récupérés
@@ -368,20 +368,18 @@ devisJoint      Boolean
 
 ---
 
-### [VERT-03] OrthoptiBot — Orthoptistes
+### [VERT-03] OrthoBot — Orthophonistes
 
-**Priorité :** Low — marché plus petit, après OrthoBot  
+**Priorité :** Low — marché complémentaire  
 **Effort estimé :** 3 semaines MVP  
 **Déclencheur :** Stack RPA stabilisée
 
 **Analyse**
-- ~5 000 orthoptistes en France
-- Remboursements en forte croissance depuis 2022 (bilans visuels remboursés, accès direct sans ordonnance)
-- Actes : bilan orthoptique (55,50€ remboursé Sécu), séances de rééducation
+- ~25 000 orthophonistes en France
+- Actes : bilan orthophonique, séances de rééducation
 - Part mutuelle complémentaire = saisie manuelle sur les mêmes portails (Almerys, Wemind, Viamedis)
-- Proximité naturelle avec OptiBot (filière visuelle) → cross-selling facile aux opticiens qui connaissent des orthoptistes
-- Pain moyen (montants inférieurs à l'optique/dentaire) mais volume en explosion post-2022
-- Marché petit mais acquisition via réseau opticiens existants = coût quasi nul
+- Proximité naturelle avec AudiBot (filière auditive) → cross-selling facile aux audioprothésistes qui orientent vers des orthophonistes
+- Marché accessible via réseau audioprothésistes existants = coût quasi nul
 
 **Pricing recommandé**
 | Plan | Prix/mois |
@@ -390,23 +388,23 @@ devisJoint      Boolean
 | Pro | 59,90€ |
 
 **Go-to-Market**
-- Cross-sell auprès des opticiens clients OptiBot
-- Syndicat : SNOF (Syndicat National des Orthoptistes)
-- Salon SNOF annuel
+- Cross-sell auprès des audioprothésistes clients AudiBot
+- Syndicat : FNO (Fédération Nationale des Orthophonistes)
+- Salon FNO annuel
 
 ---
 
 ## 🗺️ Roadmap Vision
 
 ```
-2026 S1 : OptiBot FR → 50 clients payants (focus)
+2026 S1 : AudiBot FR → 50 clients payants (focus)
 2026 S2 : DentiBot MVP + AudiBot stabilisation
-2026 Q4 : DentiBot launch + OptiBot Belgique
-2027 S1 : DentiBot Belgique + OptiBot Suisse romande
+2026 Q4 : DentiBot launch + AudiBot Belgique
+2027 S1 : DentiBot Belgique + AudiBot Suisse romande
 2027 S2 : OrthoBot + expansion alémanique
 2028    : Marché complet FR/BE/CH multi-verticales
 ```
 
-**ARR cible 2028 :** 3-5M€ (OptiBot + DentiBot + AudiBot × FR + BE)
+**ARR cible 2028 :** 3-5M€ (AudiBot + DentiBot + AudiBot × FR + BE)
 
 ---

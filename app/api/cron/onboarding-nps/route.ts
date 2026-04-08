@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const BASE_URL = process.env.NEXTAUTH_URL || "https://optibot.fr";
+  const BASE_URL = process.env.NEXTAUTH_URL || "https://audibot.fr";
   const now = new Date();
   const from = new Date(now.getTime() - 169 * 60 * 60 * 1000);
   const to   = new Date(now.getTime() - 167 * 60 * 60 * 1000);
@@ -50,10 +50,10 @@ export async function GET(req: Request) {
         html: emailWrapper({
           unsubscribeEmail: user.email,
           content: `
-            ${h1(`${firstName ? `${firstName}, votre` : "Votre"} première semaine avec OptiBot ⭐`)}
+            ${h1(`${firstName ? `${firstName}, votre` : "Votre"} première semaine avec AudiBot ⭐`)}
             ${timeSaved > 0
               ? bodyText(`En une semaine, vous avez déjà économisé <strong>${timeSavedStr}</strong> de saisie manuelle. Comment s'est passée votre expérience ?`)
-              : bodyText(`Vous utilisez OptiBot depuis une semaine maintenant. Comment s'est passée votre expérience ?`)
+              : bodyText(`Vous utilisez AudiBot depuis une semaine maintenant. Comment s'est passée votre expérience ?`)
             }
             <p style="font-size:14px;color:#475569;margin:8px 0 4px;">Votre satisfaction :</p>
             <div style="text-align:center;margin:16px 0 24px;">
@@ -63,7 +63,7 @@ export async function GET(req: Request) {
                 <span>Excellent 😍</span>
               </p>
             </div>
-            ${bodyText(`Votre avis prend 10 secondes et aide directement toute la communauté des opticiens OptiBot.`)}
+            ${bodyText(`Votre avis prend 10 secondes et aide directement toute la communauté des opticiens AudiBot.`)}
             ${smallText(`Vous avez une question ou un problème ? Répondez directement à cet email — notre équipe est là.`)}
           `,
         }),

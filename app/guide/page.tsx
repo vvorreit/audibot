@@ -37,7 +37,7 @@ export default function GuidePage() {
             <Link href="/dashboard" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors">
               ← Dashboard
             </Link>
-            <Link href="/dashboard" className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 transition-colors">
+            <Link href="/dashboard" className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors">
               Ouvrir l&apos;app
             </Link>
           </div>
@@ -63,7 +63,7 @@ export default function GuidePage() {
         <FaqSection />
 
         {/* ── CTA FINAL ── */}
-        <section className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-12 text-center text-white">
+        <section className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-3xl p-12 text-center text-white">
           <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Zap className="w-7 h-7 text-white" />
           </div>
@@ -74,7 +74,7 @@ export default function GuidePage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/auth/signup"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-black rounded-2xl hover:bg-blue-50 transition-all shadow-xl"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-600 font-black rounded-2xl hover:bg-indigo-50 transition-all shadow-xl"
             >
               Commencer gratuitement
               <ArrowRight className="w-4 h-4" />
@@ -104,7 +104,7 @@ export default function GuidePage() {
       <footer className="fixed bottom-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm border-t border-slate-100 shadow-[0_-1px_8px_rgba(0,0,0,0.06)]">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
             <span className="text-sm font-black text-slate-900 hidden sm:block">AudiBot</span>
@@ -119,7 +119,7 @@ export default function GuidePage() {
 
           <Link
             href="/dashboard"
-            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 transition-colors shrink-0"
+            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors shrink-0"
           >
             ← Dashboard
           </Link>

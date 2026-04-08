@@ -47,7 +47,7 @@ export default {
         }
         var prescEl = findElement('[id$="rechercherdateprescription_I"]');
         var rppsEl = findElement('[id$="rechercherRPPS_I"]');
-        console.info("[OptiBot APGIS] prescEl found:", !!prescEl, "| rppsEl found:", !!rppsEl);
+        console.info("[AudiBot APGIS] prescEl found:", !!prescEl, "| rppsEl found:", !!rppsEl);
         /* DevExpress combos — manipulation DOM directe (CSP bloque les scripts inline).
            Pattern : setter la valeur visible (_I) + la valeur cachée (_VI) + dispatch change */
         function dxComboFill(idSuffix, displayText, value) {

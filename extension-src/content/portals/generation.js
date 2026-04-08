@@ -86,7 +86,7 @@ export default {
           if (montureLigne.prixBrut) { ultraFill(findElement('#ctl00_Cph_TCCalcul_TPVerresMont_TxtMtMont'), String(montureLigne.prixBrut).replace(".", ",")); filled++; }
         }
 
-        console.info("[OptiBot Generation] Page simulation — filled:", filled, "| hasOD:", !!od, "| hasOG:", !!og, "| monture:", !!montureLigne, "| verreOD:", !!verreOD, "| verreOG:", !!verreOG);
+        console.info("[AudiBot Generation] Page simulation — filled:", filled, "| hasOD:", !!od, "| hasOG:", !!og, "| monture:", !!montureLigne, "| verreOD:", !!verreOD, "| verreOG:", !!verreOG);
         return filled > 0;
       }
 

@@ -2,7 +2,7 @@
 set -e
 
 # ═══════════════════════════════════════════════════════════════
-# OptiBot — Déploiement local (contourne GitHub Actions)
+# AudiBot — Déploiement local (contourne GitHub Actions)
 #
 # 1. Build Next.js sur Mac (natif, rapide)
 # 2. Package dans une image Docker amd64 (pas de build Node dans Docker)
@@ -14,7 +14,7 @@ set -e
 #   (Personal Access Token → scope packages:write)
 #
 #   ~/.ssh/config :
-#     Host optibot
+#     Host audibot
 #       HostName TON_IP
 #       User TON_USER
 #       IdentityFile ~/.ssh/id_ed25519
@@ -23,7 +23,7 @@ set -e
 #   ./scripts/deploy-local.sh
 # ═══════════════════════════════════════════════════════════════
 
-IMAGE="ghcr.io/vvorreit/optibot"
+IMAGE="ghcr.io/vvorreit/audibot"
 TAG="latest"
 # Toujours s'exécuter depuis la racine du repo (peu importe d'où le script est lancé)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,14 +31,14 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 SHA_TAG="$(git rev-parse --short HEAD)"
-STAGING="/tmp/optibot-deploy-$$"
+STAGING="/tmp/audibot-deploy-$$"
 
 cleanup() { rm -rf "$STAGING" 2>/dev/null; }
 trap cleanup EXIT
 
 echo ""
 echo "══════════════════════════════════════════"
-echo "  OptiBot — Build local & push GHCR"
+echo "  AudiBot — Build local & push GHCR"
 echo "  commit: ${SHA_TAG}"
 echo "══════════════════════════════════════════"
 echo ""
@@ -91,7 +91,7 @@ cp package-lock.json "$STAGING/package-lock.json"
 # Dockerfile : repart de l'image GHCR existante (node:20-alpine déjà dedans)
 # Le dossier staging a déjà le contenu de .next/standalone/ à la racine
 cat > "$STAGING/Dockerfile" << 'DKFILE'
-FROM ghcr.io/vvorreit/optibot:latest
+FROM ghcr.io/vvorreit/audibot:latest
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -132,7 +132,7 @@ docker buildx build \
 echo "  ✓ Image pushée : ${IMAGE}:${TAG} + :${SHA_TAG}"
 
 # ── 5b. Build image OCR (PaddleOCR) si changements ───────────
-IMAGE_OCR="ghcr.io/vvorreit/optibot-ocr"
+IMAGE_OCR="ghcr.io/vvorreit/audibot-ocr"
 
 OCR_CHANGED=false
 if git diff HEAD~1 --name-only 2>/dev/null | grep -q "ocr-service/"; then
@@ -159,19 +159,19 @@ fi
 echo ""
 echo "▸ Déploiement sur le serveur..."
 
-if ! ssh -o ConnectTimeout=10 -o BatchMode=yes optibot "echo ok" > /dev/null 2>&1; then
+if ! ssh -o ConnectTimeout=10 -o BatchMode=yes audibot "echo ok" > /dev/null 2>&1; then
   echo ""
-  echo "  ⚠ Impossible de se connecter via SSH (Host 'optibot')."
+  echo "  ⚠ Impossible de se connecter via SSH (Host 'audibot')."
   echo ""
   echo "  L'image est sur GHCR. Finis manuellement :"
   echo "    ssh ton-serveur"
-  echo "    cd /app/optibot && docker compose pull app ocr && docker compose up -d --no-build app ocr"
+  echo "    cd /app/audibot && docker compose pull app ocr && docker compose up -d --no-build app ocr"
   exit 0
 fi
 
-ssh optibot << 'REMOTE'
+ssh audibot << 'REMOTE'
   set -e
-  cd /app/optibot
+  cd /app/audibot
 
   echo "  → git pull..."
   git pull origin main 2>/dev/null || true
@@ -183,7 +183,7 @@ ssh optibot << 'REMOTE'
   docker compose up -d --no-build app ocr
 
   echo "  → migrations Prisma..."
-  docker exec optibot-app npx prisma migrate deploy 2>/dev/null || true
+  docker exec audibot-app npx prisma migrate deploy 2>/dev/null || true
 
   echo "  → nettoyage images..."
   docker image prune -f > /dev/null 2>&1

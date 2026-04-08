@@ -321,7 +321,7 @@ export default function FonctionnalitesPage() {
       <nav className="bg-slate-900 text-white px-6 py-5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <Image src="/icon.png" alt="AudiBot" width={28} height={28} className="rounded-lg" priority />
             </div>
             <span className="text-lg font-bold tracking-tight uppercase">AudiBot</span>
@@ -335,7 +335,7 @@ export default function FonctionnalitesPage() {
       {/* Hero */}
       <section className="py-20 px-6 bg-slate-50 border-b border-slate-100">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
             {features.length} fonctionnalités
           </div>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
@@ -352,7 +352,7 @@ export default function FonctionnalitesPage() {
               <a
                 key={cat}
                 href={`#${cat.toLowerCase().replace(/\s+/g, "-").replace(/[éèê]/g, "e").replace(/[àâ]/g, "a")}`}
-                className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-black hover:border-blue-300 hover:text-blue-600 transition-colors"
+                className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-black hover:border-indigo-300 hover:text-indigo-600 transition-colors"
               >
                 {cat}
               </a>
@@ -371,8 +371,8 @@ export default function FonctionnalitesPage() {
               <div key={category} id={anchorId}>
                 {/* Header catégorie */}
                 <div className="mb-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2">{category}</p>
-                  <div className="w-12 h-1 bg-blue-600 rounded-full" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-2">{category}</p>
+                  <div className="w-12 h-1 bg-indigo-600 rounded-full" />
                 </div>
 
                 {/* Features grid */}
@@ -386,7 +386,7 @@ export default function FonctionnalitesPage() {
                       >
                         {/* Header */}
                         <div className="flex items-start gap-4 mb-5">
-                          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                             <Icon className="w-6 h-6" />
                           </div>
                           <div className="flex-1">
@@ -406,7 +406,7 @@ export default function FonctionnalitesPage() {
                         <ul className="space-y-2 mt-auto">
                           {feature.details.map((detail, i) => (
                             <li key={i} className="flex items-start gap-2.5 text-sm text-slate-600">
-                              <CheckCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                              <CheckCircle className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
                               <span className="font-medium">{detail}</span>
                             </li>
                           ))}
@@ -449,7 +449,7 @@ export default function FonctionnalitesPage() {
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-3 px-10 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 uppercase tracking-widest text-sm"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 uppercase tracking-widest text-sm"
           >
             Essayer AudiBot gratuitement
             <ArrowRight className="w-5 h-5" />

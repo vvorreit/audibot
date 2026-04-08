@@ -14,8 +14,8 @@
 ## 1. Alternatives de distribution (hors Chrome Web Store)
 
 ### Option A — Self-hosted CRX + auto-update (recommandé à court terme)
-- Héberger le `.crx` sur `optibot.fr/extension/`
-- `manifest.json` : ajouter `"update_url": "https://optibot.fr/extension/update.xml"`
+- Héberger le `.crx` sur `audibot.fr/extension/`
+- `manifest.json` : ajouter `"update_url": "https://audibot.fr/extension/update.xml"`
 - Les utilisateurs installent via `chrome://extensions` → mode développeur → "Installer CRX"
 - **Avantage** : zéro dépendance Google, mises à jour silencieuses
 - **Inconvénient** : l'utilisateur doit activer le mode développeur (friction à l'onboarding)
@@ -38,12 +38,12 @@
 ## 2. Chrome Web Store — Réduire le risque de rejection
 
 ### Permissions actuelles à justifier
-- `clipboardRead` → **sensible**, souvent rejeté. Justification : lecture du clipboard pour récupérer le payload OptiBot copié depuis le dashboard. Documenter dans la privacy policy.
+- `clipboardRead` → **sensible**, souvent rejeté. Justification : lecture du clipboard pour récupérer le payload AudiBot copié depuis le dashboard. Documenter dans la privacy policy.
 - `tabs` → justifier l'usage (détection du portail actif)
 - `host_permissions` larges → restreindre aux domaines stricts (déjà bien fait)
 
 ### Actions concrètes
-1. **Privacy policy** obligatoire : créer `/legal/extension-privacy` sur optibot.fr
+1. **Privacy policy** obligatoire : créer `/legal/extension-privacy` sur audibot.fr
 2. **Single purpose** : l'extension ne doit faire QUE l'autofill mutuelles (pas de tracking, pas d'analytics)
 3. **No remote code** : tout le JS doit être dans le package (✅ déjà le cas avec MV3)
 4. **CSP stricte** dans manifest : `"content_security_policy": { "extension_pages": "script-src 'self'; object-src 'self'" }`
@@ -51,11 +51,11 @@
 
 ### Template privacy policy extension
 ```
-OptiBot Multi-Site Extension — Politique de confidentialité
+AudiBot Multi-Site Extension — Politique de confidentialité
 - L'extension lit le clipboard uniquement sur action explicite de l'utilisateur
 - Aucune donnée patient n'est transmise à des serveurs tiers
 - Aucune télémétrie, aucun tracking
-- Les données autofill transitent uniquement entre le dashboard OptiBot et le portail mutuelle, localement dans le navigateur
+- Les données autofill transitent uniquement entre le dashboard AudiBot et le portail mutuelle, localement dans le navigateur
 ```
 
 ---
@@ -65,7 +65,7 @@ OptiBot Multi-Site Extension — Politique de confidentialité
 Un ping est envoyé à `/api/bookmarklet/ping` à chaque injection :
 ```js
 // À ajouter dans content.js après chaque tentative d'autofill
-fetch("https://app.optibot.fr/api/bookmarklet/ping", {
+fetch("https://app.audibot.fr/api/bookmarklet/ping", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -76,7 +76,7 @@ fetch("https://app.optibot.fr/api/bookmarklet/ping", {
   }),
 }).catch(() => {}); // best-effort, silencieux
 ```
-Les résultats sont visibles dans l'admin OptiBot → onglet OCR → section Bookmarklet Health.
+Les résultats sont visibles dans l'admin AudiBot → onglet OCR → section Bookmarklet Health.
 
 ---
 
@@ -85,7 +85,7 @@ Les résultats sont visibles dans l'admin OptiBot → onglet OCR → section Boo
 | Priorité | Action |
 |----------|--------|
 | P0 | Ajouter le ping monitoring dans content.js |
-| P0 | Créer la privacy policy extension sur optibot.fr |
+| P0 | Créer la privacy policy extension sur audibot.fr |
 | P1 | Soumettre sur Firefox AMO |
 | P1 | Self-hosted CRX update URL pour ne pas dépendre du store |
 | P2 | Soumettre Chrome Web Store (avec permissions justifiées) |

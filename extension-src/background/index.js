@@ -1,4 +1,4 @@
-/* OptiBot — Service Worker : icone dynamique + lock inactivite + remote config + SSE */
+/* AudiBot — Service Worker : icone dynamique + lock inactivite + remote config + SSE */
 
 const ACTIVE_DOMAINS = [
   /* Portails mutuelles TP (25) */
@@ -41,7 +41,7 @@ const ACTIVE_DOMAINS = [
 ];
 
 const INACTIVITY_MINUTES = 15;
-const API_BASE = "https://optibot.fr";
+const API_BASE = "https://audibot.fr";
 
 function isActiveDomain(url) {
   try {
@@ -114,9 +114,9 @@ chrome.tabs.onActivated.addListener(function (info) {
 
 /* Forwarding PEC vers Cosium quand on bascule sur l'onglet ERP */
 function forwardPECToCosiumIfNeeded(tab) {
-  chrome.storage.local.get(["optibot_cosium_url", "optibot_pec_pending"], function(result) {
-    var cosiumUrl = result.optibot_cosium_url;
-    var pec = result.optibot_pec_pending;
+  chrome.storage.local.get(["audibot_cosium_url", "audibot_pec_pending"], function(result) {
+    var cosiumUrl = result.audibot_cosium_url;
+    var pec = result.audibot_pec_pending;
     if (!cosiumUrl || !pec || !tab.url) return;
     try {
       var cosiumOrigin = new URL(cosiumUrl).origin;
@@ -124,11 +124,11 @@ function forwardPECToCosiumIfNeeded(tab) {
     } catch(e) { return; }
     /* Fraicheur : max 30 min */
     if (Date.now() - pec.ts > 30 * 60 * 1000) {
-      chrome.storage.local.remove("optibot_pec_pending");
+      chrome.storage.local.remove("audibot_pec_pending");
       return;
     }
     chrome.tabs.sendMessage(tab.id, {
-      type: "OPTIBOT_INJECT_PEC",
+      type: "AUDIBOT_INJECT_PEC",
       pecData: pec.encryptedPayload
     }, function() {
       if (chrome.runtime.lastError) {} /* silencieux */
@@ -147,13 +147,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     clearTimeout(_pageLoadedTimers[tabId]);
     _pageLoadedTimers[tabId] = setTimeout(function() {
       delete _pageLoadedTimers[tabId];
-      /* Envoyer OPTIBOT_PAGE_LOADED au nouvel onglet (fix cross-domain Almerys target=_blank) */
-      chrome.tabs.sendMessage(tabId, { type: "OPTIBOT_PAGE_LOADED" }, function() {
+      /* Envoyer AUDIBOT_PAGE_LOADED au nouvel onglet (fix cross-domain Almerys target=_blank) */
+      chrome.tabs.sendMessage(tabId, { type: "AUDIBOT_PAGE_LOADED" }, function() {
         if (chrome.runtime.lastError) {} /* silencieux */
       });
-      /* V3-10 : Propager optibot_rpa — matching dynamique sur tout domaine */
-      chrome.storage.local.get(["optibot_rpa"], function(result) {
-        var rpa = result.optibot_rpa;
+      /* V3-10 : Propager audibot_rpa — matching dynamique sur tout domaine */
+      chrome.storage.local.get(["audibot_rpa"], function(result) {
+        var rpa = result.audibot_rpa;
         if (!rpa || !rpa.target) return;
         /* Mapping connu pour les bots codes en dur */
         var knownDomains = {
@@ -176,8 +176,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         }
         if (!matches) return;
         /* Données fraîches (< 5 min) — déclencher checkAndStartRPA via le content script */
-        if (Date.now() - rpa.ts > 300000) { chrome.storage.local.remove("optibot_rpa"); return; }
-        chrome.tabs.sendMessage(tabId, { type: "OPTIBOT_CHECK_RPA" }, function() {
+        if (Date.now() - rpa.ts > 300000) { chrome.storage.local.remove("audibot_rpa"); return; }
+        chrome.tabs.sendMessage(tabId, { type: "AUDIBOT_CHECK_RPA" }, function() {
           if (chrome.runtime.lastError) {} /* silencieux */
         });
       });
@@ -187,22 +187,22 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 /* ── Lock d'inactivite avec chrome.alarms ─────────────────── */
 function resetLockAlarm() {
-  chrome.alarms.clear("optibot_lock", function() {
-    chrome.alarms.create("optibot_lock", { delayInMinutes: INACTIVITY_MINUTES });
+  chrome.alarms.clear("audibot_lock", function() {
+    chrome.alarms.create("audibot_lock", { delayInMinutes: INACTIVITY_MINUTES });
   });
   /* Mettre a jour le lockAt dans le storage */
-  chrome.storage.local.set({ optibot_lock: { lockAt: Date.now() + INACTIVITY_MINUTES * 60 * 1000 } });
+  chrome.storage.local.set({ audibot_lock: { lockAt: Date.now() + INACTIVITY_MINUTES * 60 * 1000 } });
 }
 
 /* Creer l'alarme au demarrage du service worker */
 resetLockAlarm();
 
 /* ── Parcours dynamiques : refresh toutes les 30 min ────────────────────── */
-chrome.alarms.create("optibot_dynamic_parcours", { delayInMinutes: 1, periodInMinutes: 30 });
+chrome.alarms.create("audibot_dynamic_parcours", { delayInMinutes: 1, periodInMinutes: 30 });
 
 function fetchAndCacheDynamicParcours() {
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return;
     fetch(API_BASE + "/api/extension/parcours?handlers=true", {
       headers: { "Authorization": "Bearer " + auth.syncToken }
@@ -211,11 +211,11 @@ function fetchAndCacheDynamicParcours() {
     .then(function(data) {
       if (Array.isArray(data.handlers)) {
         chrome.storage.local.set({
-          optibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
+          audibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
         });
       }
     })
-    .catch(function(err) { console.warn("[OptiBot] dynamic parcours fetch failed:", err); });
+    .catch(function(err) { console.warn("[AudiBot] dynamic parcours fetch failed:", err); });
   });
 }
 
@@ -227,11 +227,11 @@ function fetchAndCacheSelectorOverrides() {
     .then(function(data) {
       if (data && data.overrides) {
         chrome.storage.local.set({
-          optibot_selector_overrides: { overrides: data.overrides, version: data.version || 1, ts: Date.now() }
+          audibot_selector_overrides: { overrides: data.overrides, version: data.version || 1, ts: Date.now() }
         });
       }
     })
-    .catch(function(err) { console.warn("[OptiBot] selector overrides fetch failed:", err); });
+    .catch(function(err) { console.warn("[AudiBot] selector overrides fetch failed:", err); });
 }
 
 /* ── US-9 : Remote Config Mappings — mise a jour silencieuse ─────────────── */
@@ -239,14 +239,14 @@ function fetchAndCacheSelectorOverrides() {
 /* Format JSON : { version, sources: [ { source, urlPattern, fields: {...} } ] } */
 /* Chrome Web Store autorise les donnees JSON distantes, pas le code JS.       */
 
-var MAPPINGS_CHECK_ALARM = "optibot_mappings_check";
+var MAPPINGS_CHECK_ALARM = "audibot_mappings_check";
 /* Creer l'alarme : verif au demarrage + toutes les 24h */
 chrome.alarms.create(MAPPINGS_CHECK_ALARM, { delayInMinutes: 2, periodInMinutes: 1440 });
 
 function fetchAndCacheMappings() {
-  chrome.storage.local.get(["optibot_mappings", "optibot_auth"], function(result) {
-    var auth = result.optibot_auth || {};
-    var cached = result.optibot_mappings || {};
+  chrome.storage.local.get(["audibot_mappings", "audibot_auth"], function(result) {
+    var auth = result.audibot_auth || {};
+    var cached = result.audibot_mappings || {};
     var localVersion = cached.version || 0;
 
     var headers = { "Content-Type": "application/json" };
@@ -256,7 +256,7 @@ function fetchAndCacheMappings() {
       .then(function(r) {
         /* 304 = pas de changement */
         if (r.status === 304) {
-          console.info("[OptiBot] Mappings a jour (version " + localVersion + ")");
+          console.info("[AudiBot] Mappings a jour (version " + localVersion + ")");
           return null;
         }
         return r.json();
@@ -265,21 +265,21 @@ function fetchAndCacheMappings() {
         if (!data) return;
         if (data.version && data.sources) {
           chrome.storage.local.set({
-            optibot_mappings: { version: data.version, sources: data.sources, ts: Date.now() }
+            audibot_mappings: { version: data.version, sources: data.sources, ts: Date.now() }
           });
-          console.info("[OptiBot] Mappings mis a jour → version " + data.version + " (" + data.sources.length + " sources)");
+          console.info("[AudiBot] Mappings mis a jour → version " + data.version + " (" + data.sources.length + " sources)");
           /* Notifier les content scripts actifs */
           chrome.tabs.query({ active: true }, function(tabs) {
             tabs.forEach(function(tab) {
               if (tab.id) {
-                chrome.tabs.sendMessage(tab.id, { type: "OPTIBOT_MAPPINGS_UPDATED", version: data.version })
+                chrome.tabs.sendMessage(tab.id, { type: "AUDIBOT_MAPPINGS_UPDATED", version: data.version })
                   .catch(function() {});
               }
             });
           });
         }
       })
-      .catch(function(err) { console.warn("[OptiBot] mappings fetch failed:", err); });
+      .catch(function(err) { console.warn("[AudiBot] mappings fetch failed:", err); });
   });
 }
 
@@ -294,9 +294,9 @@ var _sseConnected = false;
 var SSE_RETRY_DELAYS = [5000, 10000, 30000, 60000]; /* backoff exponentiel */
 
 function connectSSE() {
-  chrome.storage.local.get(["optibot_auth", "optibot_lock"], function(result) {
-    var auth = result.optibot_auth || {};
-    var lock = result.optibot_lock || {};
+  chrome.storage.local.get(["audibot_auth", "audibot_lock"], function(result) {
+    var auth = result.audibot_auth || {};
+    var lock = result.audibot_lock || {};
 
     /* Ne pas connecter si pas authentifie ou verrouille */
     if (!auth.syncToken) return;
@@ -351,7 +351,7 @@ function connectSSE() {
 
             read();
           }).catch(function(err) {
-            console.warn("[OptiBot] SSE read error:", err);
+            console.warn("[AudiBot] SSE read error:", err);
             if (_sseConnected) scheduleSSEReconnect();
           });
         }
@@ -359,7 +359,7 @@ function connectSSE() {
         read();
       })
       .catch(function(err) {
-        console.warn("[OptiBot] SSE connection error:", err);
+        console.warn("[AudiBot] SSE connection error:", err);
         if (_sseConnected) scheduleSSEReconnect();
       });
   });
@@ -404,9 +404,9 @@ function handleSSEEvent(payload) {
   /* Dispatcher l'evenement a tous les onglets actifs */
   chrome.tabs.query({}, function(tabs) {
     tabs.forEach(function(tab) {
-      if (tab.url && (isActiveDomain(tab.url) || (tab.url.indexOf("optibot.fr") !== -1))) {
+      if (tab.url && (isActiveDomain(tab.url) || (tab.url.indexOf("audibot.fr") !== -1))) {
         chrome.tabs.sendMessage(tab.id, {
-          type: "OPTIBOT_SSE_EVENT",
+          type: "AUDIBOT_SSE_EVENT",
           payload: payload,
         }, function() {
           if (chrome.runtime.lastError) {} /* silencieux */
@@ -417,12 +417,12 @@ function handleSSEEvent(payload) {
 }
 
 /* ── Alarme SSE keepalive (reconnecte si silent drop) ─────────────────────── */
-chrome.alarms.create("optibot_sse_keepalive", { delayInMinutes: 20, periodInMinutes: 20 });
+chrome.alarms.create("audibot_sse_keepalive", { delayInMinutes: 20, periodInMinutes: 20 });
 
 /* ── Cosium ERP : restaurer les scripts dynamiques au demarrage ─────── */
-chrome.storage.local.get(["optibot_cosium_url"], function(result) {
-  if (result.optibot_cosium_url) {
-    registerCosiumScripts(result.optibot_cosium_url);
+chrome.storage.local.get(["audibot_cosium_url"], function(result) {
+  if (result.audibot_cosium_url) {
+    registerCosiumScripts(result.audibot_cosium_url);
   }
 });
 
@@ -432,12 +432,12 @@ async function registerCosiumScripts(cosiumUrl) {
 
     /* Desinscrire les anciens scripts si existants */
     try {
-      await chrome.scripting.unregisterContentScripts({ ids: ["optibot-cosium"] });
+      await chrome.scripting.unregisterContentScripts({ ids: ["audibot-cosium"] });
     } catch(e) { /* pas encore enregistre */ }
 
     /* Enregistrer les scripts Cosium */
     await chrome.scripting.registerContentScripts([{
-      id: "optibot-cosium",
+      id: "audibot-cosium",
       matches: [origin],
       js: ["crypto.js", "erp-bridge.js"],
       allFrames: true,
@@ -450,9 +450,9 @@ async function registerCosiumScripts(cosiumUrl) {
       ACTIVE_DOMAINS.push(cosiumDomain);
     }
 
-    chrome.storage.local.set({ optibot_cosium_url: cosiumUrl });
+    chrome.storage.local.set({ audibot_cosium_url: cosiumUrl });
   } catch(e) {
-    console.warn("[OptiBot] Cosium script registration failed:", e);
+    console.warn("[AudiBot] Cosium script registration failed:", e);
   }
 }
 
@@ -464,20 +464,20 @@ connectSSE();
 
 /* ── Alarm handler ───────────────────────────────────────────────────────── */
 chrome.alarms.onAlarm.addListener(function(alarm) {
-  if (alarm.name === "optibot_lock") {
+  if (alarm.name === "audibot_lock") {
     /* Marquer comme verrouille ET supprimer le cache patient (donnees de sante) */
-    chrome.storage.local.set({ optibot_lock: { lockAt: Date.now() - 1000 } });
-    chrome.storage.local.remove(["optibot_cache", "optibot_rpa"]);
+    chrome.storage.local.set({ audibot_lock: { lockAt: Date.now() - 1000 } });
+    chrome.storage.local.remove(["audibot_cache", "audibot_rpa"]);
     disconnectSSE();
   }
-  if (alarm.name === "optibot_dynamic_parcours") {
+  if (alarm.name === "audibot_dynamic_parcours") {
     fetchAndCacheDynamicParcours();
     fetchAndCacheSelectorOverrides();
   }
   if (alarm.name === MAPPINGS_CHECK_ALARM) {
     fetchAndCacheMappings();
   }
-  if (alarm.name === "optibot_sse_keepalive") {
+  if (alarm.name === "audibot_sse_keepalive") {
     /* Reconnecter si la connexion SSE est tombee silencieusement */
     if (!_sseConnected || !_sseReader) {
       connectSSE();
@@ -487,19 +487,19 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 
 /* ── Messages depuis les content scripts et la popup ─────────────────────── */
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-  if (msg && msg.type === 'OPTIBOT_OPEN_TAB' && msg.url) {
+  if (msg && msg.type === 'AUDIBOT_OPEN_TAB' && msg.url) {
     chrome.tabs.create({ url: msg.url });
   }
-  if (msg && msg.type === 'OPTIBOT_RENEW_LOCK') {
+  if (msg && msg.type === 'AUDIBOT_RENEW_LOCK') {
     resetLockAlarm();
     /* Reconnecter SSE si deconnecte apres lock */
     if (!_sseConnected) connectSSE();
   }
 
   /* ── US-8 : Feedback Loop — signalement champ mal rempli ── */
-  if (msg && msg.type === 'OPTIBOT_FIELD_FEEDBACK' && msg.payload) {
-    chrome.storage.local.get(["optibot_auth"], function(result) {
-      var auth = result.optibot_auth || {};
+  if (msg && msg.type === 'AUDIBOT_FIELD_FEEDBACK' && msg.payload) {
+    chrome.storage.local.get(["audibot_auth"], function(result) {
+      var auth = result.audibot_auth || {};
       if (!auth.syncToken) { sendResponse({ ok: false, error: 'not_authenticated' }); return; }
 
       fetch(API_BASE + "/api/extension/field-feedback", {
@@ -519,31 +519,31 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       .then(function(r) { return r.json(); })
       .then(function(data) { sendResponse({ ok: true, data: data }); })
       .catch(function(err) {
-        console.warn("[OptiBot] field-feedback failed:", err);
+        console.warn("[AudiBot] field-feedback failed:", err);
         sendResponse({ ok: false, error: err.message });
       });
     });
     return true; /* async sendResponse */
   }
   /* Proxy fetch pour eviter CORS — le service worker n'a pas de restrictions CORS */
-  if (msg && msg.type === 'OPTIBOT_PING' && msg.payloads) {
+  if (msg && msg.type === 'AUDIBOT_PING' && msg.payloads) {
     msg.payloads.forEach(function(p) {
       fetch(p.url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(p.body)
-      }).catch(function(err) { console.warn("[OptiBot] ping relay failed:", err); });
+      }).catch(function(err) { console.warn("[AudiBot] ping relay failed:", err); });
     });
   }
   /* ── Cosium ERP ── */
-  if (msg && msg.type === 'OPTIBOT_SET_COSIUM_URL') {
+  if (msg && msg.type === 'AUDIBOT_SET_COSIUM_URL') {
     registerCosiumScripts(msg.url);
     sendResponse({ ok: true });
     return true;
   }
 
   /* ── Badge rejet rouge ── */
-  if (msg && msg.type === 'OPTIBOT_REJET_BADGE') {
+  if (msg && msg.type === 'AUDIBOT_REJET_BADGE') {
     var badgeColor = msg.rejetType === "technique" ? "#f59e0b" : "#ef4444";
     var badgeText = msg.rejetType === "technique" ? "!" : "REJET";
     chrome.action.setBadgeText({ text: badgeText });
@@ -555,16 +555,16 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   }
 
   /* ── Injection note rejet dans Cosium ── */
-  if (msg && msg.type === 'OPTIBOT_COSIUM_INJECT_NOTE') {
-    chrome.storage.local.get(["optibot_cosium_url"], function(result) {
-      if (!result.optibot_cosium_url) return;
-      var cosiumOrigin = new URL(result.optibot_cosium_url).origin;
+  if (msg && msg.type === 'AUDIBOT_COSIUM_INJECT_NOTE') {
+    chrome.storage.local.get(["audibot_cosium_url"], function(result) {
+      if (!result.audibot_cosium_url) return;
+      var cosiumOrigin = new URL(result.audibot_cosium_url).origin;
       /* Chercher un onglet Cosium ouvert et injecter la note */
       chrome.tabs.query({}, function(tabs) {
         for (var i = 0; i < tabs.length; i++) {
           if (tabs[i].url && tabs[i].url.startsWith(cosiumOrigin)) {
             chrome.tabs.sendMessage(tabs[i].id, {
-              type: "OPTIBOT_INJECT_REJET_NOTE",
+              type: "AUDIBOT_INJECT_REJET_NOTE",
               note: msg.note,
             }, function() {
               if (chrome.runtime.lastError) {} /* silencieux */
@@ -576,15 +576,15 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     });
   }
 
-  if (msg && msg.type === 'OPTIBOT_COSIUM_SCRAPED') {
+  if (msg && msg.type === 'AUDIBOT_COSIUM_SCRAPED') {
     chrome.storage.local.set({
-      optibot_cosium_status: { scraped: true, fields: msg.fields, ts: Date.now() }
+      audibot_cosium_status: { scraped: true, fields: msg.fields, ts: Date.now() }
     });
   }
 
-  if (msg && msg.type === 'OPTIBOT_PEC_CAPTURED') {
+  if (msg && msg.type === 'AUDIBOT_PEC_CAPTURED') {
     chrome.storage.local.set({
-      optibot_pec_pending: {
+      audibot_pec_pending: {
         encryptedPayload: msg.encryptedPayload,
         source: msg.source,
         ts: Date.now()
@@ -593,9 +593,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   }
 
   /* Envoyer un statut au serveur (extension → dashboard) */
-  if (msg && msg.type === 'OPTIBOT_SEND_STATUS') {
-    chrome.storage.local.get(["optibot_auth"], function(result) {
-      var auth = result.optibot_auth || {};
+  if (msg && msg.type === 'AUDIBOT_SEND_STATUS') {
+    chrome.storage.local.get(["audibot_auth"], function(result) {
+      var auth = result.audibot_auth || {};
       if (!auth.syncToken) return;
       fetch(API_BASE + "/api/extension/status", {
         method: "POST",
@@ -606,7 +606,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
           portal: msg.portal || null,
           details: msg.details || null,
         })
-      }).catch(function(err) { console.warn("[OptiBot] status send failed:", err); });
+      }).catch(function(err) { console.warn("[AudiBot] status send failed:", err); });
     });
   }
 });

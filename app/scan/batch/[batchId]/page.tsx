@@ -114,7 +114,7 @@ export default function BatchScanPage({ params }: { params: Promise<{ batchId: s
   useEffect(() => {
     const metas: [string, string][] = [
       ["apple-mobile-web-app-capable", "yes"],
-      ["apple-mobile-web-app-title", "OptiBot Scan"],
+      ["apple-mobile-web-app-title", "AudiBot Scan"],
       ["theme-color", "#2563eb"],
     ];
     for (const [name, content] of metas) {
@@ -295,11 +295,11 @@ export default function BatchScanPage({ params }: { params: Promise<{ batchId: s
 
       let syncToken: string | null = null;
       try {
-        const authRaw = localStorage.getItem("optibot_auth");
+        const authRaw = localStorage.getItem("audibot_auth");
         if (authRaw) syncToken = JSON.parse(authRaw)?.syncToken ?? null;
       } catch { /* */ }
       if (!syncToken) {
-        setError("Connectez-vous sur optibot.fr depuis ce téléphone pour associer votre compte.");
+        setError("Connectez-vous sur audibot.fr depuis ce téléphone pour associer votre compte.");
         setStep("error");
         return;
       }
@@ -338,7 +338,7 @@ export default function BatchScanPage({ params }: { params: Promise<{ batchId: s
     if (!batchId) return;
     let syncToken: string | null = null;
     try {
-      const authRaw = localStorage.getItem("optibot_auth");
+      const authRaw = localStorage.getItem("audibot_auth");
       if (authRaw) syncToken = JSON.parse(authRaw)?.syncToken ?? null;
     } catch { /* */ }
     if (syncToken) {

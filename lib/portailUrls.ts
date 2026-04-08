@@ -1,4 +1,4 @@
-/** Mapping portail OptiBot → URL de soumission du portail mutuelle. */
+/** Mapping portail AudiBot → URL de soumission du portail mutuelle. */
 export const PORTAIL_URLS: Record<string, string> = {
   ALMERYS: "https://www.be-almerys.com/espace-professionnels",
   VIAMEDIS: "https://pro.viamedis.net",

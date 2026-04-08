@@ -5,8 +5,8 @@
 var _rejectionModel = null;
 
 function loadRejectionModel() {
-  chrome.storage.local.get(["optibot_rejection_model"], function(result) {
-    var cached = result.optibot_rejection_model;
+  chrome.storage.local.get(["audibot_rejection_model"], function(result) {
+    var cached = result.audibot_rejection_model;
     if (cached && cached.ts && Date.now() - cached.ts < 86400000) {
       _rejectionModel = cached.model;
       return;
@@ -14,15 +14,15 @@ function loadRejectionModel() {
     if (typeof getSyncToken === "function") {
       getSyncToken().then(function(token) {
         if (!token) return;
-        fetch("https://optibot.fr/api/extension/rejection-model", {
+        fetch("https://audibot.fr/api/extension/rejection-model", {
           headers: { "Authorization": "Bearer " + token }
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           _rejectionModel = data.model || null;
-          chrome.storage.local.set({ optibot_rejection_model: { model: _rejectionModel, ts: Date.now() } });
+          chrome.storage.local.set({ audibot_rejection_model: { model: _rejectionModel, ts: Date.now() } });
         })
-        .catch(function(err) { console.warn("[OptiBot] rejection model fetch failed:", err); });
+        .catch(function(err) { console.warn("[AudiBot] rejection model fetch failed:", err); });
       });
     }
   });
@@ -74,14 +74,14 @@ function predictRejectionRisk(fillData, hostname) {
 function showRejectionRiskBanner(prediction) {
   if (!prediction || prediction.risk < 15) return;
 
-  var existing = document.getElementById("optibot-rejection-risk");
+  var existing = document.getElementById("audibot-rejection-risk");
   if (existing) existing.remove();
 
   var colors = { low: "#059669", medium: "#d97706", high: "#dc2626" };
   var labels = { low: "Faible", medium: "Moyen", high: "Eleve" };
 
   var banner = document.createElement("div");
-  banner.id = "optibot-rejection-risk";
+  banner.id = "audibot-rejection-risk";
   banner.style.cssText = "position:fixed;top:16px;right:16px;z-index:2147483647;background:white;border-radius:12px;padding:16px 20px;box-shadow:0 8px 30px rgba(0,0,0,0.15);font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:360px;border-left:4px solid " + colors[prediction.level] + ";";
 
   var header = document.createElement("div");

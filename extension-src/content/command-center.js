@@ -1,13 +1,13 @@
-/* OptiBot Command Center — Mini dashboard flottant sur les portails */
+/* AudiBot Command Center — Mini dashboard flottant sur les portails */
 /* Injecte via Shadow DOM pour isolation CSS complete */
 
-var CC_STORAGE_KEY = "optibot_cc_state";
+var CC_STORAGE_KEY = "audibot_cc_state";
 
 function createCommandCenter() {
-  if (document.getElementById("optibot-command-center")) return;
+  if (document.getElementById("audibot-command-center")) return;
 
   var host = document.createElement("div");
-  host.id = "optibot-command-center";
+  host.id = "audibot-command-center";
   host.style.cssText = "position:fixed;z-index:2147483647;";
   document.body.appendChild(host);
 
@@ -36,7 +36,7 @@ function createCommandCenter() {
 
   /* SSE Event Listener — re-render on cache update from background */
   chrome.runtime.onMessage.addListener(function(message) {
-    if (message && message.type === "OPTIBOT_SSE_EVENT") {
+    if (message && message.type === "AUDIBOT_SSE_EVENT") {
       readEncryptedCache().then(function() {
         /* Determine current mode from storage before re-rendering */
         chrome.storage.local.get([CC_STORAGE_KEY], function(result) {
@@ -97,7 +97,7 @@ function renderCommandCenter(shadow, container, host, mode) {
 
     var logoText = document.createElement("span");
     logoText.className = "cc-logo";
-    logoText.textContent = "OptiBot";
+    logoText.textContent = "AudiBot";
     logoWrap.appendChild(logoText);
 
     /* Status dot */
@@ -151,7 +151,7 @@ function renderCommandCenter(shadow, container, host, mode) {
     if (!data || !data.nom) {
       var empty = document.createElement("div");
       empty.className = "cc-empty";
-      empty.textContent = "Aucune donnee patient. Scannez un document depuis le dashboard OptiBot.";
+      empty.textContent = "Aucune donnee patient. Scannez un document depuis le dashboard AudiBot.";
       container.appendChild(empty);
       return;
     }
@@ -203,7 +203,7 @@ function renderCommandCenter(shadow, container, host, mode) {
     fillBtn.className = "cc-btn cc-btn-fill";
     fillBtn.textContent = "Remplir";
     fillBtn.onclick = function() {
-      var pageBtn = document.getElementById("optibot-fill-btn");
+      var pageBtn = document.getElementById("audibot-fill-btn");
       if (pageBtn) pageBtn.click();
     };
     actions.appendChild(fillBtn);
@@ -212,7 +212,7 @@ function renderCommandCenter(shadow, container, host, mode) {
     scanBtn.className = "cc-btn cc-btn-scan";
     scanBtn.textContent = "Rescanner";
     scanBtn.onclick = function() {
-      chrome.runtime.sendMessage({ type: "OPTIBOT_OPEN_TAB", url: "https://optibot.fr/dashboard" });
+      chrome.runtime.sendMessage({ type: "AUDIBOT_OPEN_TAB", url: "https://audibot.fr/dashboard" });
     };
     actions.appendChild(scanBtn);
 
@@ -377,16 +377,16 @@ function saveState(host, mode) {
 function getCommandCenterCSS() {
   return [
     /* Animations */
-    "@keyframes optibotPulse {",
+    "@keyframes audibotPulse {",
     "  0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }",
     "  70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }",
     "  100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }",
     "}",
-    "@keyframes optibotFadeIn {",
+    "@keyframes audibotFadeIn {",
     "  from { opacity: 0; transform: translateY(8px); }",
     "  to { opacity: 1; transform: translateY(0); }",
     "}",
-    "@keyframes optibotDotFlash {",
+    "@keyframes audibotDotFlash {",
     "  0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }",
     "  50% { box-shadow: 0 0 12px 4px rgba(16,185,129,0.5); }",
     "  100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }",
@@ -405,7 +405,7 @@ function getCommandCenterCSS() {
     "  overflow: hidden;",
     "  user-select: none;",
     "  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);",
-    "  animation: optibotFadeIn 0.3s ease-out;",
+    "  animation: audibotFadeIn 0.3s ease-out;",
     "}",
 
     /* Minimized container */
@@ -432,7 +432,7 @@ function getCommandCenterCSS() {
     "  cursor: pointer;",
     "  box-shadow: 0 4px 14px rgba(37,99,235,0.4);",
     "  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);",
-    "  animation: optibotFadeIn 0.3s ease-out;",
+    "  animation: audibotFadeIn 0.3s ease-out;",
     "}",
     ".cc-mini-btn:hover {",
     "  box-shadow: 0 6px 20px rgba(37,99,235,0.55);",
@@ -485,10 +485,10 @@ function getCommandCenterCSS() {
     "  flex-shrink: 0;",
     "}",
     ".cc-dot-pulse {",
-    "  animation: optibotPulse 2s infinite;",
+    "  animation: audibotPulse 2s infinite;",
     "}",
     ".cc-dot-flash {",
-    "  animation: optibotDotFlash 1.5s ease-out !important;",
+    "  animation: audibotDotFlash 1.5s ease-out !important;",
     "}",
 
     /* Header buttons */

@@ -1,4 +1,4 @@
-/* OptiBot — Config : domaines actifs + icone dynamique */
+/* AudiBot — Config : domaines actifs + icone dynamique */
 
 export var ACTIVE_DOMAINS = [
   /* Portails mutuelles TP (25) */
@@ -41,7 +41,7 @@ export var ACTIVE_DOMAINS = [
 ];
 
 export var INACTIVITY_MINUTES = 15;
-export var API_BASE = "https://optibot.fr";
+export var API_BASE = "https://audibot.fr";
 
 export function isActiveDomain(url) {
   try {

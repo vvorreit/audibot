@@ -11,10 +11,10 @@ export function init() {
 
   /* Portail inconnu — afficher quand même le bouton Smart Fill */
   if (!currentSite) {
-    if (!document.getElementById("optibot-fill-btn")) {
+    if (!document.getElementById("audibot-fill-btn")) {
       var btnSmart = document.createElement("button");
       btnSmart.type = "button";
-      btnSmart.id = "optibot-fill-btn";
+      btnSmart.id = "audibot-fill-btn";
       btnSmart.innerText = "\uD83E\uDD16 Remplir";
       btnSmart.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:999999;background:#7c3aed;color:white;border:none;padding:12px 20px;border-radius:50px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);font-family:sans-serif;transition:all 0.2s;";
       btnSmart.title = "Remplir les champs de cette page";
@@ -31,10 +31,10 @@ export function init() {
   }
 
   // Création du bouton Remplir
-  if (!document.getElementById('optibot-fill-btn')) {
+  if (!document.getElementById('audibot-fill-btn')) {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.id = 'optibot-fill-btn';
+    btn.id = 'audibot-fill-btn';
     btn.innerText = '\uD83E\uDD16 Remplir';
     btn.style.cssText = `
       position: fixed; bottom: 20px; right: 20px; z-index: 999999;
@@ -71,8 +71,8 @@ export function init() {
   checkAndStartRPA();
 
   /* ── Remplissage auto au chargement (activé par défaut) ── */
-  chrome.storage.local.get(["optibot_settings"], function(result) {
-    var settings = result.optibot_settings || {};
+  chrome.storage.local.get(["audibot_settings"], function(result) {
+    var settings = result.audibot_settings || {};
     if (settings.autofillOnLoad !== false) {
       /* Attendre que la page soit prête avant de fill */
       setTimeout(function() {
@@ -85,9 +85,9 @@ export function init() {
   document.addEventListener("input", function(e) {
     var el = e.target;
     if (!el || !el.getAttribute) return;
-    var filledVar = el.getAttribute("data-optibot-filled");
+    var filledVar = el.getAttribute("data-audibot-filled");
     if (!filledVar) return;
-    var oldValue = el.getAttribute("data-optibot-value");
+    var oldValue = el.getAttribute("data-audibot-value");
     if (el.value !== oldValue) {
       sendLearningSignal({
         hostname: window.location.hostname,
@@ -110,8 +110,8 @@ export function init() {
   var _activeObservers = [];
 
   function observeDoc(doc) {
-    if (!doc || doc._optibotObserved) return;
-    doc._optibotObserved = true;
+    if (!doc || doc._audibotObserved) return;
+    doc._audibotObserved = true;
     var obs = new MutationObserver(function() {
       if (_smartFillDebounce) clearTimeout(_smartFillDebounce);
       _smartFillDebounce = setTimeout(function() {
@@ -119,7 +119,7 @@ export function init() {
         var hasNew = false;
         currentFields.forEach(function(f) {
           var key = f.id || f.name || (f.getAttribute && f.getAttribute("formcontrolname")) || "";
-          if (key && !_knownFieldIds.has(key) && !(f.getAttribute && f.getAttribute("data-optibot-filled"))) {
+          if (key && !_knownFieldIds.has(key) && !(f.getAttribute && f.getAttribute("data-audibot-filled"))) {
             hasNew = true;
             _knownFieldIds.add(key);
           }

@@ -6,9 +6,9 @@ import { getReplayState, setReplayState } from "./replay/index.js";
 // ── RPA Logging ─────────────────────────────────────────────────────────────
 
 export function logRPA(mutuelle, etape, statut, erreur) {
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var syncToken = (result.optibot_auth && result.optibot_auth.syncToken) || null;
-    fetch("https://optibot.fr/api/extension/rpa-log", {
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var syncToken = (result.audibot_auth && result.audibot_auth.syncToken) || null;
+    fetch("https://audibot.fr/api/extension/rpa-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -19,14 +19,14 @@ export function logRPA(mutuelle, etape, statut, erreur) {
         erreur: erreur || null,
         url: window.location.href
       })
-    }).catch(function(err) { console.warn("[OptiBot] RPA log failed:", err); }); /* silent fail */
+    }).catch(function(err) { console.warn("[AudiBot] RPA log failed:", err); }); /* silent fail */
   });
 }
 
 // ── RPA Toast ───────────────────────────────────────────────────────────────
 
 export function showRPAToast(message, type) {
-  var existing = document.getElementById('optibot-rpa-toast');
+  var existing = document.getElementById('audibot-rpa-toast');
   if (existing) existing.remove();
 
   var colors = {
@@ -38,7 +38,7 @@ export function showRPAToast(message, type) {
   var c = colors[type] || colors.info;
 
   var toast = document.createElement('div');
-  toast.id = 'optibot-rpa-toast';
+  toast.id = 'audibot-rpa-toast';
   toast.textContent = message;
   toast.style.cssText = [
     'position: fixed; bottom: ' + getToastBottom() + 'px; right: 20px; z-index: 9999999;',
@@ -59,10 +59,10 @@ export function showRPAToast(message, type) {
 /* ── Replay Engine — UI & Health (unique to index.js) ─────────────────────── */
 
 export function showReplayControls() {
-  var existing = document.getElementById("optibot-replay-controls");
+  var existing = document.getElementById("audibot-replay-controls");
   if (existing) existing.remove();
   var div = document.createElement("div");
-  div.id = "optibot-replay-controls";
+  div.id = "audibot-replay-controls";
   div.style.cssText = "position:fixed;bottom:80px;right:20px;z-index:2147483646;display:flex;flex-direction:column;gap:8px;";
   var btnResume = document.createElement("button");
   btnResume.type = "button";
@@ -82,9 +82,9 @@ export function showReplayControls() {
 export function sendHealthPing(portal, status, errorHint) {
   try {
     var version = (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : "unknown";
-    fetch("https://optibot.fr/api/bookmarklet/ping", {
+    fetch("https://audibot.fr/api/bookmarklet/ping", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ version: version, portal: portal, status: status, errorHint: errorHint })
-    }).catch(function(err) { console.warn("[OptiBot] health ping failed:", err); });
+    }).catch(function(err) { console.warn("[AudiBot] health ping failed:", err); });
   } catch(e) {}
 }

@@ -48,7 +48,7 @@ export default function OnboardingDPAPage() {
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200">
               O
             </div>
-            <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
+            <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
           </Link>
         </div>
 
@@ -59,14 +59,14 @@ export default function OnboardingDPAPage() {
           </div>
 
           <p className="text-slate-600 font-medium mb-4 leading-relaxed">
-            OptiBot traite des <strong>données de santé</strong> en qualité de sous-traitant au sens de l&apos;article 28 du RGPD.
+            AudiBot traite des <strong>données de santé</strong> en qualité de sous-traitant au sens de l&apos;article 28 du RGPD.
           </p>
           <p className="text-slate-600 font-medium mb-6 leading-relaxed">
             En tant que professionnel de santé, vous êtes <strong>Responsable de traitement</strong>. Veuillez lire et accepter l&apos;Accord de Traitement des Données avant d&apos;utiliser le service.
           </p>
 
           <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 space-y-2 text-sm text-blue-800">
-            <p className="font-bold">En résumé, OptiBot s&apos;engage à :</p>
+            <p className="font-bold">En résumé, AudiBot s&apos;engage à :</p>
             <ul className="space-y-1 pl-2">
               <li>✅ Ne jamais stocker vos données de santé sur ses serveurs</li>
               <li>✅ Héberger l&apos;infrastructure en France (Scaleway HDS)</li>

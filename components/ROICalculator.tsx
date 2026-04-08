@@ -115,7 +115,7 @@ export default function ROICalculator({ defaultPlan = "pro", hidePlanSelector = 
           </div>
           <div className="bg-slate-50 rounded-xl p-4 text-center">
             <p className="text-2xl md:text-3xl font-black text-slate-400">{coutAnnuel.toLocaleString("fr-FR")}€</p>
-            <p className="text-2xs font-bold text-slate-500 uppercase tracking-wider mt-1">Coût OptiBot/an</p>
+            <p className="text-2xs font-bold text-slate-500 uppercase tracking-wider mt-1">Coût AudiBot/an</p>
           </div>
           <div className="bg-green-50 rounded-xl p-4 text-center">
             <p className="text-2xl md:text-3xl font-black text-green-600">{roi}%</p>

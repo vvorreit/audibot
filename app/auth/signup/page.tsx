@@ -62,7 +62,7 @@ export default function SignUpPage() {
               <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200">
                 O
               </div>
-              <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
+              <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
             </Link>
           </div>
           <div className="bg-white p-6 sm:p-10 rounded-card shadow-sm border border-slate-100">
@@ -98,13 +98,13 @@ export default function SignUpPage() {
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200 group-hover:scale-105 transition-transform">
               O
             </div>
-            <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
+            <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
           </Link>
         </div>
 
         <div className="bg-white p-6 sm:p-10 rounded-card shadow-sm border border-slate-100">
           <h1 className="text-3xl font-black text-slate-900 mb-2">Créer un compte</h1>
-          <p className="text-slate-500 font-medium mb-8">Rejoignez OptiBot en quelques secondes.</p>
+          <p className="text-slate-500 font-medium mb-8">Rejoignez AudiBot en quelques secondes.</p>
 
           <div aria-live="polite" aria-atomic="true">
             {error && (
@@ -194,7 +194,7 @@ export default function SignUpPage() {
 
             <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mt-2">
               <p className="text-sm text-blue-800 font-medium">
-                OptiBot traite des données de santé en qualité de sous-traitant au sens de l&apos;article 28 du RGPD.
+                AudiBot traite des données de santé en qualité de sous-traitant au sens de l&apos;article 28 du RGPD.
                 L&apos;acceptation de l&apos;Accord de Traitement des Données (DPA) est requise pour utiliser le service.
               </p>
             </div>

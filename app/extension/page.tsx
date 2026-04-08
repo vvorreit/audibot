@@ -11,9 +11,9 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     <div className="border-b border-slate-100 last:border-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-6 flex justify-between items-center text-left hover:text-blue-600 transition-colors group"
+        className="w-full py-6 flex justify-between items-center text-left hover:text-indigo-600 transition-colors group"
       >
-        <span className="text-lg font-bold text-slate-800 group-hover:text-blue-600">{question}</span>
+        <span className="text-lg font-bold text-slate-800 group-hover:text-indigo-600">{question}</span>
         {isOpen ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
       </button>
       <div className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-96 pb-6" : "max-h-0"}`}>
@@ -35,7 +35,7 @@ export default function ExtensionPage() {
           </Link>
           <Link
             href="/dashboard"
-            className="px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-600 transition-all shadow-xl shadow-slate-200 active:scale-95"
+            className="px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 active:scale-95"
           >
             Tableau de bord
           </Link>
@@ -46,7 +46,7 @@ export default function ExtensionPage() {
       <section className="relative pt-48 pb-20 px-6 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent -z-10" />
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-2xs font-black uppercase tracking-[0.2em] mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-2xs font-black uppercase tracking-[0.2em] mb-8">
             <Plug className="w-3 h-3" />
             Extension Chrome
           </div>
@@ -65,7 +65,7 @@ export default function ExtensionPage() {
       <section className="py-24 bg-slate-50 px-6 border-y border-slate-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-2xs font-black uppercase tracking-[0.3em] text-blue-600 mb-4">Installation</h2>
+            <h2 className="text-2xs font-black uppercase tracking-[0.3em] text-indigo-600 mb-4">Installation</h2>
             <h3 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Guide en 3 étapes</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -73,7 +73,7 @@ export default function ExtensionPage() {
             <div className="relative group">
               <div className="text-8xl font-black text-slate-100 absolute -top-10 -left-4 group-hover:text-blue-50 transition-colors">01</div>
               <div className="relative z-10 bg-white p-10 rounded-card shadow-sm border border-slate-100 group-hover:shadow-xl group-hover:-translate-y-2 transition-all">
-                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-100">
+                <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-100">
                   <Download className="w-7 h-7" />
                 </div>
                 <h4 className="text-xl font-black mb-4">Téléchargez le fichier ZIP</h4>
@@ -82,7 +82,7 @@ export default function ExtensionPage() {
                 </p>
                 <a
                   href="/audibot-extension.zip"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
                 >
                   <Download className="w-4 h-4" />
                   Télécharger l&apos;extension (.zip)
@@ -94,7 +94,7 @@ export default function ExtensionPage() {
             <div className="relative group">
               <div className="text-8xl font-black text-slate-100 absolute -top-10 -left-4 group-hover:text-blue-50 transition-colors">02</div>
               <div className="relative z-10 bg-white p-10 rounded-card shadow-sm border border-slate-100 group-hover:shadow-xl group-hover:-translate-y-2 transition-all">
-                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-100">
+                <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-100">
                   <Plug className="w-7 h-7" />
                 </div>
                 <h4 className="text-xl font-black mb-4">Connectez l&apos;extension à votre compte</h4>
@@ -112,14 +112,14 @@ export default function ExtensionPage() {
             <div className="relative group">
               <div className="text-8xl font-black text-slate-100 absolute -top-10 -left-4 group-hover:text-blue-50 transition-colors">03</div>
               <div className="relative z-10 bg-white p-10 rounded-card shadow-sm border border-slate-100 group-hover:shadow-xl group-hover:-translate-y-2 transition-all">
-                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-100">
+                <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-100">
                   <MousePointerClick className="w-7 h-7" />
                 </div>
                 <h4 className="text-xl font-black mb-4">Cliquez &quot;Remplir&quot; sur un portail</h4>
                 <p className="text-slate-500 font-medium leading-relaxed mb-4">
                   Le bouton AudiBot apparaît en bas à droite sur tous les portails compatibles.
                 </p>
-                <Link href="/portails" className="inline-flex items-center gap-2 text-blue-600 font-black text-sm hover:text-blue-700 transition-colors group/link">
+                <Link href="/portails" className="inline-flex items-center gap-2 text-indigo-600 font-black text-sm hover:text-indigo-700 transition-colors group/link">
                   Voir les portails compatibles
                   <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                 </Link>
@@ -160,7 +160,7 @@ export default function ExtensionPage() {
           <p className="text-slate-500 font-medium mb-10">L&apos;extension est installée ? Retournez sur le dashboard pour scanner votre premier document.</p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-3 px-10 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-200 text-lg group uppercase tracking-widest active:scale-95"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-200 text-lg group uppercase tracking-widest active:scale-95"
           >
             Aller sur le dashboard
             <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />

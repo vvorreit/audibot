@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
           const alertAllowed = await rateLimit(`alert-portal-${portalNorm}`, 1, 2 * 60 * 60_000);
           if (alertAllowed) {
             await sendMail({
-              to: "contact@optibot.fr",
+              to: "contact@audibot.fr",
               subject: `[ALERTE] Portail ${portalNorm} — 3+ broken en 1h`,
               html: `
 <!DOCTYPE html>
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     Une investigation est recommandée — vérifier la compatibilité du sélecteur ou un changement de structure HTML du portail.
   </p>
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot — contact@optibot.fr
+    AudiBot — contact@audibot.fr
   </p>
 </body></html>`,
             });

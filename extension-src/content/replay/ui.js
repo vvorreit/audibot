@@ -1,10 +1,10 @@
 /* ── Replay UI — showReplayControls + sendHealthPing ──────────────────── */
 
 export function showReplayControls() {
-  var existing = document.getElementById("optibot-replay-controls");
+  var existing = document.getElementById("audibot-replay-controls");
   if (existing) existing.remove();
   var div = document.createElement("div");
-  div.id = "optibot-replay-controls";
+  div.id = "audibot-replay-controls";
   div.style.cssText = "position:fixed;bottom:80px;right:20px;z-index:2147483646;display:flex;flex-direction:column;gap:8px;";
   var btnResume = document.createElement("button");
   btnResume.type = "button";
@@ -24,9 +24,9 @@ export function showReplayControls() {
 export function sendHealthPing(portal, status, errorHint) {
   try {
     var version = (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : "unknown";
-    fetch("https://optibot.fr/api/bookmarklet/ping", {
+    fetch("https://audibot.fr/api/bookmarklet/ping", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ version: version, portal: portal, status: status, errorHint: errorHint })
-    }).catch(function(err) { console.warn("[OptiBot] health ping failed:", err); });
+    }).catch(function(err) { console.warn("[AudiBot] health ping failed:", err); });
   } catch(e) {}
 }

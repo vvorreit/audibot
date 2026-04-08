@@ -1,5 +1,5 @@
 {
-  "name": "OptiBot Scan",
+  "name": "AudiBot Scan",
   "short_name": "Scan",
   "description": "Scanner vos cartes mutuelles et ordonnances",
   "start_url": "/scan",

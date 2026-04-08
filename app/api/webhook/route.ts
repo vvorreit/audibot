@@ -68,27 +68,27 @@ export async function POST(req: Request) {
               select: { email: true, name: true },
             });
             if (teamOwner?.email) {
-              const appUrl = process.env.NEXTAUTH_URL || "https://app.optibot.fr";
+              const appUrl = process.env.NEXTAUTH_URL || "https://app.audibot.fr";
               await sendMail({
                 to: teamOwner.email,
-                subject: "Votre abonnement équipe OptiBot est actif",
+                subject: "Votre abonnement équipe AudiBot est actif",
                 html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:0 auto;padding:32px 16px;color:#1e293b;">
   <h1 style="font-size:20px;font-weight:800;margin-bottom:8px;">Merci${teamOwner.name ? ` ${teamOwner.name}` : ""} !</h1>
   <p style="font-size:14px;line-height:1.6;color:#475569;">
-    Votre abonnement équipe OptiBot <strong>${plan}</strong> est désormais actif. Toute votre équipe bénéficie d'un accès illimité.
+    Votre abonnement équipe AudiBot <strong>${plan}</strong> est désormais actif. Toute votre équipe bénéficie d'un accès illimité.
   </p>
   <a href="${appUrl}/dashboard"
      style="display:inline-block;margin:24px 0;padding:12px 28px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;border-radius:12px;text-decoration:none;">
     Accéder au tableau de bord
   </a>
   <p style="font-size:13px;color:#94a3b8;margin-top:16px;">
-    Une question ? Contactez-nous à <a href="mailto:contact@optibot.fr" style="color:#2563eb;">contact@optibot.fr</a>.
+    Une question ? Contactez-nous à <a href="mailto:contact@audibot.fr" style="color:#2563eb;">contact@audibot.fr</a>.
   </p>
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot — contact@optibot.fr
+    AudiBot — contact@audibot.fr
   </p>
 </body></html>`,
               });
@@ -119,27 +119,27 @@ export async function POST(req: Request) {
               select: { email: true, name: true },
             });
             if (paidUser?.email) {
-              const appUrl = process.env.NEXTAUTH_URL || "https://app.optibot.fr";
+              const appUrl = process.env.NEXTAUTH_URL || "https://app.audibot.fr";
               await sendMail({
                 to: paidUser.email,
-                subject: "Votre abonnement OptiBot est actif",
+                subject: "Votre abonnement AudiBot est actif",
                 html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:0 auto;padding:32px 16px;color:#1e293b;">
   <h1 style="font-size:20px;font-weight:800;margin-bottom:8px;">Merci${paidUser.name ? ` ${paidUser.name}` : ""} !</h1>
   <p style="font-size:14px;line-height:1.6;color:#475569;">
-    Votre abonnement OptiBot <strong>${plan}</strong> est d\u00e9sormais actif. Vous b\u00e9n\u00e9ficiez d\u2019un acc\u00e8s illimit\u00e9.
+    Votre abonnement AudiBot <strong>${plan}</strong> est d\u00e9sormais actif. Vous b\u00e9n\u00e9ficiez d\u2019un acc\u00e8s illimit\u00e9.
   </p>
   <a href="${appUrl}/dashboard"
      style="display:inline-block;margin:24px 0;padding:12px 28px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;border-radius:12px;text-decoration:none;">
     Acc\u00e9der au tableau de bord
   </a>
   <p style="font-size:13px;color:#94a3b8;margin-top:16px;">
-    Une question ? Contactez-nous \u00e0 <a href="mailto:contact@optibot.fr" style="color:#2563eb;">contact@optibot.fr</a>.
+    Une question ? Contactez-nous \u00e0 <a href="mailto:contact@audibot.fr" style="color:#2563eb;">contact@audibot.fr</a>.
   </p>
   <p style="font-size:11px;color:#cbd5e1;margin-top:32px;">
-    OptiBot \u2014 contact@optibot.fr
+    AudiBot \u2014 contact@audibot.fr
   </p>
 </body></html>`,
               });
@@ -193,7 +193,7 @@ export async function POST(req: Request) {
               try {
                 await sendMail({
                   to: member.email,
-                  subject: "Votre accès équipe OptiBot a pris fin",
+                  subject: "Votre accès équipe AudiBot a pris fin",
                   html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
@@ -201,16 +201,16 @@ export async function POST(req: Request) {
   <h1 style="font-size:20px;font-weight:800;margin-bottom:8px;">Votre accès équipe a pris fin</h1>
   <p style="font-size:14px;line-height:1.6;color:#475569;">
     Bonjour${member.name ? ` ${member.name}` : ""},<br><br>
-    L'abonnement équipe OptiBot a été résilié. Votre accès via l'équipe n'est plus actif.
+    L'abonnement équipe AudiBot a été résilié. Votre accès via l'équipe n'est plus actif.
   </p>
   <p style="font-size:14px;line-height:1.6;color:#475569;">
-    Pour continuer à utiliser OptiBot, vous pouvez souscrire à votre propre abonnement.
+    Pour continuer à utiliser AudiBot, vous pouvez souscrire à votre propre abonnement.
   </p>
-  <a href="${process.env.NEXTAUTH_URL ?? "https://optibot.fr"}/dashboard"
+  <a href="${process.env.NEXTAUTH_URL ?? "https://audibot.fr"}/dashboard"
      style="display:inline-block;margin:24px 0;padding:12px 28px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;border-radius:12px;text-decoration:none;">
     Voir les abonnements
   </a>
-  <p style="font-size:13px;color:#94a3b8;margin-top:16px;">Une question ? <a href="mailto:contact@optibot.fr" style="color:#2563eb;">contact@optibot.fr</a></p>
+  <p style="font-size:13px;color:#94a3b8;margin-top:16px;">Une question ? <a href="mailto:contact@audibot.fr" style="color:#2563eb;">contact@audibot.fr</a></p>
 </body></html>`,
                 });
               } catch (emailErr) {
@@ -314,7 +314,7 @@ export async function POST(req: Request) {
                 try {
                   await sendMail({
                     to: member.email,
-                    subject: "Votre accès équipe OptiBot a pris fin",
+                    subject: "Votre accès équipe AudiBot a pris fin",
                     html: `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
@@ -322,17 +322,17 @@ export async function POST(req: Request) {
   <h1 style="font-size:20px;font-weight:800;margin-bottom:8px;">Votre accès équipe a pris fin</h1>
   <p style="font-size:14px;line-height:1.6;color:#475569;">
     Bonjour${member.name ? ` ${member.name}` : ""},<br><br>
-    L'abonnement équipe OptiBot auquel vous étiez rattaché a été modifié. Votre accès via l'équipe n'est plus actif.
+    L'abonnement équipe AudiBot auquel vous étiez rattaché a été modifié. Votre accès via l'équipe n'est plus actif.
   </p>
   <p style="font-size:14px;line-height:1.6;color:#475569;">
-    Pour continuer à utiliser OptiBot, vous pouvez souscrire à votre propre abonnement.
+    Pour continuer à utiliser AudiBot, vous pouvez souscrire à votre propre abonnement.
   </p>
-  <a href="${process.env.NEXTAUTH_URL ?? "https://optibot.fr"}/dashboard"
+  <a href="${process.env.NEXTAUTH_URL ?? "https://audibot.fr"}/dashboard"
      style="display:inline-block;margin:24px 0;padding:12px 28px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;border-radius:12px;text-decoration:none;">
     Voir les abonnements
   </a>
   <p style="font-size:13px;color:#94a3b8;margin-top:16px;">
-    Une question ? <a href="mailto:contact@optibot.fr" style="color:#2563eb;">contact@optibot.fr</a>
+    Une question ? <a href="mailto:contact@audibot.fr" style="color:#2563eb;">contact@audibot.fr</a>
   </p>
 </body></html>`,
                   });
@@ -370,8 +370,8 @@ export async function POST(req: Request) {
       const { Resend } = await import("resend");
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
-        from: "alerts@optibot.fr",
-        to: "contact@optibot.fr",
+        from: "alerts@audibot.fr",
+        to: "contact@audibot.fr",
         subject: "[ALERTE] Webhook Stripe échoué",
         text: "Erreur webhook Stripe: " + String(err) + "\n\nTimestamp: " + new Date().toISOString(),
       });

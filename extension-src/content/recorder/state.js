@@ -16,7 +16,7 @@ export function saveRecorderState() {
     var u = recorderState.etapes[pi].url;
     if (u && !seenUrls[u]) { seenUrls[u] = true; pages.push(u); }
   }
-  chrome.storage.local.set({ optibot_recorder: {
+  chrome.storage.local.set({ audibot_recorder: {
     active: true,
     etapes: etapesSansHtml,
     hostname: recorderState.hostname,

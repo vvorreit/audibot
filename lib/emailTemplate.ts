@@ -1,7 +1,7 @@
-const BASE_URL = process.env.NEXTAUTH_URL || "https://optibot.fr";
+const BASE_URL = process.env.NEXTAUTH_URL || "https://audibot.fr";
 
 /**
- * Wrapper HTML commun pour tous les emails transactionnels OptiBot.
+ * Wrapper HTML commun pour tous les emails transactionnels AudiBot.
  * Inclut header avec logo, footer avec désinscription.
  */
 export function emailWrapper({
@@ -15,7 +15,7 @@ export function emailWrapper({
     ? `<p style="font-size:11px;color:#94a3b8;margin-top:24px;text-align:center;">
         <a href="${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(unsubscribeEmail)}" style="color:#94a3b8;text-decoration:underline;">Se désabonner</a>
         &nbsp;·&nbsp;
-        <a href="mailto:contact@optibot.fr" style="color:#94a3b8;text-decoration:underline;">Contact</a>
+        <a href="mailto:contact@audibot.fr" style="color:#94a3b8;text-decoration:underline;">Contact</a>
       </p>`
     : "";
 
@@ -32,7 +32,7 @@ export function emailWrapper({
             <a href="${BASE_URL}" style="text-decoration:none;">
               <span style="display:inline-flex;align-items:center;gap:10px;">
                 <span style="display:inline-block;width:36px;height:36px;background:linear-gradient(135deg,#2563eb,#6366f1);border-radius:10px;text-align:center;line-height:36px;color:white;font-weight:800;font-size:18px;">O</span>
-                <span style="font-size:20px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;">OptiBot</span>
+                <span style="font-size:20px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;">AudiBot</span>
               </span>
             </a>
           </td>
@@ -49,8 +49,8 @@ export function emailWrapper({
         <tr>
           <td style="padding:20px 0 0 0;text-align:center;">
             <p style="font-size:11px;color:#94a3b8;margin:0;">
-              OptiBot — L&apos;assistant robotisé des opticiens<br>
-              <a href="${BASE_URL}" style="color:#94a3b8;text-decoration:underline;">optibot.fr</a>
+              AudiBot — L&apos;assistant robotisé des opticiens<br>
+              <a href="${BASE_URL}" style="color:#94a3b8;text-decoration:underline;">audibot.fr</a>
             </p>
             ${unsubLink}
           </td>

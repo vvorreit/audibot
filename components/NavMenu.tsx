@@ -72,8 +72,8 @@ export default function NavMenu() {
 
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0 group">
-          <Image src="/icon.png" alt="OptiBot" width={36} height={36} className="rounded-xl shadow-md shadow-blue-200 group-hover:scale-105 transition-transform" priority />
-          <span className="text-lg font-black tracking-tight text-slate-900">OptiBot</span>
+          <Image src="/icon.png" alt="AudiBot" width={36} height={36} className="rounded-xl shadow-md shadow-blue-200 group-hover:scale-105 transition-transform" priority />
+          <span className="text-lg font-black tracking-tight text-slate-900">AudiBot</span>
         </Link>
 
         {/* Nav links — desktop */}

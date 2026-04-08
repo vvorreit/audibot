@@ -22,7 +22,7 @@ type EventProps = Record<string, string | number | boolean | undefined>;
 function hasAnalyticsConsent(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return localStorage.getItem("optibot_analytics_consent") === "granted";
+    return localStorage.getItem("audibot_analytics_consent") === "granted";
   } catch {
     return false;
   }

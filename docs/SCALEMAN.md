@@ -1,4 +1,4 @@
-# Guide de Déploiement OptiBot sur CentOS (Scaleway Instance)
+# Guide de Déploiement AudiBot sur CentOS (Scaleway Instance)
 
 ## 1. Préparation du serveur (Une seule fois)
 Connectez-vous en SSH à votre serveur et installez Docker :
@@ -13,8 +13,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 Préparez le dossier de l'app :
 ```bash
-mkdir -p /app/optibot
-git clone https://github.com/vvorreit/optibot.git /app/optibot
+mkdir -p /app/audibot
+git clone https://github.com/vvorreit/audibot.git /app/audibot
 ```
 
 ## 2. Mise en place de la CI/CD (GitHub Actions)
@@ -26,7 +26,7 @@ Votre dépôt contient un fichier `.github/workflows/deploy.yml`. Ajoutez ces 3 
 | `SSH_PRIVATE_KEY` | Votre clé SSH privée (celle qui permet de se connecter en root). |
 
 ## 3. Configuration des Variables d'Environnement
-Sur le serveur, créez un fichier `.env` dans `/app/optibot` pour stocker vos secrets :
+Sur le serveur, créez un fichier `.env` dans `/app/audibot` pour stocker vos secrets :
 ```bash
 NEXTAUTH_URL=https://votre-domaine.fr
 NEXTAUTH_SECRET=une-phrase-longue-et-aleatoire

@@ -17,7 +17,7 @@
 
 ## Contexte technique
 
-Le flux actuel Google OAuth (`signIn("google")`) crée l'utilisateur en BDD via l'event `createUser` dans `lib/auth.ts`, mais **ne crée pas d'entrée `legalAcceptance`** et **ne présente jamais le DPA à l'utilisateur**. Un utilisateur Google peut donc utiliser OptiBot sans avoir jamais vu ou accepté le DPA.
+Le flux actuel Google OAuth (`signIn("google")`) crée l'utilisateur en BDD via l'event `createUser` dans `lib/auth.ts`, mais **ne crée pas d'entrée `legalAcceptance`** et **ne présente jamais le DPA à l'utilisateur**. Un utilisateur Google peut donc utiliser AudiBot sans avoir jamais vu ou accepté le DPA.
 
 ---
 
@@ -48,7 +48,7 @@ Afficher une page dédiée (pas une modale, pour garantir la lisibilité) :
 **Contenu :**
 - Titre : *"Avant de continuer — Accord de Traitement des Données"*
 - Texte d'explication court :
-  > *"OptiBot traite des données de santé en qualité de sous-traitant au sens de l'article 28 du RGPD. En tant que professionnel de santé, vous êtes Responsable de traitement. Veuillez lire et accepter l'Accord de Traitement des Données avant d'utiliser le service."*
+  > *"AudiBot traite des données de santé en qualité de sous-traitant au sens de l'article 28 du RGPD. En tant que professionnel de santé, vous êtes Responsable de traitement. Veuillez lire et accepter l'Accord de Traitement des Données avant d'utiliser le service."*
 - Iframe ou résumé des points clés du DPA (lien vers `/legal/dpa`)
 - **Checkbox non pré-cochée** : *"J'ai lu et j'accepte l'[Accord de Traitement des Données](/legal/dpa)"*
 - Bouton **"Accepter et continuer"** (désactivé tant que checkbox non cochée)

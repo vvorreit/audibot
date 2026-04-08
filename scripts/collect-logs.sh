@@ -10,11 +10,11 @@ TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 mkdir -p "$LOG_DIR"
 
 echo "══════════════════════════════════════════"
-echo " OptiBot — Collecte logs ($LINES lignes)"
+echo " AudiBot — Collecte logs ($LINES lignes)"
 echo " → $LOG_DIR/"
 echo "══════════════════════════════════════════"
 
-for CONTAINER in optibot-app optibot-ocr optibot-db; do
+for CONTAINER in audibot-app audibot-ocr audibot-db; do
   OUT="$LOG_DIR/${CONTAINER}_${TIMESTAMP}.log"
   echo ""
   echo "▸ $CONTAINER → $OUT"
@@ -25,7 +25,7 @@ done
 # Fichier combiné pour debug rapide
 COMBINED="$LOG_DIR/combined_${TIMESTAMP}.log"
 echo "" > "$COMBINED"
-for CONTAINER in optibot-app optibot-ocr optibot-db; do
+for CONTAINER in audibot-app audibot-ocr audibot-db; do
   echo "════ $CONTAINER ════" >> "$COMBINED"
   docker logs "$CONTAINER" --tail "$LINES" --timestamps >> "$COMBINED" 2>&1
   echo "" >> "$COMBINED"
@@ -35,6 +35,6 @@ echo ""
 echo "✓ Logs combinés : $COMBINED"
 echo ""
 echo "Pour suivre en live :"
-echo "  docker logs optibot-app -f --tail 50"
-echo "  docker logs optibot-ocr -f --tail 50"
-echo "  docker logs optibot-db  -f --tail 50"
+echo "  docker logs audibot-app -f --tail 50"
+echo "  docker logs audibot-ocr -f --tail 50"
+echo "  docker logs audibot-db  -f --tail 50"

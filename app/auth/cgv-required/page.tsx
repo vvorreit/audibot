@@ -73,7 +73,7 @@ export default function CgvRequiredPage() {
             <Link href="/legal/cgv" className="text-blue-600 underline" target="_blank">
               Conditions Générales de Vente v1.1
             </Link>{" "}
-            d&apos;OptiBot.
+            d&apos;AudiBot.
           </span>
         </label>
 

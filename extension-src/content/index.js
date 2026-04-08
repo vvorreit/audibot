@@ -1,4 +1,4 @@
-// ── OptiBot Multi-Site Dispatcher (Modular Build) ────────────────
+// ── AudiBot Multi-Site Dispatcher (Modular Build) ────────────────
 
 import { CONFIGS } from "./portals/index.js";
 import "./utils/remote-selectors.js";
@@ -17,7 +17,7 @@ import { getCachedSelector, setCachedSelector, loadSelectorCache, saveSelectorCa
 import { getSmartFillData, getCachedClient, getVisibleFields, detectPageContext } from "./utils/data.js";
 import { ultraFill, ultraFillWithRetry, smartFillField, smartSelectOption, fillDatePicker, selectRadixOption } from "./utils/fill.js";
 import { performSmartFill } from "./smart-fill/index.js";
-import { markFilledByOptiBot, sendLearningSignal } from "./smart-fill/learning.js";
+import { markFilledByAudiBot, sendLearningSignal } from "./smart-fill/learning.js";
 import { performFill } from "./standard-fill/index.js";
 import { startReplay, runStep, resolveVariables, tryDynamicReplay, replayState, setReplayState } from "./replay/index.js";
 import { checkAndStartRPA } from "./rpa/index.js";
@@ -26,26 +26,26 @@ import { checkAndStartRPA } from "./rpa/index.js";
 /* ── Parcours Dynamiques DB → CONFIGS ──────────────────────────────────────── */
 
 function loadDynamicParcours() {
-  chrome.storage.local.get(['optibot_dynamic_parcours', 'optibot_auth'], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(['audibot_dynamic_parcours', 'audibot_auth'], function(result) {
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return;
-    var cached = result.optibot_dynamic_parcours;
+    var cached = result.audibot_dynamic_parcours;
     /* Utiliser le cache si moins de 30 min */
     if (cached && cached.ts && Date.now() - cached.ts < 1800000) {
       injectDynamicParcours(cached.handlers);
       return;
     }
-    fetch("https://optibot.fr/api/extension/parcours?handlers=true", {
+    fetch("https://audibot.fr/api/extension/parcours?handlers=true", {
       headers: { "Authorization": "Bearer " + auth.syncToken }
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
       chrome.storage.local.set({
-        optibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
+        audibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
       });
       injectDynamicParcours(data.handlers);
     })
-    .catch(function(err) { console.warn("[OptiBot] dynamic parcours fetch failed:", err); });
+    .catch(function(err) { console.warn("[AudiBot] dynamic parcours fetch failed:", err); });
   });
 }
 
@@ -232,10 +232,10 @@ function isUnder18(dob) {
 }
 
 function showSyncButton() {
-  if (document.getElementById('optibot-sync-btn')) return;
+  if (document.getElementById('audibot-sync-btn')) return;
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.id = 'optibot-sync-btn';
+  btn.id = 'audibot-sync-btn';
   btn.innerText = '💾 Mémoriser';
   btn.style.cssText = `
     position: fixed; bottom: 80px; right: 20px; z-index: 999999;
@@ -325,7 +325,7 @@ function scrapeTPTable() {
   return dossiers;
 }
 
-async function syncTPToOptiBot(btn) {
+async function syncTPToAudiBot(btn) {
   btn.innerText = "Chargement...";
   btn.style.background = "#6366f1";
 
@@ -376,10 +376,10 @@ async function syncTPToOptiBot(btn) {
 
   btn.innerText = "Envoi " + allDossiers.length + " dossiers...";
 
-  /* Récupérer le syncToken depuis optibot_auth (source de vérité) */
+  /* Récupérer le syncToken depuis audibot_auth (source de vérité) */
   var syncToken = await getSyncToken();
   if (!syncToken) {
-    btn.innerText = "Connectez-vous sur OptiBot";
+    btn.innerText = "Connectez-vous sur AudiBot";
     btn.style.background = "#ef4444";
     setTimeout(function() { btn.innerText = "Sync TP"; btn.style.background = "#6366f1"; }, 3000);
     return;
@@ -387,7 +387,7 @@ async function syncTPToOptiBot(btn) {
   (async function() {
 
     try {
-      var resp = await fetch("https://optibot.fr/api/extension/sync-tp", {
+      var resp = await fetch("https://audibot.fr/api/extension/sync-tp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ syncToken: syncToken, dossiers: allDossiers })
@@ -410,11 +410,11 @@ async function syncTPToOptiBot(btn) {
 }
 
 function showSyncTPButton() {
-  if (document.getElementById('optibot-sync-tp-btn')) return;
+  if (document.getElementById('audibot-sync-tp-btn')) return;
   if (!document.querySelector('#grid_pointage_tiers_payant')) return;
   var btn = document.createElement('button');
   btn.type = 'button';
-  btn.id = 'optibot-sync-tp-btn';
+  btn.id = 'audibot-sync-tp-btn';
   btn.innerText = 'Sync TP';
   btn.style.cssText = [
     'position: fixed; bottom: 140px; right: 20px; z-index: 999999;',
@@ -423,16 +423,16 @@ function showSyncTPButton() {
     'box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: sans-serif;',
     'transition: all 0.2s;'
   ].join('');
-  btn.onclick = function() { syncTPToOptiBot(btn); };
+  btn.onclick = function() { syncTPToAudiBot(btn); };
   document.body.appendChild(btn);
 }
 
 // ── RPA Logging ─────────────────────────────────────────────────────────────
 
 function logRPA(mutuelle, etape, statut, erreur) {
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    var syncToken = (result.optibot_auth && result.optibot_auth.syncToken) || null;
-    fetch("https://optibot.fr/api/extension/rpa-log", {
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    var syncToken = (result.audibot_auth && result.audibot_auth.syncToken) || null;
+    fetch("https://audibot.fr/api/extension/rpa-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -443,14 +443,14 @@ function logRPA(mutuelle, etape, statut, erreur) {
         erreur: erreur || null,
         url: window.location.href
       })
-    }).catch(function(err) { console.warn("[OptiBot] RPA log failed:", err); }); /* silent fail */
+    }).catch(function(err) { console.warn("[AudiBot] RPA log failed:", err); }); /* silent fail */
   });
 }
 
 // ── RPA Toast ───────────────────────────────────────────────────────────────
 
 function showRPAToast(message, type) {
-  var existing = document.getElementById('optibot-rpa-toast');
+  var existing = document.getElementById('audibot-rpa-toast');
   if (existing) existing.remove();
 
   var colors = {
@@ -462,7 +462,7 @@ function showRPAToast(message, type) {
   var c = colors[type] || colors.info;
 
   var toast = document.createElement('div');
-  toast.id = 'optibot-rpa-toast';
+  toast.id = 'audibot-rpa-toast';
   toast.textContent = message;
   toast.style.cssText = [
     'position: fixed; bottom: 80px; right: 20px; z-index: 9999999;',
@@ -482,7 +482,7 @@ function showRPAToast(message, type) {
 
 /* ── iframes cross-domain postMessage listener ────────────────────────────── */
 window.addEventListener("message", function(e) {
-  if (!e.data || e.data.type !== "OPTIBOT_FILL_FRAME" || !e.data.payload) return;
+  if (!e.data || e.data.type !== "AUDIBOT_FILL_FRAME" || !e.data.payload) return;
   /* Valider l'origine : accepter same-origin + iframes enfants connues */
   if (e.origin !== window.location.origin) {
     var isKnownFrame = false;
@@ -496,7 +496,7 @@ window.addEventListener("message", function(e) {
       } catch(err) {}
     }
     if (!isKnownFrame) {
-      console.warn("[OptiBot] postMessage rejeté — iframe non reconnue :", e.origin);
+      console.warn("[AudiBot] postMessage rejeté — iframe non reconnue :", e.origin);
       return;
     }
   }
@@ -513,7 +513,7 @@ window.addEventListener("message", function(e) {
   cachePromise.then(function() { performSmartFill(); });
   /* Accusé de réception vers la source */
   if (e.source) {
-    try { e.source.postMessage({ type: "OPTIBOT_FILL_FRAME_ACK", ok: true }, e.origin); } catch(err) {}
+    try { e.source.postMessage({ type: "AUDIBOT_FILL_FRAME_ACK", ok: true }, e.origin); } catch(err) {}
   }
 }, false);
 
@@ -532,10 +532,10 @@ function initLocal() {
 
   /* Portail inconnu — afficher quand même le bouton Smart Fill */
   if (!currentSite) {
-    if (!document.getElementById("optibot-fill-btn")) {
+    if (!document.getElementById("audibot-fill-btn")) {
       var btnSmart = document.createElement("button");
       btnSmart.type = "button";
-      btnSmart.id = "optibot-fill-btn";
+      btnSmart.id = "audibot-fill-btn";
       btnSmart.innerText = "🤖 Remplir";
       btnSmart.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:999999;background:#7c3aed;color:white;border:none;padding:12px 20px;border-radius:50px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);font-family:sans-serif;transition:all 0.2s;";
       btnSmart.title = "Remplir les champs de cette page";
@@ -552,10 +552,10 @@ function initLocal() {
   }
 
   // Création du bouton Remplir
-  if (!document.getElementById('optibot-fill-btn')) {
+  if (!document.getElementById('audibot-fill-btn')) {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.id = 'optibot-fill-btn';
+    btn.id = 'audibot-fill-btn';
     btn.innerText = '🤖 Remplir';
     btn.style.cssText = `
       position: fixed; bottom: 20px; right: 20px; z-index: 999999;
@@ -595,9 +595,9 @@ function initLocal() {
   document.addEventListener("input", function(e) {
     var el = e.target;
     if (!el || !el.getAttribute) return;
-    var filledVar = el.getAttribute("data-optibot-filled");
+    var filledVar = el.getAttribute("data-audibot-filled");
     if (!filledVar) return;
-    var oldValue = el.getAttribute("data-optibot-value");
+    var oldValue = el.getAttribute("data-audibot-value");
     if (el.value !== oldValue) {
       sendLearningSignal({
         hostname: window.location.hostname,
@@ -620,8 +620,8 @@ function initLocal() {
   var _activeObservers = [];
 
   function observeDoc(doc) {
-    if (!doc || doc._optibotObserved) return;
-    doc._optibotObserved = true;
+    if (!doc || doc._audibotObserved) return;
+    doc._audibotObserved = true;
     var obs = new MutationObserver(function() {
       if (_smartFillDebounce) clearTimeout(_smartFillDebounce);
       _smartFillDebounce = setTimeout(function() {
@@ -629,7 +629,7 @@ function initLocal() {
         var hasNew = false;
         currentFields.forEach(function(f) {
           var key = f.id || f.name || (f.getAttribute && f.getAttribute("formcontrolname")) || "";
-          if (key && !_knownFieldIds.has(key) && !(f.getAttribute && f.getAttribute("data-optibot-filled"))) {
+          if (key && !_knownFieldIds.has(key) && !(f.getAttribute && f.getAttribute("data-audibot-filled"))) {
             hasNew = true;
             _knownFieldIds.add(key);
           }
@@ -668,7 +668,7 @@ function initLocal() {
 /* ── Visibilite des boutons (toggle depuis popup) ───────────────────────── */
 
 function setButtonsVisibility(visible) {
-  var ids = ['optibot-fill-btn', 'optibot-sync-btn', 'optibot-sync-tp-btn'];
+  var ids = ['audibot-fill-btn', 'audibot-sync-btn', 'audibot-sync-tp-btn'];
   for (var i = 0; i < ids.length; i++) {
     var el = document.getElementById(ids[i]);
     if (el) el.style.display = visible ? 'block' : 'none';
@@ -677,11 +677,11 @@ function setButtonsVisibility(visible) {
 
 /* Ecoute le message du popup pour toggle immediat */
 chrome.runtime.onMessage.addListener(function(msg) {
-  if (msg && msg.type === 'OPTIBOT_TOGGLE_BUTTONS') {
+  if (msg && msg.type === 'AUDIBOT_TOGGLE_BUTTONS') {
     setButtonsVisibility(msg.visible);
   }
   /* Auto-replay : notification page chargée depuis background.js */
-  if (msg && msg.type === 'OPTIBOT_PAGE_LOADED') {
+  if (msg && msg.type === 'AUDIBOT_PAGE_LOADED') {
     var matchedPortail = Object.values(CONFIGS).find(function(cfg) { return cfg.isMatch(); });
     if (matchedPortail) {
       /* Plus de notification "données prêtes" — inutile et distrayant */
@@ -691,8 +691,8 @@ chrome.runtime.onMessage.addListener(function(msg) {
 
 /* Au chargement, appliquer la preference sauvegardee */
 function applyButtonsPreference() {
-  chrome.storage.local.get(['optibot_buttons_visible'], function(result) {
-    var visible = result.optibot_buttons_visible !== false;
+  chrome.storage.local.get(['audibot_buttons_visible'], function(result) {
+    var visible = result.audibot_buttons_visible !== false;
     setButtonsVisibility(visible);
   });
 }
@@ -709,13 +709,13 @@ if (typeof initFieldFeedback === 'function') initFieldFeedback();
     if (newHref === _lastHref) return;
     _lastHref = newHref;
     /* Réinitialiser l'état de détection du portail */
-    console.info("[OptiBot] SPA navigation détectée →", newHref);
+    console.info("[AudiBot] SPA navigation détectée →", newHref);
     /* Re-détecter le portail actuel */
     var currentSite = Object.values(CONFIGS).find(function(cfg) { return cfg.isMatch(); });
     if (currentSite) {
       /* Re-afficher le bouton remplir si besoin */
       setTimeout(function() {
-        var fillBtn = document.getElementById("optibot-fill-btn");
+        var fillBtn = document.getElementById("audibot-fill-btn");
         if (fillBtn) fillBtn.style.display = "";
       }, 500);
     }
@@ -744,7 +744,7 @@ else window.addEventListener('load', function() { initLocal(); applyButtonsPrefe
 /* Command Center : injecter sur les portails ou data patient presente */
 function initCommandCenter() {
   if (window.location.hostname.includes("localhost")) return;
-  if (window.location.hostname.includes("optibot.fr")) return;
+  if (window.location.hostname.includes("audibot.fr")) return;
   setTimeout(function() {
     if (typeof createCommandCenter === "function") createCommandCenter();
   }, 1500);
@@ -753,10 +753,10 @@ function initCommandCenter() {
 /* ── Replay Engine — UI & Health (unique to index.js) ─────────────────────── */
 
 function showReplayControls() {
-  var existing = document.getElementById("optibot-replay-controls");
+  var existing = document.getElementById("audibot-replay-controls");
   if (existing) existing.remove();
   var div = document.createElement("div");
-  div.id = "optibot-replay-controls";
+  div.id = "audibot-replay-controls";
   div.style.cssText = "position:fixed;bottom:80px;right:20px;z-index:2147483646;display:flex;flex-direction:column;gap:8px;";
   var btnResume = document.createElement("button");
   btnResume.type = "button";
@@ -776,21 +776,21 @@ function showReplayControls() {
 function sendHealthPing(portal, status, errorHint) {
   try {
     var version = (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) ? chrome.runtime.getManifest().version : "unknown";
-    fetch("https://optibot.fr/api/bookmarklet/ping", {
+    fetch("https://audibot.fr/api/bookmarklet/ping", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ version: version, portal: portal, status: status, errorHint: errorHint })
-    }).catch(function(err) { console.warn("[OptiBot] health ping failed:", err); });
+    }).catch(function(err) { console.warn("[AudiBot] health ping failed:", err); });
   } catch(e) {}
 }
 
 chrome.runtime.onMessage.addListener(function(msg) {
-  if (msg && msg.type === "OPTIBOT_LAUNCH_PARCOURS" && msg.parcoursId) {
+  if (msg && msg.type === "AUDIBOT_LAUNCH_PARCOURS" && msg.parcoursId) {
     (async function() {
       var syncToken = await getSyncToken();
       if (!syncToken) return;
       try {
         var hostname = window.location.hostname.replace("www.", "");
-        var res = await fetch("https://optibot.fr/api/extension/parcours?hostname=" + encodeURIComponent(hostname), { headers: { "Authorization": "Bearer " + syncToken } });
+        var res = await fetch("https://audibot.fr/api/extension/parcours?hostname=" + encodeURIComponent(hostname), { headers: { "Authorization": "Bearer " + syncToken } });
         if (!res.ok) return;
         var data = await res.json();
         var found = (data.parcours || []).find(function(p) { return p.id === msg.parcoursId; });
@@ -914,29 +914,29 @@ async function detectVariable(value) {
 /* ── Panneau guidé latéral ─────────────────────────────────────────────── */
 
 function showRecorderPanel() {
-  if (document.getElementById("optibot-recorder-panel")) return;
+  if (document.getElementById("audibot-recorder-panel")) return;
   var panel = document.createElement("div");
-  panel.id = "optibot-recorder-panel";
+  panel.id = "audibot-recorder-panel";
   panel.style.cssText = "position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:2147483646;background:white;border-radius:12px 0 0 12px;box-shadow:-4px 0 20px rgba(0,0,0,0.15);width:260px;font-family:sans-serif;display:flex;flex-direction:column;max-height:70vh;";
 
   /* Header */
   var header = document.createElement("div");
   header.style.cssText = "padding:14px 16px 10px;border-bottom:1px solid #e5e7eb;";
-  header.innerHTML = '<div style="font-size:14px;font-weight:700;color:#ef4444;">⏺ OptiBot — Enregistrement</div>';
+  header.innerHTML = '<div style="font-size:14px;font-weight:700;color:#ef4444;">⏺ AudiBot — Enregistrement</div>';
   panel.appendChild(header);
 
   /* Body (scrollable list) */
   var body = document.createElement("div");
-  body.id = "optibot-recorder-panel-body";
+  body.id = "audibot-recorder-panel-body";
   body.style.cssText = "flex:1;overflow-y:auto;padding:8px 12px;";
   panel.appendChild(body);
 
   /* Footer */
   var footer = document.createElement("div");
-  footer.id = "optibot-recorder-panel-footer";
+  footer.id = "audibot-recorder-panel-footer";
   footer.style.cssText = "padding:10px 16px;border-top:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;";
   var counter = document.createElement("span");
-  counter.id = "optibot-recorder-panel-counter";
+  counter.id = "audibot-recorder-panel-counter";
   counter.style.cssText = "font-size:12px;color:#6b7280;";
   counter.textContent = "0 étapes enregistrées";
   var stopBtn = document.createElement("button");
@@ -952,8 +952,8 @@ function showRecorderPanel() {
 
 function updateRecorderPanel() {
   if (!recorderState) return;
-  var body = document.getElementById("optibot-recorder-panel-body");
-  var counter = document.getElementById("optibot-recorder-panel-counter");
+  var body = document.getElementById("audibot-recorder-panel-body");
+  var counter = document.getElementById("audibot-recorder-panel-counter");
   if (!body) return;
 
   var etapes = recorderState.etapes;
@@ -1023,8 +1023,8 @@ function updateRecorderPanel() {
 /* ── Highlight visuel des champs capturés ──────────────────────────────── */
 
 function highlightRecordedField(el, variable) {
-  if (!el || el.getAttribute("data-optibot-recorded")) return;
-  el.setAttribute("data-optibot-recorded", "true");
+  if (!el || el.getAttribute("data-audibot-recorded")) return;
+  el.setAttribute("data-audibot-recorded", "true");
 
   var isKnown = variable && variable.indexOf("{{") === 0;
   el.style.outline = isKnown ? "2px solid #10b981" : "2px solid #f59e0b";
@@ -1033,7 +1033,7 @@ function highlightRecordedField(el, variable) {
   /* Badge absolu au-dessus du champ */
   var rect = el.getBoundingClientRect();
   var badge = document.createElement("span");
-  badge.className = "optibot-recorder-field-badge";
+  badge.className = "audibot-recorder-field-badge";
   badge.style.cssText = "position:absolute;z-index:2147483645;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;font-family:sans-serif;pointer-events:none;white-space:nowrap;";
   if (isKnown) {
     badge.style.background = "#d1fae5";
@@ -1055,14 +1055,14 @@ function highlightRecordedField(el, variable) {
 
 function removeRecorderHighlights() {
   /* Retirer les outlines et backgrounds */
-  var marked = document.querySelectorAll("[data-optibot-recorded]");
+  var marked = document.querySelectorAll("[data-audibot-recorded]");
   for (var i = 0; i < marked.length; i++) {
     marked[i].style.outline = "";
     marked[i].style.backgroundColor = "";
-    marked[i].removeAttribute("data-optibot-recorded");
+    marked[i].removeAttribute("data-audibot-recorded");
   }
   /* Retirer les badges */
-  var badges = document.querySelectorAll(".optibot-recorder-field-badge");
+  var badges = document.querySelectorAll(".audibot-recorder-field-badge");
   for (var j = 0; j < badges.length; j++) {
     badges[j].remove();
   }
@@ -1079,15 +1079,15 @@ function startRecorder() {
 
   /* Badge enregistrement */
   var badge = document.createElement("div");
-  badge.id = "optibot-recorder-badge";
+  badge.id = "audibot-recorder-badge";
   badge.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#ef4444;color:white;padding:8px 20px;border-radius:50px;font-family:sans-serif;font-size:13px;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;";
   badge.innerHTML = '<span style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> Enregistrement en cours — effectuez le parcours manuellement';
   document.body.appendChild(badge);
 
   /* Style animation */
-  if (!document.getElementById("optibot-recorder-style")) {
+  if (!document.getElementById("audibot-recorder-style")) {
     var style = document.createElement("style");
-    style.id = "optibot-recorder-style";
+    style.id = "audibot-recorder-style";
     style.textContent = "@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }";
     document.head.appendChild(style);
   }
@@ -1103,8 +1103,8 @@ function startRecorder() {
     for (var i = 0; i < iframes.length; i++) {
       try {
         var iDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
-        if (!iDoc || iDoc._optibotRecorder) continue; /* déjà attaché */
-        iDoc._optibotRecorder = true;
+        if (!iDoc || iDoc._audibotRecorder) continue; /* déjà attaché */
+        iDoc._audibotRecorder = true;
         iDoc.addEventListener("click", onRecorderClick, true);
         iDoc.addEventListener("change", onRecorderChange, true);
         iDoc.addEventListener("blur", onRecorderBlur, true);
@@ -1121,7 +1121,7 @@ function startRecorder() {
   recorderState._iframeObserver = iframeObserver;
 
   /* Persister l'état dans chrome.storage pour survivre aux navigations */
-  chrome.storage.local.set({ optibot_recorder: { active: true, etapes: [], hostname: recorderState.hostname, startTime: recorderState.startTime } });
+  chrome.storage.local.set({ audibot_recorder: { active: true, etapes: [], hostname: recorderState.hostname, startTime: recorderState.startTime } });
 
   /* Afficher le panneau guidé latéral */
   showRecorderPanel();
@@ -1148,7 +1148,7 @@ async function stopRecorder() {
       try {
         var iDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
         if (!iDoc) continue;
-        iDoc._optibotRecorder = false;
+        iDoc._audibotRecorder = false;
         iDoc.removeEventListener("click", onRecorderClick, true);
         iDoc.removeEventListener("change", onRecorderChange, true);
         iDoc.removeEventListener("blur", onRecorderBlur, true);
@@ -1156,11 +1156,11 @@ async function stopRecorder() {
     }
   } catch(e) {}
 
-  var badge = document.getElementById("optibot-recorder-badge");
+  var badge = document.getElementById("audibot-recorder-badge");
   if (badge) badge.remove();
 
   /* Retirer le panneau guidé et les highlights */
-  var panel = document.getElementById("optibot-recorder-panel");
+  var panel = document.getElementById("audibot-recorder-panel");
   if (panel) panel.remove();
   removeRecorderHighlights();
 
@@ -1169,7 +1169,7 @@ async function stopRecorder() {
   recorderState = null;
 
   /* Nettoyer le storage */
-  chrome.storage.local.remove("optibot_recorder");
+  chrome.storage.local.remove("audibot_recorder");
 
   if (etapes.length === 0) {
     showRPAToast("Aucune étape enregistrée.", "info");
@@ -1189,7 +1189,7 @@ async function sendRecorderParcours(etapes, hostname, nom) {
   }
 
   try {
-    var res = await fetch("https://optibot.fr/api/extension/parcours/save", {
+    var res = await fetch("https://audibot.fr/api/extension/parcours/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1212,7 +1212,7 @@ async function sendRecorderParcours(etapes, hostname, nom) {
 /* ── Wizard 3 étapes — remplace le modal de confirmation ──────────────── */
 
 function showRecorderWizard(etapes, hostname) {
-  var existing = document.getElementById("optibot-recorder-modal-overlay");
+  var existing = document.getElementById("audibot-recorder-modal-overlay");
   if (existing) existing.remove();
 
   var currentStep = 1;
@@ -1228,7 +1228,7 @@ function showRecorderWizard(etapes, hostname) {
 
   /* Overlay */
   var overlay = document.createElement("div");
-  overlay.id = "optibot-recorder-modal-overlay";
+  overlay.id = "audibot-recorder-modal-overlay";
   overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2147483647;display:flex;align-items:center;justify-content:center;font-family:sans-serif;";
 
   /* Carte */
@@ -1420,7 +1420,7 @@ function showRecorderWizard(etapes, hostname) {
     /* Bouton Envoyer */
     var sendBtn = document.createElement("button");
     sendBtn.style.cssText = "width:100%;padding:12px;border:none;border-radius:8px;background:#3b82f6;color:white;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;";
-    sendBtn.textContent = "Envoyer à OptiBot";
+    sendBtn.textContent = "Envoyer à AudiBot";
     sendBtn.addEventListener("click", function() {
       overlay.remove();
       sendRecorderParcours(etapes, hostname, nomPortail);
@@ -1436,7 +1436,7 @@ function showRecorderWizard(etapes, hostname) {
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
-      a.download = "optibot-parcours-" + hostname + ".json";
+      a.download = "audibot-parcours-" + hostname + ".json";
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -1505,7 +1505,7 @@ function anonymizeHtmlSnapshot() {
 async function onRecorderClick(e) {
   if (!recorderState) return;
   var el = e.target;
-  if (!el || el.id === "optibot-recorder-badge" || el.closest("#optibot-recorder-badge") || el.closest("#optibot-recorder-panel")) return;
+  if (!el || el.id === "audibot-recorder-badge" || el.closest("#audibot-recorder-badge") || el.closest("#audibot-recorder-panel")) return;
 
   /* Ignorer les champs de saisie (gérés par blur) */
   if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT") return;
@@ -1547,9 +1547,9 @@ async function onRecorderClick(e) {
       lastStepAdded.waitFor = "input:not([type=hidden]), select, button[type=submit], form";
       saveRecorderState();
       /* Notification changement de page */
-      showRPAToast("📄 Nouvelle page — continuez votre saisie, OptiBot enregistre", "info");
+      showRPAToast("📄 Nouvelle page — continuez votre saisie, AudiBot enregistre", "info");
       /* Mettre à jour le badge avec le compteur */
-      var recBadge = document.getElementById("optibot-recorder-badge");
+      var recBadge = document.getElementById("audibot-recorder-badge");
       if (recBadge) {
         recBadge.innerHTML = '<span style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> Enregistrement en cours (' + recorderState.etapes.length + ' étapes)';
       }
@@ -1677,7 +1677,7 @@ function saveRecorderState() {
     var u = recorderState.etapes[pi].url;
     if (u && !seenUrls[u]) { seenUrls[u] = true; pages.push(u); }
   }
-  chrome.storage.local.set({ optibot_recorder: {
+  chrome.storage.local.set({ audibot_recorder: {
     active: true,
     etapes: etapesSansHtml,
     hostname: recorderState.hostname,
@@ -1688,8 +1688,8 @@ function saveRecorderState() {
 
 /* Restaurer le recorder si une navigation a eu lieu pendant l'enregistrement */
 function restoreRecorderIfNeeded() {
-  chrome.storage.local.get(["optibot_recorder"], function(result) {
-    var saved = result.optibot_recorder;
+  chrome.storage.local.get(["audibot_recorder"], function(result) {
+    var saved = result.audibot_recorder;
     if (!saved || !saved.active) return;
 
     /* Recorder actif dans le storage mais pas en mémoire → restaurer.
@@ -1703,9 +1703,9 @@ function restoreRecorderIfNeeded() {
     };
 
     /* Ré-afficher le badge */
-    if (!document.getElementById("optibot-recorder-badge")) {
+    if (!document.getElementById("audibot-recorder-badge")) {
       var badge = document.createElement("div");
-      badge.id = "optibot-recorder-badge";
+      badge.id = "audibot-recorder-badge";
       badge.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#ef4444;color:white;padding:8px 20px;border-radius:50px;font-family:sans-serif;font-size:13px;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;";
       badge.innerHTML = '<span style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> Enregistrement en cours (' + recorderState.etapes.length + ' étapes) — continuez le parcours';
       document.body.appendChild(badge);
@@ -1726,10 +1726,10 @@ function restoreRecorderIfNeeded() {
 
 /* Écouter les messages du popup */
 chrome.runtime.onMessage.addListener(function(msg) {
-  if (msg && msg.type === "OPTIBOT_RECORDER_START") startRecorder();
-  if (msg && msg.type === "OPTIBOT_RECORDER_STOP") stopRecorder();
-  if (msg && msg.type === "OPTIBOT_RECORDER_STATUS") {
-    chrome.runtime.sendMessage({ type: "OPTIBOT_RECORDER_STATUS_REPLY", active: !!recorderState, etapes: recorderState ? recorderState.etapes.length : 0 });
+  if (msg && msg.type === "AUDIBOT_RECORDER_START") startRecorder();
+  if (msg && msg.type === "AUDIBOT_RECORDER_STOP") stopRecorder();
+  if (msg && msg.type === "AUDIBOT_RECORDER_STATUS") {
+    chrome.runtime.sendMessage({ type: "AUDIBOT_RECORDER_STATUS_REPLY", active: !!recorderState, etapes: recorderState ? recorderState.etapes.length : 0 });
   }
 });
 

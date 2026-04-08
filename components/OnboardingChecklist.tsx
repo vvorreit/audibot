@@ -7,7 +7,7 @@ import { track } from "@/lib/analytics";
 import Link from "next/link";
 import confetti from "canvas-confetti";
 
-const MILESTONE_KEY = "optibot_onboarding_milestone_seen";
+const MILESTONE_KEY = "audibot_onboarding_milestone_seen";
 
 interface OnboardingChecklistProps {
   clientCount?: number;
@@ -34,15 +34,15 @@ export default function OnboardingChecklist({ clientCount = 0, onboardingStep }:
     }
   }, [clientCount, currentStep, markStep]);
 
-  /* Step 3 (copié): listen for optibot_data_copied event */
+  /* Step 3 (copié): listen for audibot_data_copied event */
   useEffect(() => {
     const handler = () => {
       if (currentStep < 3) {
         markStep(3);
       }
     };
-    window.addEventListener("optibot_data_copied", handler);
-    return () => window.removeEventListener("optibot_data_copied", handler);
+    window.addEventListener("audibot_data_copied", handler);
+    return () => window.removeEventListener("audibot_data_copied", handler);
   }, [currentStep, markStep]);
 
   const steps = [
@@ -131,7 +131,7 @@ export default function OnboardingChecklist({ clientCount = 0, onboardingStep }:
       >
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-black text-slate-900">
-            {allDone ? "Vous \u00eates pr\u00eat !" : "Bien d\u00e9marrer avec OptiBot"}
+            {allDone ? "Vous \u00eates pr\u00eat !" : "Bien d\u00e9marrer avec AudiBot"}
           </h2>
           <span className="text-2xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
             {completedCount}/{steps.length}

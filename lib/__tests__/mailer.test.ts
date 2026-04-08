@@ -128,7 +128,7 @@ describe("sendWelcomeEmail", () => {
     await sendWelcomeEmail("new@example.com", "Jean Dupont");
 
     expect(mocks.emailsSend).toHaveBeenCalledWith(
-      expect.objectContaining({ to: ["new@example.com"], subject: "Bienvenue sur OptiBot" })
+      expect.objectContaining({ to: ["new@example.com"], subject: "Bienvenue sur AudiBot" })
     );
   });
 

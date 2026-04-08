@@ -11,7 +11,7 @@ function isValidEmail(email: string): boolean {
   return EMAIL_REGEX.test(email);
 }
 
-// Limites de champs (exemples représentatifs de formulaires optibot)
+// Limites de champs (exemples représentatifs de formulaires audibot)
 const FIELD_LIMITS = {
   email: 254,       // RFC 5321
   name: 100,
@@ -25,7 +25,7 @@ describe("validation — email regex", () => {
     });
 
     it("email avec sous-domaine", () => {
-      expect(isValidEmail("test@mail.optibot.fr")).toBe(true);
+      expect(isValidEmail("test@mail.audibot.fr")).toBe(true);
     });
 
     it("email avec chiffres", () => {
@@ -37,11 +37,11 @@ describe("validation — email regex", () => {
     });
 
     it("email avec plus (alias Gmail)", () => {
-      expect(isValidEmail("jean.test+optibot@gmail.com")).toBe(true);
+      expect(isValidEmail("jean.test+audibot@gmail.com")).toBe(true);
     });
 
     it("TLD court (.fr)", () => {
-      expect(isValidEmail("contact@optibot.fr")).toBe(true);
+      expect(isValidEmail("contact@audibot.fr")).toBe(true);
     });
 
     it("TLD long (.solutions)", () => {

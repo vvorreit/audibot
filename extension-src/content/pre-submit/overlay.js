@@ -1,8 +1,8 @@
-/* ── OptiBot Pre-Submit Validation Overlay ──────────────────────────────── */
+/* ── AudiBot Pre-Submit Validation Overlay ──────────────────────────────── */
 /* Displays validation results before form submission.                      */
 
-var OVERLAY_ID = "optibot-presubmit-overlay";
-var BACKDROP_ID = "optibot-presubmit-backdrop";
+var OVERLAY_ID = "audibot-presubmit-overlay";
+var BACKDROP_ID = "audibot-presubmit-backdrop";
 
 /* ── Show Overlay ───────────────────────────────────────────────────────── */
 
@@ -37,7 +37,7 @@ export function showPreSubmitOverlay(results, onCorrect, onSubmitAnyway) {
   /* ── Title ───────────────────────────────────────────────────────────── */
   var title = document.createElement("h2");
   title.style.cssText = "margin: 0 0 18px 0; font-size: 18px; font-weight: 700; color: #1a1a1a;";
-  title.textContent = "\u26A0\uFE0F OptiBot \u2014 V\u00E9rification pr\u00E9-soumission";
+  title.textContent = "\u26A0\uFE0F AudiBot \u2014 V\u00E9rification pr\u00E9-soumission";
   card.appendChild(title);
 
   /* ── Results list ────────────────────────────────────────────────────── */

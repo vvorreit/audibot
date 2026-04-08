@@ -49,7 +49,7 @@ function SignInForm() {
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-blue-200 group-hover:scale-105 transition-transform">
               O
             </div>
-            <span className="text-2xl font-black tracking-tight text-slate-900">OptiBot</span>
+            <span className="text-2xl font-black tracking-tight text-slate-900">AudiBot</span>
           </Link>
         </div>
 

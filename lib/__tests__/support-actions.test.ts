@@ -50,7 +50,7 @@ describe("sendSupportEmail", () => {
     expect(mocks.sendMail).toHaveBeenCalledTimes(1);
     expect(mocks.sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
-        to: "contact@optibot.fr",
+        to: "contact@audibot.fr",
         replyTo: "marie@optique.fr",
         subject: "[Incident / Bug] Bug remplissage Almerys",
       })

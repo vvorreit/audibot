@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     if (smtpConfigured()) {
       sendMail({
-        to: "contact@optibot.fr",
+        to: "contact@audibot.fr",
         subject: `[OCR Feedback] ${type} — ${user.email}`,
         html: `
 <h2>Feedback OCR reçu</h2>

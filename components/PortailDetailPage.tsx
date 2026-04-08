@@ -38,17 +38,17 @@ const steps = [
   {
     icon: ScanLine,
     title: "Scannez la carte mutuelle",
-    desc: "Depuis l\u2019appli OptiBot ou l\u2019extension Chrome, scannez la carte du patient. Toutes les infos sont extraites automatiquement.",
+    desc: "Depuis l\u2019appli AudiBot ou l\u2019extension Chrome, scannez la carte du patient. Toutes les infos sont extraites automatiquement.",
   },
   {
     icon: Globe,
     title: "Ouvrez le portail",
-    desc: "Rendez-vous sur le portail mutuelle ou ERP concern\u00e9. OptiBot d\u00e9tecte automatiquement la page.",
+    desc: "Rendez-vous sur le portail mutuelle ou ERP concern\u00e9. AudiBot d\u00e9tecte automatiquement la page.",
   },
   {
     icon: MousePointerClick,
     title: 'Cliquez "Remplir"',
-    desc: "Un seul clic sur le bouton OptiBot et tous les champs reconnus sont remplis instantan\u00e9ment.",
+    desc: "Un seul clic sur le bouton AudiBot et tous les champs reconnus sont remplis instantan\u00e9ment.",
   },
 ];
 
@@ -62,8 +62,8 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
       <nav className="bg-slate-900 text-white px-6 py-5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/icon.png" alt="OptiBot" width={32} height={32} className="rounded-xl" />
-            <span className="text-lg font-bold tracking-tight uppercase">OptiBot</span>
+            <Image src="/icon.png" alt="AudiBot" width={32} height={32} className="rounded-xl" />
+            <span className="text-lg font-bold tracking-tight uppercase">AudiBot</span>
           </Link>
           <Link
             href="/portails"
@@ -83,7 +83,7 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
           <div className="flex items-center justify-center gap-4 mb-6">
             <FaviconImg name={data.name} favicon={getFaviconUrl(data.domain)} />
             <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-              OptiBot &times; {data.name}
+              AudiBot &times; {data.name}
             </h1>
           </div>
           <StatusBadge status={data.status} />
@@ -96,11 +96,11 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
         </div>
       </section>
 
-      {/* Ce qu'OptiBot remplit */}
+      {/* Ce qu'AudiBot remplit */}
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto">
           <p className="text-2xs font-black uppercase tracking-[0.3em] text-blue-600 mb-2">Automatisation</p>
-          <h2 className="text-2xl font-black tracking-tight mb-8">Ce qu&apos;OptiBot remplit sur {data.name}</h2>
+          <h2 className="text-2xl font-black tracking-tight mb-8">Ce qu&apos;AudiBot remplit sur {data.name}</h2>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Champs automatisés */}
@@ -143,7 +143,7 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
         <div className="max-w-3xl mx-auto">
           <p className="text-2xs font-black uppercase tracking-[0.3em] text-blue-600 mb-2">En 3 étapes</p>
           <h2 className="text-2xl font-black tracking-tight mb-10">
-            Comment utiliser OptiBot avec {data.name}
+            Comment utiliser AudiBot avec {data.name}
           </h2>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -177,7 +177,7 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
               <h3 className="text-xl font-black text-slate-900 mb-1">Smart Fill — remplissage universel</h3>
               <p className="text-slate-600 text-sm font-medium leading-relaxed">
                 M&ecirc;me si le mapping d&eacute;di&eacute; {data.name} n&apos;est pas encore complet, le{" "}
-                <strong>Smart Fill</strong> fonctionne d&eacute;j&agrave; : OptiBot d&eacute;tecte et remplit
+                <strong>Smart Fill</strong> fonctionne d&eacute;j&agrave; : AudiBot d&eacute;tecte et remplit
                 automatiquement tous les champs reconnus (NSS, nom, pr&eacute;nom, date&hellip;) sans aucune
                 configuration.
               </p>
@@ -198,7 +198,7 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
             <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 blur-[100px]" />
             <div className="relative z-10">
               <h3 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-4">
-                Essayez OptiBot gratuitement
+                Essayez AudiBot gratuitement
               </h3>
               <p className="text-slate-400 font-medium mb-8 max-w-lg mx-auto leading-relaxed">
                 7 jours d&apos;essai gratuit, sans engagement. Automatisez vos saisies tiers payant d&egrave;s
@@ -247,7 +247,7 @@ export default function PortailDetailPage({ data }: { data: PortailDetailData })
             <Link href="/legal/cgv" className="hover:text-white transition-colors">CGV</Link>
             <Link href="/legal/mentions-legales" className="hover:text-white transition-colors">Mentions</Link>
           </div>
-          <div className="text-slate-500 text-2xs font-black uppercase tracking-widest">&copy; 2026 OptiBot</div>
+          <div className="text-slate-500 text-2xs font-black uppercase tracking-widest">&copy; 2026 AudiBot</div>
         </div>
       </footer>
     </div>

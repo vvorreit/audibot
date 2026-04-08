@@ -7,7 +7,7 @@ import { getCachedSelector, setCachedSelector, saveSelectorCache } from "../util
 import { getFieldLabel, normalizeLabel, normalizeAlias, scoreFieldMatch, matchSmartField, clearMatchingCache, preCacheLabelMap, loadLearnedWeights } from "../utils/field-matching.js";
 import { formatOpticalValue, normalizeDateValue, fieldHasValue, VALUE_NORMALIZERS, OPTICAL_FIELD_KEYS } from "../utils/format.js";
 import { SMART_FILL_ALIASES, SMART_FILL_BLACKLIST, detectPageContext } from "../utils/data.js";
-import { markFilledByOptiBot } from "./learning.js";
+import { markFilledByAudiBot } from "./learning.js";
 
 /* Fonctions definies dans content/index.js et exposees via globalThis */
 var showRPAToast = function() { return globalThis.showRPAToast ? globalThis.showRPAToast.apply(null, arguments) : undefined; };
@@ -48,13 +48,13 @@ export async function performSmartFill() {
   if (typeof loadLearnedWeights === "function") loadLearnedWeights();
 
   /* V3-5: read preview-before-fill setting */
-  var settings = await new Promise(function(r) { chrome.storage.local.get(["optibot_settings"], function(res) { r(res.optibot_settings || {}); }); });
+  var settings = await new Promise(function(r) { chrome.storage.local.get(["audibot_settings"], function(res) { r(res.audibot_settings || {}); }); });
   var previewEnabled = settings.previewBeforeFill || false;
 
   /* ── Scanning indicator for large pages ─────────────────────────────── */
   if (inputList.length > 100) {
     var scanToast = document.createElement("div");
-    scanToast.id = "optibot-scan-progress";
+    scanToast.id = "audibot-scan-progress";
     scanToast.textContent = "Scan en cours\u2026 (" + inputList.length + " champs)";
     scanToast.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#1e293b;color:white;padding:8px 16px;border-radius:8px;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;";
     document.body.appendChild(scanToast);
@@ -126,7 +126,7 @@ export async function performSmartFill() {
 
     /* Ne pas écraser un champ déjà rempli manuellement par l'opticien */
     var existingVal = (el.value || "").trim();
-    if (existingVal && !el.getAttribute("data-optibot-filled")) {
+    if (existingVal && !el.getAttribute("data-audibot-filled")) {
       fillReport.skipped.push({ label: normalizeLabel(getFieldLabel(el)), variable: bestField, confidence: bestScore, reason: "deja_rempli" });
       continue;
     }
@@ -168,14 +168,14 @@ export async function performSmartFill() {
   fillReport.scanDuration = scanDuration;
   fillReport.totalFields = inputList.length;
   /* Remove scanning indicator, show result if long */
-  var existingToast = document.getElementById("optibot-scan-progress");
+  var existingToast = document.getElementById("audibot-scan-progress");
   if (existingToast) existingToast.remove();
   if (scanDuration > 500) {
-    console.info("[OptiBot] Smart Fill scan: " + inputList.length + " fields in " + scanDuration + "ms");
+    console.info("[AudiBot] Smart Fill scan: " + inputList.length + " fields in " + scanDuration + "ms");
   }
   if (scanDuration > 1000) {
     var resultToast = document.createElement("div");
-    resultToast.id = "optibot-scan-progress";
+    resultToast.id = "audibot-scan-progress";
     resultToast.textContent = "Scan termin\u00E9 — " + inputList.length + " champs en " + (scanDuration / 1000).toFixed(1) + "s";
     resultToast.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#1e293b;color:white;padding:8px 16px;border-radius:8px;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;";
     document.body.appendChild(resultToast);
@@ -202,13 +202,13 @@ export async function performSmartFill() {
           if (itiInstance && itiInstance.setNumber) {
             itiInstance.setNumber(value);
             filled++;
-            markFilledByOptiBot(el, bestField);
+            markFilledByAudiBot(el, bestField);
             if (bestScore < 80) {
-              el.setAttribute("data-optibot-confidence", bestScore);
-              el.setAttribute("data-optibot-warned", "true");
+              el.setAttribute("data-audibot-confidence", bestScore);
+              el.setAttribute("data-audibot-warned", "true");
               el.style.backgroundColor = "#fef9c3";
               el.style.outline = "2px solid #eab308";
-              el.title = "OptiBot \u2014 confiance " + bestScore + "% (" + bestField + ") \u2014 v\u00E9rifiez";
+              el.title = "AudiBot \u2014 confiance " + bestScore + "% (" + bestField + ") \u2014 v\u00E9rifiez";
               probable++;
               fillReport.warned.push({ label: normalizeLabel(getFieldLabel(el)), variable: bestField, confidence: bestScore, signals: { cached: !!cachedField, idMatch: el.id && normalizeAlias(el.id).indexOf(normalizeAlias(bestField)) !== -1, nameMatch: el.name && normalizeAlias(el.name).indexOf(normalizeAlias(bestField)) !== -1, labelMatch: !!getFieldLabel(el) } });
             } else {
@@ -231,14 +231,14 @@ export async function performSmartFill() {
       }
 
       filled++;
-      markFilledByOptiBot(el, bestField);
+      markFilledByAudiBot(el, bestField);
 
       if (bestScore >= 50 && bestScore < 80) {
-        el.setAttribute("data-optibot-confidence", bestScore);
-        el.setAttribute("data-optibot-warned", "true");
+        el.setAttribute("data-audibot-confidence", bestScore);
+        el.setAttribute("data-audibot-warned", "true");
         el.style.backgroundColor = "#fef9c3";
         el.style.outline = "2px solid #eab308";
-        el.title = "OptiBot \u2014 confiance " + bestScore + "% (" + bestField + ") \u2014 v\u00E9rifiez";
+        el.title = "AudiBot \u2014 confiance " + bestScore + "% (" + bestField + ") \u2014 v\u00E9rifiez";
         probable++;
         fillReport.warned.push({ label: normalizeLabel(getFieldLabel(el)), variable: bestField, confidence: bestScore, signals: { cached: !!cachedField, idMatch: el.id && normalizeAlias(el.id).indexOf(normalizeAlias(bestField)) !== -1, nameMatch: el.name && normalizeAlias(el.name).indexOf(normalizeAlias(bestField)) !== -1, labelMatch: !!getFieldLabel(el) } });
       } else {
@@ -272,13 +272,13 @@ export async function performSmartFill() {
     }
 
     /* ── Amélioration 9 : sauvegarder le rapport de remplissage ── */
-    chrome.storage.local.set({ optibot_last_fill_report: fillReport });
+    chrome.storage.local.set({ audibot_last_fill_report: fillReport });
 
     /* ── Log injection vers le backend (stats admin/extension) ── */
     if (filled > 0) {
       getSyncToken().then(function(syncToken) {
         if (!syncToken) return;
-        fetch("https://optibot.fr/api/extension/log-injection", {
+        fetch("https://audibot.fr/api/extension/log-injection", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + syncToken },
           body: JSON.stringify({
@@ -289,7 +289,7 @@ export async function performSmartFill() {
             mode: "smartfill",
             ts: Date.now()
           })
-        }).catch(function(err) { console.warn("[OptiBot] log-injection failed:", err); });
+        }).catch(function(err) { console.warn("[AudiBot] log-injection failed:", err); });
       });
     }
 
@@ -337,7 +337,7 @@ export async function performSmartFill() {
 /* ── V3-5: Preview overlay before fill ─────────────────────────────────── */
 function showFillPreview(items, onConfirm, onCancel) {
   var overlay = document.createElement("div");
-  overlay.id = "optibot-fill-preview";
+  overlay.id = "audibot-fill-preview";
   overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483646;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,sans-serif;";
 
   var panel = document.createElement("div");
@@ -345,7 +345,7 @@ function showFillPreview(items, onConfirm, onCancel) {
 
   var title = document.createElement("div");
   title.style.cssText = "font-size:16px;font-weight:700;color:#111;margin-bottom:16px;";
-  title.textContent = "OptiBot — Apercu du remplissage (" + items.length + " champs)";
+  title.textContent = "AudiBot — Apercu du remplissage (" + items.length + " champs)";
   panel.appendChild(title);
 
   var list = document.createElement("div");
@@ -400,7 +400,7 @@ function showFillPreview(items, onConfirm, onCancel) {
 export function setupPostMessageListener() {
   window.addEventListener("message", function(e) {
     if (e.origin !== window.location.origin) return;
-    if (!e.data || e.data.type !== "OPTIBOT_FILL_FRAME" || !e.data.payload) return;
+    if (!e.data || e.data.type !== "AUDIBOT_FILL_FRAME" || !e.data.payload) return;
     performSmartFill(e.data.payload);
   }, false);
 }

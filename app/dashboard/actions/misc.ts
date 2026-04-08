@@ -10,10 +10,10 @@ export async function requestExtensionAccess(): Promise<{ success: boolean; erro
     const { getTransporter } = await import("@/lib/mailer");
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
-      to: "contact@optibot.fr",
+      to: "contact@audibot.fr",
       replyTo: session.user.email,
       subject: `[Extension] Demande d'accès anticipé — ${session.user.name || session.user.email}`,
-      html: `<p><strong>${session.user.name || "Utilisateur"}</strong> (${session.user.email}) demande l'accès anticipé à l'extension Chrome OptiBot.</p>`,
+      html: `<p><strong>${session.user.name || "Utilisateur"}</strong> (${session.user.email}) demande l'accès anticipé à l'extension Chrome AudiBot.</p>`,
     });
     return { success: true };
   } catch (err) {

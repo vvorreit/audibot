@@ -1,8 +1,8 @@
-/* OptiBot — Remote Config : parcours dynamiques, selectors, hotpatches, mappings */
+/* AudiBot — Remote Config : parcours dynamiques, selectors, hotpatches, mappings */
 
 import { API_BASE } from './config.js';
 
-export var MAPPINGS_CHECK_ALARM = "optibot_mappings_check";
+export var MAPPINGS_CHECK_ALARM = "audibot_mappings_check";
 
 /** Fetch with timeout and response.ok validation */
 function safeFetch(url, options, timeoutMs) {
@@ -40,9 +40,9 @@ function fetchWithRetry(url, options, maxRetries) {
 }
 
 export function fetchAndCacheDynamicParcours() {
-  chrome.storage.local.get(["optibot_auth"], function(result) {
-    if (chrome.runtime.lastError) { console.warn("[OptiBot] storage error:", chrome.runtime.lastError); return; }
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(["audibot_auth"], function(result) {
+    if (chrome.runtime.lastError) { console.warn("[AudiBot] storage error:", chrome.runtime.lastError); return; }
+    var auth = result.audibot_auth || {};
     if (!auth.syncToken) return;
     fetchWithRetry(API_BASE + "/api/extension/parcours?handlers=true", {
       headers: { "Authorization": "Bearer " + auth.syncToken }
@@ -51,11 +51,11 @@ export function fetchAndCacheDynamicParcours() {
     .then(function(data) {
       if (Array.isArray(data.handlers)) {
         chrome.storage.local.set({
-          optibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
+          audibot_dynamic_parcours: { handlers: data.handlers, ts: Date.now() }
         });
       }
     })
-    .catch(function(err) { console.warn("[OptiBot] dynamic parcours fetch failed:", err.message); });
+    .catch(function(err) { console.warn("[AudiBot] dynamic parcours fetch failed:", err.message); });
   });
 }
 
@@ -65,11 +65,11 @@ export function fetchAndCacheSelectorOverrides() {
     .then(function(data) {
       if (data && data.overrides) {
         chrome.storage.local.set({
-          optibot_selector_overrides: { overrides: data.overrides, version: data.version || 1, ts: Date.now() }
+          audibot_selector_overrides: { overrides: data.overrides, version: data.version || 1, ts: Date.now() }
         });
       }
     })
-    .catch(function(err) { console.warn("[OptiBot] selector overrides fetch failed:", err.message); });
+    .catch(function(err) { console.warn("[AudiBot] selector overrides fetch failed:", err.message); });
 }
 
 export function fetchAndCacheHotPatches() {
@@ -78,12 +78,12 @@ export function fetchAndCacheHotPatches() {
     .then(function(data) {
       if (data && data.patches) {
         chrome.storage.local.set({
-          optibot_hotpatches: { patches: data.patches, ts: Date.now() }
+          audibot_hotpatches: { patches: data.patches, ts: Date.now() }
         });
-        console.info("[OptiBot] Hot-patches: " + data.patches.length + " actifs");
+        console.info("[AudiBot] Hot-patches: " + data.patches.length + " actifs");
       }
     })
-    .catch(function(err) { console.warn("[OptiBot] hotpatch fetch failed:", err.message); });
+    .catch(function(err) { console.warn("[AudiBot] hotpatch fetch failed:", err.message); });
 }
 
 /* ── US-9 : Remote Config Mappings — mise a jour silencieuse ─────────────── */
@@ -92,10 +92,10 @@ export function fetchAndCacheHotPatches() {
 /* Chrome Web Store autorise les donnees JSON distantes, pas le code JS.       */
 
 export function fetchAndCacheMappings() {
-  chrome.storage.local.get(["optibot_mappings", "optibot_auth"], function(result) {
-    if (chrome.runtime.lastError) { console.warn("[OptiBot] storage error:", chrome.runtime.lastError); return; }
-    var auth = result.optibot_auth || {};
-    var cached = result.optibot_mappings || {};
+  chrome.storage.local.get(["audibot_mappings", "audibot_auth"], function(result) {
+    if (chrome.runtime.lastError) { console.warn("[AudiBot] storage error:", chrome.runtime.lastError); return; }
+    var auth = result.audibot_auth || {};
+    var cached = result.audibot_mappings || {};
     var localVersion = cached.version || 0;
 
     var headers = { "Content-Type": "application/json" };
@@ -105,7 +105,7 @@ export function fetchAndCacheMappings() {
       .then(function(r) {
         /* 304 = pas de changement */
         if (r.status === 304) {
-          console.info("[OptiBot] Mappings a jour (version " + localVersion + ")");
+          console.info("[AudiBot] Mappings a jour (version " + localVersion + ")");
           return null;
         }
         return r.json();
@@ -114,20 +114,20 @@ export function fetchAndCacheMappings() {
         if (!data) return;
         if (data.version && data.sources) {
           chrome.storage.local.set({
-            optibot_mappings: { version: data.version, sources: data.sources, ts: Date.now() }
+            audibot_mappings: { version: data.version, sources: data.sources, ts: Date.now() }
           });
-          console.info("[OptiBot] Mappings mis a jour → version " + data.version + " (" + data.sources.length + " sources)");
+          console.info("[AudiBot] Mappings mis a jour → version " + data.version + " (" + data.sources.length + " sources)");
           /* Notifier les content scripts actifs */
           chrome.tabs.query({ active: true }, function(tabs) {
             tabs.forEach(function(tab) {
               if (tab.id) {
-                chrome.tabs.sendMessage(tab.id, { type: "OPTIBOT_MAPPINGS_UPDATED", version: data.version })
+                chrome.tabs.sendMessage(tab.id, { type: "AUDIBOT_MAPPINGS_UPDATED", version: data.version })
                   .catch(function() {});
               }
             });
           });
         }
       })
-      .catch(function(err) { console.warn("[OptiBot] mappings fetch failed:", err.message); });
+      .catch(function(err) { console.warn("[AudiBot] mappings fetch failed:", err.message); });
   });
 }

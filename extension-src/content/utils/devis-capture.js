@@ -92,7 +92,7 @@ export function syncDevisToBackend(devis) {
   if (typeof getSyncToken === "function") {
     getSyncToken().then(function(token) {
       if (!token) return;
-      fetch("https://optibot.fr/api/extension/devis", {
+      fetch("https://audibot.fr/api/extension/devis", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,17 +108,17 @@ export function syncDevisToBackend(devis) {
       .then(function() {
         showDevisToast("Devis capture — " + (devis.totalTTC || "montant inconnu") + " EUR", "success");
       })
-      .catch(function(err) { console.warn("[OptiBot] devis sync failed:", err); });
+      .catch(function(err) { console.warn("[AudiBot] devis sync failed:", err); });
     });
   }
 }
 
 function showDevisToast(message, type) {
-  var existing = document.getElementById("optibot-devis-toast");
+  var existing = document.getElementById("audibot-devis-toast");
   if (existing) existing.remove();
 
   var toast = document.createElement("div");
-  toast.id = "optibot-devis-toast";
+  toast.id = "audibot-devis-toast";
   toast.textContent = message;
   var bg = type === "success" ? "#059669" : "#d97706";
   toast.style.cssText = "position:fixed;bottom:70px;right:24px;z-index:2147483647;background:" + bg + ";color:white;padding:10px 16px;border-radius:10px;font:600 12px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.12);opacity:0;transition:opacity .3s;";

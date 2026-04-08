@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
   try {
     const result = await sendMail({
       to: session!.user.email!,
-      subject: "OptiBot — Test email ✓",
-      html: `<p>Email de test envoyé depuis OptiBot à ${new Date().toISOString()}.<br/>Si vous recevez ceci, Resend est correctement configuré.</p>`,
+      subject: "AudiBot — Test email ✓",
+      html: `<p>Email de test envoyé depuis AudiBot à ${new Date().toISOString()}.<br/>Si vous recevez ceci, Resend est correctement configuré.</p>`,
     });
 
     await auditLog({

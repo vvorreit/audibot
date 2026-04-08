@@ -1,52 +1,52 @@
 export const faqItems = [
   {
-    question: "Pourquoi dites-vous que c'est plus sûr qu'ailleurs ?",
+    question: "Pourquoi c'est plus s\u00fbr qu'une solution cloud ?",
     answer:
-      "Parce que la lecture de vos documents se fait entièrement dans votre navigateur, sur votre appareil. Les données de santé de vos patients ne quittent jamais votre écran et ne transitent jamais par nos serveurs — conformité RGPD native, sans aucun compromis.",
+      "L'analyse OCR se fait directement dans votre navigateur, sur votre ordinateur. Les donn\u00e9es de sant\u00e9 de vos patients \u2014 audiogramme, NSS, donn\u00e9es ORL \u2014 ne transitent jamais par nos serveurs. Conformit\u00e9 RGPD native, sans compromis.",
   },
   {
-    question: "Quels logiciels métiers (ERP) sont compatibles ?",
+    question: "Quels logiciels m\u00e9tiers sont compatibles ?",
     answer:
-      "OptiBot est compatible avec les principaux logiciels métiers et portails mutuelles utilisés en optique (Almerys, Viamedis, Wemind, Génération Mutuelle, Harmonie, Malakoff Humanis…). Nous nous adaptons à votre environnement — si votre outil n'est pas encore pris en charge, contactez-nous : nous l'intégrons en priorité.",
+      "AudiBot est compatible avec Auditdata pour une int\u00e9gration parfaite, ainsi qu'Ameli Pro (SCOR) pour la t\u00e9l\u00e9transmission. Le support Otosuite et Easyaudio est en d\u00e9veloppement. Pour les portails mutuelles : Almerys, Viamedis, Wemind, G\u00e9n\u00e9ration, et bien d'autres.",
   },
   {
-    question: "Est-ce que ça fonctionne avec tous les scanners ?",
+    question: "Est-ce que \u00e7a lit bien les prescriptions ORL ?",
     answer:
-      "Oui. Que ce soit un scan ou une photo prise avec votre téléphone, OptiBot s'adapte et traite le document automatiquement. Attention cependant à la qualité de la photo : une image floue ou mal cadrée peut réduire la précision. Vérifiez toujours les données remplies avant de valider.",
+      "Oui. Le Bot est entra\u00een\u00e9 sur les formats de prescriptions ORL fran\u00e7aises. Il extrait l'audiogramme complet (250Hz \u00e0 4kHz, OD et OG), la classe d'appareillage (1 ou 2), le type d'appareil et les informations patient automatiquement.",
   },
   {
     question: "Peut-on tester avant de payer ?",
     answer:
-      "Absolument. Chaque nouvel inscrit bénéficie de 14 jours d'essai gratuit sans carte bancaire pour tester OptiBot en conditions réelles dans son magasin.",
+      "Absolument. Chaque nouvel inscrit b\u00e9n\u00e9ficie de 5 scans gratuits sans carte bancaire pour tester AudiBot en conditions r\u00e9elles dans son centre.",
   },
   {
-    question: "Comment fonctionne le tiers payant avec OptiBot ?",
+    question: "\u00c7a fonctionne avec une simple photo de prescription ?",
     answer:
-      "OptiBot détecte automatiquement les rejets de tiers payant (AMO et AMC) via l'extension Chrome, les centralise dans votre tableau de bord, et vous envoie des alertes en temps réel. Vous configurez des règles de relance automatique et suivez l'état de chaque dossier sans ouvrir de tableur.",
+      "Oui. Que ce soit un PDF g\u00e9n\u00e9r\u00e9 par le logiciel de l'ORL ou une photo prise avec votre smartphone, AudiBot redresse et nettoie l'image pour une lecture optimale.",
   },
   {
-    question: "Mes données patients sont-elles stockées sur vos serveurs ?",
+    question: "Mes donn\u00e9es patients sont-elles stock\u00e9es sur vos serveurs ?",
     answer:
-      "Non. L'OCR est traité localement sur votre machine. Aucune image de prescription ou de carte mutuelle ne quitte votre poste. Seules les métadonnées de suivi (statut dossier, montants) sont enregistrées pour alimenter votre tableau de bord — jamais les données médicales ou personnelles brutes.",
+      "Non. L'OCR est trait\u00e9 localement sur votre machine. Aucune image de prescription ou de carte mutuelle ne quitte votre poste. Seules les m\u00e9tadonn\u00e9es de suivi (statut dossier, montants) sont enregistr\u00e9es pour alimenter votre tableau de bord \u2014 jamais les donn\u00e9es m\u00e9dicales ou personnelles brutes.",
   },
   {
-    question: "Puis-je utiliser OptiBot avec plusieurs opticiens dans mon magasin ?",
+    question: "Puis-je utiliser AudiBot avec plusieurs postes dans mon centre ?",
     answer:
-      "Oui. Le plan Cabinet inclut 3 postes, le plan Réseau en inclut 5 avec un supplément par siège supplémentaire. Chaque utilisateur dispose de son propre accès, le gérant voit les statistiques consolidées depuis un tableau de bord centralisé.",
+      "Oui. Le pack Team Trio inclut 3 postes, le pack Team Pro en inclut 5. Chaque utilisateur dispose de son propre acc\u00e8s, le g\u00e9rant voit les statistiques consolid\u00e9es depuis un tableau de bord centralis\u00e9.",
   },
   {
-    question: "Y a-t-il un engagement de durée ?",
+    question: "Y a-t-il un engagement de dur\u00e9e ?",
     answer:
-      "Non. Les plans Essentiel, Pro, Cabinet et Réseau sont sans engagement et annulables à tout moment depuis votre espace compte. Seul le plan Franchise fonctionne sur contrat annuel.",
+      "Non. Tous les plans sont sans engagement et annulables \u00e0 tout moment depuis votre espace compte. Passez \u00e0 l'annuel pour \u00e9conomiser 15%.",
   },
   {
     question: "Que se passe-t-il si un portail mutuelle change son interface ?",
     answer:
-      "On le détecte avant vous grâce au monitoring automatique de l'extension (extension-health). Dès qu'un sélecteur casse, notre équipe technique est alertée et déploie une mise à jour sous 24-48h ouvrées. Vous n'avez rien à faire.",
+      "On le d\u00e9tecte avant vous gr\u00e2ce au monitoring automatique de l'extension. D\u00e8s qu'un s\u00e9lecteur casse, notre \u00e9quipe technique est alert\u00e9e et d\u00e9ploie une mise \u00e0 jour sous 24-48h ouvr\u00e9es. Vous n'avez rien \u00e0 faire.",
   },
   {
     question: "Comment contacter le support ?",
     answer:
-      "Par email à contact@optibot.fr (réponse sous 48h sur le plan Essentiel, sous 4h sur le plan Pro). Les plans Cabinet, Réseau et Franchise bénéficient d'un support dédié. Vous pouvez aussi nous écrire directement depuis votre tableau de bord.",
+      "Par email \u00e0 contact@audibot.fr (r\u00e9ponse sous 48h). Les packs Team b\u00e9n\u00e9ficient d'un support prioritaire d\u00e9di\u00e9. Vous pouvez aussi nous \u00e9crire directement depuis votre tableau de bord.",
   },
 ];

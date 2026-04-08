@@ -14,15 +14,15 @@ export default function ExtensionPrivacyPage() {
           <Puzzle className="w-12 h-12" />
           <h1 className="text-4xl font-black">Politique de confidentialité — Extension</h1>
         </div>
-        <p className="text-sm text-slate-400 mb-10">Extension navigateur OptiBot Multi-Site — Version 1.3 — 23 mars 2026</p>
+        <p className="text-sm text-slate-400 mb-10">Extension navigateur AudiBot Multi-Site — Version 1.3 — 23 mars 2026</p>
 
         <div className="prose prose-slate max-w-none space-y-8">
 
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">1. Éditeur</h2>
             <p className="text-slate-600 leading-relaxed">
-              L&apos;extension OptiBot Multi-Site est éditée par <strong>Vorreiter Activities</strong> (SASU),
-              54 rue Marcel et Ida Demia, 01500 Ambérieu-en-Bugey — <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              L&apos;extension AudiBot Multi-Site est éditée par <strong>Vorreiter Activities</strong> (SASU),
+              54 rue Marcel et Ida Demia, 01500 Ambérieu-en-Bugey — <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
           </section>
 
@@ -32,14 +32,14 @@ export default function ExtensionPrivacyPage() {
             <h3 className="font-bold text-slate-800 mb-2">2.1 Presse-papier (<code>clipboardRead</code>)</h3>
             <p className="text-slate-600 leading-relaxed mb-4">
               L&apos;extension lit le presse-papier <strong>uniquement lorsque vous cliquez sur le bouton &quot;🤖 Remplir&quot;</strong>.
-              Elle y recherche des données structurées préalablement copiées depuis votre tableau de bord OptiBot
-              (nom, prénom, NSS, ordonnance). Ces données ne sont pas envoyées à un serveur lors de cette lecture.
+              Elle y recherche des données structurées préalablement copiées depuis votre tableau de bord AudiBot
+              (nom, prénom, NSS, prescription ORL). Ces données ne sont pas envoyées à un serveur lors de cette lecture.
             </p>
 
             <h3 className="font-bold text-slate-800 mb-2">2.2 Données patients en cache local</h3>
             <p className="text-slate-600 leading-relaxed mb-4">
               Pour éviter de copier-coller à chaque formulaire, l&apos;extension peut mettre en cache local les données
-              d&apos;un patient (NSS, corrections optiques, nom, prénom). Ces données sont <strong>chiffrées en AES-256-GCM</strong>
+              d&apos;un patient (NSS, audiogramme, nom, prénom). Ces données sont <strong>chiffrées en AES-256-GCM</strong>
               avec une clé dérivée de votre token de session (PBKDF2, 310 000 itérations, salt aléatoire par appareil).
               Elles ne quittent jamais votre navigateur et sont automatiquement supprimées après <strong>15 minutes d&apos;inactivité</strong>.
             </p>
@@ -67,14 +67,14 @@ export default function ExtensionPrivacyPage() {
               Si vous activez la détection automatique des rejets dans le popup de l&apos;extension,
               celle-ci analyse périodiquement les pages de résultats tiers-payant de certains portails
               (Almerys, Viamedis, Itelis, Actil) pour détecter les dossiers rejetés et les synchroniser
-              avec votre espace OptiBot. Les données transmises sont : numéro de dossier, motif de rejet,
+              avec votre espace AudiBot. Les données transmises sont : numéro de dossier, motif de rejet,
               date, montant. <strong>Aucun nom de patient n&apos;est transmis.</strong>
               Cette fonctionnalité est <strong>désactivée par défaut</strong> et nécessite votre activation explicite.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Données envoyées aux serveurs OptiBot</h2>
+            <h2 className="text-xl font-bold mb-4 border-b pb-2">3. Données envoyées aux serveurs AudiBot</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-slate-600 border border-slate-200 rounded">
                 <thead className="bg-slate-50 font-semibold">
@@ -129,25 +129,25 @@ export default function ExtensionPrivacyPage() {
                 </thead>
                 <tbody>
                   <tr className="border-b">
-                    <td className="p-3 font-mono text-xs">optibot_cache</td>
-                    <td className="p-3">Données patient en cache (NSS, ordonnance, etc.)</td>
+                    <td className="p-3 font-mono text-xs">audibot_cache</td>
+                    <td className="p-3">Données patient en cache (NSS, prescription ORL, etc.)</td>
                     <td className="p-3 text-green-700 font-semibold">✅ AES-256-GCM</td>
                     <td className="p-3">15 min d&apos;inactivité</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-3 font-mono text-xs">optibot_rpa</td>
+                    <td className="p-3 font-mono text-xs">audibot_rpa</td>
                     <td className="p-3">Payload RPA temporaire (données patient)</td>
                     <td className="p-3 text-green-700 font-semibold">✅ AES-256-GCM</td>
                     <td className="p-3">5 minutes max</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-3 font-mono text-xs">optibot_auth</td>
+                    <td className="p-3 font-mono text-xs">audibot_auth</td>
                     <td className="p-3">Token de session, plan, expiration</td>
                     <td className="p-3 text-slate-500">Non (pas de données patient)</td>
                     <td className="p-3">20 heures</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-mono text-xs">optibot_lock</td>
+                    <td className="p-3 font-mono text-xs">audibot_lock</td>
                     <td className="p-3">Timestamp de verrouillage automatique</td>
                     <td className="p-3 text-slate-500">Non</td>
                     <td className="p-3">Session</td>
@@ -160,7 +160,7 @@ export default function ExtensionPrivacyPage() {
           <section>
             <h2 className="text-xl font-bold mb-4 border-b pb-2">5. Permissions requises</h2>
             <ul className="list-disc pl-6 text-slate-600 space-y-2">
-              <li><strong>clipboardRead</strong> — Lecture du presse-papier lors du clic sur &quot;Remplir&quot; pour récupérer les données copiées depuis OptiBot</li>
+              <li><strong>clipboardRead</strong> — Lecture du presse-papier lors du clic sur &quot;Remplir&quot; pour récupérer les données copiées depuis AudiBot</li>
               <li><strong>activeTab</strong> — Accès à l&apos;onglet actif pour injecter le script d&apos;auto-remplissage</li>
               <li><strong>storage</strong> — Stockage chiffré local des données patient en cache</li>
               <li><strong>tabs</strong> — Ouverture d&apos;un nouvel onglet lors du lancement du RPA</li>
@@ -175,7 +175,7 @@ export default function ExtensionPrivacyPage() {
               de l&apos;extension, ou en désinstallant l&apos;extension (les données chrome.storage sont supprimées automatiquement).
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
-              Pour toute question : <a href="mailto:contact@optibot.fr" className="text-blue-600 underline">contact@optibot.fr</a>
+              Pour toute question : <a href="mailto:contact@audibot.fr" className="text-blue-600 underline">contact@audibot.fr</a>
             </p>
             <p className="text-slate-600 leading-relaxed mt-3">
               Vous avez le droit d&apos;introduire une réclamation auprès de la{" "}
@@ -188,7 +188,7 @@ export default function ExtensionPrivacyPage() {
             <p className="text-slate-600 leading-relaxed">
               Cette politique complète la{" "}
               <Link href="/legal/confidentialite" className="text-blue-600 underline">
-                Politique de confidentialité générale d&apos;OptiBot
+                Politique de confidentialité générale d&apos;AudiBot
               </Link>.
             </p>
           </section>

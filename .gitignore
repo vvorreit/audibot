@@ -51,7 +51,7 @@ mail-config/
 /extension/*.js.map
 
 # Local data & test files
-optibot-data/
+audibot-data/
 test-ocr.mjs
 
 # PDF files

@@ -46,7 +46,7 @@ export default function DpaRequiredPage() {
           <h1 className="text-2xl font-black text-slate-900">Protection des données</h1>
           <p className="text-sm text-slate-500 font-medium">
             Conformément au RGPD (Art. 28), veuillez accepter notre accord de
-            traitement des données (DPA) pour utiliser OptiBot.
+            traitement des données (DPA) pour utiliser AudiBot.
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export default function DpaRequiredPage() {
             <Link href="/legal/dpa" className="text-blue-600 underline" target="_blank">
               Accord de Traitement des Données (DPA) v1.0
             </Link>{" "}
-            d&apos;OptiBot.
+            d&apos;AudiBot.
           </span>
         </label>
 

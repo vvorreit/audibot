@@ -20,7 +20,7 @@ export default async function DesignPage() {
 
         {/* Header */}
         <div>
-          <p className="text-2xs font-black uppercase tracking-widest text-blue-600 mb-2">OptiBot</p>
+          <p className="text-2xs font-black uppercase tracking-widest text-blue-600 mb-2">AudiBot</p>
           <h1 className="text-4xl font-black text-slate-900">Living Style Guide</h1>
           <p className="text-slate-400 font-medium mt-2">Référence visuelle — ADMIN uniquement</p>
         </div>

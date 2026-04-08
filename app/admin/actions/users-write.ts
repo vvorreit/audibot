@@ -96,7 +96,7 @@ export async function grantFreeMonths(
         await stripe.customers.createBalanceTransaction(user.stripeCustomerId, {
           amount: -(monthlyAmount * months),
           currency: "eur",
-          description: `${months} mois offerts par OptiBot${note ? " — " + note : ""}`,
+          description: `${months} mois offerts par AudiBot${note ? " — " + note : ""}`,
         });
         stripeCredit = true;
       }

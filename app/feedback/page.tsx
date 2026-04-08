@@ -23,7 +23,7 @@ function FeedbackContent() {
       <div className="text-center space-y-3">
         <p className="text-2xl">🙏</p>
         <p className="text-lg font-black text-slate-900">Merci pour votre retour !</p>
-        <p className="text-sm text-slate-500">Votre avis nous aide à améliorer OptiBot.</p>
+        <p className="text-sm text-slate-500">Votre avis nous aide à améliorer AudiBot.</p>
       </div>
     );
   }
@@ -35,7 +35,7 @@ function FeedbackContent() {
         <h1 className="text-xl font-black text-slate-900">Merci ! Votre avis compte beaucoup.</h1>
         <p className="text-sm text-slate-500">Content que votre première semaine se soit bien passée.</p>
         <a
-          href="https://g.page/r/optibot/review"
+          href="https://g.page/r/audibot/review"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 transition-colors text-sm"

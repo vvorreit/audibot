@@ -63,7 +63,7 @@ export default function HistoriqueClient({ scans, isPlanLimite, plan: _plan }: P
   }, [filtered]);
 
   const handleReload = () => {
-    window.dispatchEvent(new CustomEvent("optibot_scan_reload", { detail: { scans: filtered } }));
+    window.dispatchEvent(new CustomEvent("audibot_scan_reload", { detail: { scans: filtered } }));
   };
 
   return (

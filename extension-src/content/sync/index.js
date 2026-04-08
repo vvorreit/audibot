@@ -1,10 +1,10 @@
-/* ── Sync — scrapeTPTable, syncTPToOptiBot, showSyncButton, showSyncTPButton ── */
+/* ── Sync — scrapeTPTable, syncTPToAudiBot, showSyncButton, showSyncTPButton ── */
 
 export function showSyncButton() {
-  if (document.getElementById('optibot-sync-btn')) return;
+  if (document.getElementById('audibot-sync-btn')) return;
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.id = 'optibot-sync-btn';
+  btn.id = 'audibot-sync-btn';
   btn.innerText = '\uD83D\uDCBE M\u00E9moriser';
   btn.style.cssText = `
     position: fixed; bottom: 80px; right: 20px; z-index: 999999;
@@ -94,7 +94,7 @@ export function scrapeTPTable() {
   return dossiers;
 }
 
-export async function syncTPToOptiBot(btn) {
+export async function syncTPToAudiBot(btn) {
   btn.innerText = "Chargement...";
   btn.style.background = "#6366f1";
 
@@ -145,10 +145,10 @@ export async function syncTPToOptiBot(btn) {
 
   btn.innerText = "Envoi " + allDossiers.length + " dossiers...";
 
-  /* Récupérer le syncToken depuis optibot_auth (source de vérité) */
+  /* Récupérer le syncToken depuis audibot_auth (source de vérité) */
   var syncToken = await getSyncToken();
   if (!syncToken) {
-    btn.innerText = "Connectez-vous sur OptiBot";
+    btn.innerText = "Connectez-vous sur AudiBot";
     btn.style.background = "#ef4444";
     setTimeout(function() { btn.innerText = "Sync TP"; btn.style.background = "#6366f1"; }, 3000);
     return;
@@ -156,7 +156,7 @@ export async function syncTPToOptiBot(btn) {
   (async function() {
 
     try {
-      var resp = await fetch("https://optibot.fr/api/extension/sync-tp", {
+      var resp = await fetch("https://audibot.fr/api/extension/sync-tp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ syncToken: syncToken, dossiers: allDossiers })
@@ -179,11 +179,11 @@ export async function syncTPToOptiBot(btn) {
 }
 
 export function showSyncTPButton() {
-  if (document.getElementById('optibot-sync-tp-btn')) return;
+  if (document.getElementById('audibot-sync-tp-btn')) return;
   if (!document.querySelector('#grid_pointage_tiers_payant')) return;
   var btn = document.createElement('button');
   btn.type = 'button';
-  btn.id = 'optibot-sync-tp-btn';
+  btn.id = 'audibot-sync-tp-btn';
   btn.innerText = 'Sync TP';
   btn.style.cssText = [
     'position: fixed; bottom: 140px; right: 20px; z-index: 999999;',
@@ -192,6 +192,6 @@ export function showSyncTPButton() {
     'box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: sans-serif;',
     'transition: all 0.2s;'
   ].join('');
-  btn.onclick = function() { syncTPToOptiBot(btn); };
+  btn.onclick = function() { syncTPToAudiBot(btn); };
   document.body.appendChild(btn);
 }

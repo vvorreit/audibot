@@ -3,10 +3,10 @@ import PortailDetailPage from "@/components/PortailDetailPage";
 import type { PortailDetailData } from "@/components/PortailDetailPage";
 
 export const metadata: Metadata = {
-  title: "OptiBot × Viamedis — Remplissage automatique tiers payant Viamedis pour opticiens",
+  title: "AudiBot × Viamedis — Remplissage automatique tiers payant Viamedis pour opticiens",
   description:
-    "Automatisez vos saisies tiers payant sur Viamedis avec OptiBot. Smart Fill universel pour 15 millions de bénéficiaires — Harmonie Mutuelle, MGEN et plus.",
-  alternates: { canonical: "https://optibot.fr/mutuelles/viamedis" },
+    "Automatisez vos saisies tiers payant sur Viamedis avec AudiBot. Smart Fill universel pour 15 millions de bénéficiaires — Harmonie Mutuelle, MGEN et plus.",
+  alternates: { canonical: "https://audibot.fr/mutuelles/viamedis" },
 };
 
 const data: PortailDetailData = {

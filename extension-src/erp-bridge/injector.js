@@ -1,4 +1,4 @@
-/* ── OptiBot — ERP Bridge: PEC injection, ultra-fill, rejection notes ── */
+/* ── AudiBot — ERP Bridge: PEC injection, ultra-fill, rejection notes ── */
 
 import { normalizeAlias, collectSignals } from "./dom.js";
 import { matchFieldAgainst } from "./matching.js";
@@ -22,15 +22,15 @@ export async function injectPEC(encryptedPec, adapter, getPecAliases, queryInput
     var field = matchFieldAgainst(el, pecDict);
     if (field && pec[field]) {
       ultraFill(el, pec[field], adapter);
-      el.setAttribute("data-optibot-filled", field);
-      el.setAttribute("data-optibot-value", pec[field]);
+      el.setAttribute("data-audibot-filled", field);
+      el.setAttribute("data-audibot-value", pec[field]);
       filled++;
     }
   }
 
   if (filled > 0) {
     showToast("PEC inject\u00E9e \u2713 — " + filled + " champ(s)", "success", adapter);
-    chrome.storage.local.remove("optibot_pec_pending");
+    chrome.storage.local.remove("audibot_pec_pending");
     return { ok: true, filled: filled };
   }
   showToast("Aucun champ PEC d\u00E9tect\u00E9 sur cette page", "warn", adapter);

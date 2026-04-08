@@ -50,8 +50,8 @@ export function cleanSelectorCache() {
 }
 
 export function loadSelectorCache() {
-  chrome.storage.local.get(["optibot_selector_cache"], function(result) {
-    _selectorCache = result.optibot_selector_cache || {};
+  chrome.storage.local.get(["audibot_selector_cache"], function(result) {
+    _selectorCache = result.audibot_selector_cache || {};
     cleanSelectorCache();
   });
 }
@@ -60,5 +60,5 @@ export function saveSelectorCache() {
   if (!_selectorCacheDirty) return;
   _selectorCacheDirty = false;
   _selectorCacheLastSave = Date.now();
-  chrome.storage.local.set({ optibot_selector_cache: _selectorCache });
+  chrome.storage.local.set({ audibot_selector_cache: _selectorCache });
 }

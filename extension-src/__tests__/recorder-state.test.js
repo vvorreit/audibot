@@ -298,7 +298,7 @@ describe("clearSnapshots", () => {
 
   it("appelle chrome.storage.local.remove", () => {
     clearSnapshots();
-    expect(chrome.storage.local.remove).toHaveBeenCalledWith("optibot_recorder_snapshots");
+    expect(chrome.storage.local.remove).toHaveBeenCalledWith("audibot_recorder_snapshots");
   });
 });
 
@@ -314,7 +314,7 @@ describe("getSnapshots", () => {
   it("retourne les snapshots stockes", async () => {
     const snaps = { "https://example.com": "<html></html>" };
     chrome.storage.local.get.mockImplementation((keys, cb) => {
-      cb({ optibot_recorder_snapshots: snaps });
+      cb({ audibot_recorder_snapshots: snaps });
     });
     const result = await getSnapshots();
     expect(result).toEqual(snaps);

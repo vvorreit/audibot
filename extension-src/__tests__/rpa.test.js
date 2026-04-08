@@ -44,7 +44,7 @@ describe("checkAndStartRPA", () => {
   describe("plan-based access control (rpaEnabled flag)", () => {
     it("shows info toast and returns when rpaEnabled is false", () => {
       storageGetMock.mockImplementation((keys, cb) => {
-        cb({ optibot_auth: { rpaEnabled: false }, optibot_rpa: { target: "viamedis", ts: Date.now() } });
+        cb({ audibot_auth: { rpaEnabled: false }, audibot_rpa: { target: "viamedis", ts: Date.now() } });
       });
 
       checkAndStartRPA();
@@ -61,8 +61,8 @@ describe("checkAndStartRPA", () => {
     it("proceeds when rpaEnabled is true", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: { rpaEnabled: true },
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: { rpaEnabled: true },
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
@@ -75,8 +75,8 @@ describe("checkAndStartRPA", () => {
     it("proceeds when rpaEnabled is undefined (not explicitly false)", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
@@ -88,10 +88,10 @@ describe("checkAndStartRPA", () => {
       );
     });
 
-    it("proceeds when optibot_auth is missing entirely", () => {
+    it("proceeds when audibot_auth is missing entirely", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
@@ -108,8 +108,8 @@ describe("checkAndStartRPA", () => {
       window.location = { hostname: "www.viamedis.com", pathname: "/accueil" };
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
@@ -122,8 +122,8 @@ describe("checkAndStartRPA", () => {
       window.location = { hostname: "portail.almerys.com", pathname: "/home" };
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "other", targetHostname: "almerys.com", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "other", targetHostname: "almerys.com", ts: Date.now() },
         });
       });
 
@@ -136,8 +136,8 @@ describe("checkAndStartRPA", () => {
       window.location = { hostname: "www.google.com", pathname: "/" };
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", targetHostname: "almerys.com", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", targetHostname: "almerys.com", ts: Date.now() },
         });
       });
 
@@ -151,8 +151,8 @@ describe("checkAndStartRPA", () => {
       window.location = { hostname: "viamedis.com", pathname: "/accueil" };
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", targetHostname: "", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", targetHostname: "", ts: Date.now() },
         });
       });
 
@@ -168,8 +168,8 @@ describe("checkAndStartRPA", () => {
     it("proceeds when timestamp is fresh (< 5 minutes)", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() - 1000 },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() - 1000 },
         });
       });
 
@@ -183,8 +183,8 @@ describe("checkAndStartRPA", () => {
       /* Date.now() - rpa.ts > 300000 means strictly greater, so exactly 300000 is NOT expired */
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() - 300000 },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() - 300000 },
         });
       });
 
@@ -197,14 +197,14 @@ describe("checkAndStartRPA", () => {
     it("expires and removes storage when timestamp is older than 5 minutes", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() - 300001 },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() - 300001 },
         });
       });
 
       checkAndStartRPA();
 
-      expect(storageRemoveMock).toHaveBeenCalledWith("optibot_rpa");
+      expect(storageRemoveMock).toHaveBeenCalledWith("audibot_rpa");
       expect(globalThis.performSmartFill).not.toHaveBeenCalled();
       expect(globalThis.replayParcours).not.toHaveBeenCalled();
     });
@@ -212,14 +212,14 @@ describe("checkAndStartRPA", () => {
     it("expires when timestamp is very old (1 hour)", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() - 3600000 },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() - 3600000 },
         });
       });
 
       checkAndStartRPA();
 
-      expect(storageRemoveMock).toHaveBeenCalledWith("optibot_rpa");
+      expect(storageRemoveMock).toHaveBeenCalledWith("audibot_rpa");
       expect(globalThis.performSmartFill).not.toHaveBeenCalled();
     });
   });
@@ -227,20 +227,20 @@ describe("checkAndStartRPA", () => {
   /* ── Storage interaction ───────────────────────────────────────────── */
 
   describe("storage interaction", () => {
-    it("reads optibot_auth and optibot_rpa keys", () => {
+    it("reads audibot_auth and audibot_rpa keys", () => {
       storageGetMock.mockImplementation((keys, cb) => { cb({}); });
 
       checkAndStartRPA();
 
       expect(storageGetMock).toHaveBeenCalledWith(
-        ["optibot_auth", "optibot_rpa"],
+        ["audibot_auth", "audibot_rpa"],
         expect.any(Function)
       );
     });
 
-    it("does nothing when optibot_rpa is missing from storage", () => {
+    it("does nothing when audibot_rpa is missing from storage", () => {
       storageGetMock.mockImplementation((keys, cb) => {
-        cb({ optibot_auth: {} });
+        cb({ audibot_auth: {} });
       });
 
       checkAndStartRPA();
@@ -249,9 +249,9 @@ describe("checkAndStartRPA", () => {
       expect(globalThis.performSmartFill).not.toHaveBeenCalled();
     });
 
-    it("does nothing when optibot_rpa has no target", () => {
+    it("does nothing when audibot_rpa has no target", () => {
       storageGetMock.mockImplementation((keys, cb) => {
-        cb({ optibot_auth: {}, optibot_rpa: { ts: Date.now() } });
+        cb({ audibot_auth: {}, audibot_rpa: { ts: Date.now() } });
       });
 
       checkAndStartRPA();
@@ -259,11 +259,11 @@ describe("checkAndStartRPA", () => {
       expect(globalThis.performSmartFill).not.toHaveBeenCalled();
     });
 
-    it("removes optibot_rpa from storage before launching parcours replay", () => {
+    it("removes audibot_rpa from storage before launching parcours replay", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: {
+          audibot_auth: {},
+          audibot_rpa: {
             target: "viamedis",
             ts: Date.now(),
             parcours: { etapes: [{ action: "click", selector: "#btn" }] },
@@ -274,24 +274,24 @@ describe("checkAndStartRPA", () => {
 
       checkAndStartRPA();
 
-      expect(storageRemoveMock).toHaveBeenCalledWith("optibot_rpa");
+      expect(storageRemoveMock).toHaveBeenCalledWith("audibot_rpa");
       expect(globalThis.replayParcours).toHaveBeenCalledWith(
         { etapes: [{ action: "click", selector: "#btn" }] },
         { nom: "DUPONT" }
       );
     });
 
-    it("removes optibot_rpa from storage before fallback smart fill", () => {
+    it("removes audibot_rpa from storage before fallback smart fill", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
       checkAndStartRPA();
 
-      expect(storageRemoveMock).toHaveBeenCalledWith("optibot_rpa");
+      expect(storageRemoveMock).toHaveBeenCalledWith("audibot_rpa");
       expect(globalThis.performSmartFill).toHaveBeenCalled();
     });
   });
@@ -302,8 +302,8 @@ describe("checkAndStartRPA", () => {
     it("calls replayParcours when parcours with etapes is present", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: {
+          audibot_auth: {},
+          audibot_rpa: {
             target: "viamedis",
             ts: Date.now(),
             parcours: { etapes: [{ action: "fill", selector: "#nom", value: "{{nom}}" }] },
@@ -324,8 +324,8 @@ describe("checkAndStartRPA", () => {
     it("falls back to performSmartFill when parcours is absent", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
@@ -338,8 +338,8 @@ describe("checkAndStartRPA", () => {
     it("falls back to performSmartFill when parcours has no etapes", () => {
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now(), parcours: {} },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now(), parcours: {} },
         });
       });
 
@@ -360,8 +360,8 @@ describe("checkAndStartRPA", () => {
 
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 
@@ -373,7 +373,7 @@ describe("checkAndStartRPA", () => {
       );
       expect(storageSetMock).toHaveBeenCalledWith(
         expect.objectContaining({
-          optibot_rpa: expect.objectContaining({ login_shown: true }),
+          audibot_rpa: expect.objectContaining({ login_shown: true }),
         })
       );
     });
@@ -383,8 +383,8 @@ describe("checkAndStartRPA", () => {
 
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now(), login_shown: true },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now(), login_shown: true },
         });
       });
 
@@ -402,8 +402,8 @@ describe("checkAndStartRPA", () => {
 
       storageGetMock.mockImplementation((keys, cb) => {
         cb({
-          optibot_auth: {},
-          optibot_rpa: { target: "viamedis", ts: Date.now() },
+          audibot_auth: {},
+          audibot_rpa: { target: "viamedis", ts: Date.now() },
         });
       });
 

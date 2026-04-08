@@ -89,7 +89,7 @@ export default {
         if (prescDateInput) ultraFill(prescDateInput, dateOrdo);
       }
 
-      console.info("[OptiBot Solimut] filled — hasNSS:", !!effectiveNSS, "| hasDob:", !!dob, "| hasRpps:", !!rpps, "| hasDateOrdo:", !!dateOrdo);
+      console.info("[AudiBot Solimut] filled — hasNSS:", !!effectiveNSS, "| hasDob:", !!dob, "| hasRpps:", !!rpps, "| hasDateOrdo:", !!dateOrdo);
       return true;
     },
     synchroniser: async () => false

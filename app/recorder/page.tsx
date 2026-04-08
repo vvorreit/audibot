@@ -7,15 +7,15 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Guide Recorder — OptiBot",
-  description: "Apprenez à enregistrer un parcours sur n'importe quel portail mutuelle avec le Recorder OptiBot.",
+  title: "Guide Recorder — AudiBot",
+  description: "Apprenez à enregistrer un parcours sur n'importe quel portail mutuelle avec le Recorder AudiBot.",
 };
 
 const steps = [
   {
     num: "01",
     icon: ScanLine,
-    color: "bg-blue-600",
+    color: "bg-indigo-600",
     title: "Préparez vos données",
     content: (
       <>
@@ -24,13 +24,13 @@ const steps = [
         </p>
         <ul className="space-y-2">
           {[
-            "Scannez une carte mutuelle + ordonnance dans le dashboard",
+            "Scannez une carte mutuelle + prescription ORL dans le dashboard",
             "Cliquez \"Copier\" — les données sont prêtes en mémoire",
             "Le Recorder détecte automatiquement les variables (NSS, nom, date...)",
             "Sans données copiées, les champs seront marqués ⚠️ statique",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2.5 text-sm text-slate-600">
-              <CheckCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
               <span className="font-medium">{item}</span>
             </li>
           ))}
@@ -55,7 +55,7 @@ const steps = [
             "Ne commencez pas à remplir avant de lancer l'enregistrement",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2.5 text-sm text-slate-600">
-              <CheckCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
               <span className="font-medium">{item}</span>
             </li>
           ))}
@@ -71,7 +71,7 @@ const steps = [
     content: (
       <>
         <p className="text-slate-500 font-medium leading-relaxed mb-4">
-          Cliquez sur l&apos;icône OptiBot dans Chrome → bouton <strong>⏺ Enregistrer</strong>.
+          Cliquez sur l&apos;icône AudiBot dans Chrome → bouton <strong>⏺ Enregistrer</strong>.
         </p>
         <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
@@ -86,7 +86,7 @@ const steps = [
             "Badge orange ⚠️ = valeur statique — à mapper manuellement dans le wizard",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2.5 text-sm text-slate-600">
-              <CheckCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
               <span className="font-medium">{item}</span>
             </li>
           ))}
@@ -97,7 +97,7 @@ const steps = [
   {
     num: "04",
     icon: MousePointerClick,
-    color: "bg-blue-600",
+    color: "bg-indigo-600",
     title: "Effectuez le parcours normalement",
     content: (
       <>
@@ -130,7 +130,7 @@ const steps = [
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
           <p className="text-sm font-black text-amber-800">⚠️ Arrêtez-vous AVANT le bouton Soumettre / Confirmer / Envoyer</p>
-          <p className="text-xs text-amber-700 font-medium mt-1">Le Recorder ne doit jamais enregistrer la soumission finale — l&apos;opticien valide toujours manuellement.</p>
+          <p className="text-xs text-amber-700 font-medium mt-1">Le Recorder ne doit jamais enregistrer la soumission finale — l&apos;audioprothésiste valide toujours manuellement.</p>
         </div>
       </>
     ),
@@ -147,9 +147,9 @@ const steps = [
         </p>
         <div className="space-y-3">
           {[
-            { step: "1", title: "Nommez le portail", desc: "Ex : \"Malakoff Humanis — PEC Optique\"" },
+            { step: "1", title: "Nommez le portail", desc: "Ex : \"Malakoff Humanis — PEC Audio\"" },
             { step: "2", title: "Vérifiez les champs", desc: "Pour les ⚠️ orange, sélectionnez la bonne variable dans le dropdown. Supprimez les étapes incorrectes avec 🗑️" },
-            { step: "3", title: "Envoyez à OptiBot", desc: "Le parcours est soumis pour validation — il sera disponible après revue." },
+            { step: "3", title: "Envoyez à AudiBot", desc: "Le parcours est soumis pour validation — il sera disponible après revue." },
           ].map((s) => (
             <div key={s.step} className="flex items-start gap-3 bg-slate-50 rounded-2xl p-4">
               <span className="w-7 h-7 bg-violet-600 text-white rounded-full flex items-center justify-center text-xs font-black shrink-0">{s.step}</span>
@@ -166,7 +166,7 @@ const steps = [
 ];
 
 const criteria = [
-  { icon: "✅", color: "text-green-600", title: "Parcours idéal", items: ["5 à 15 étapes", "Toutes les variables en vert ✅", "Champs clés couverts : NSS, nom, date ordonnance", "Chaque page bien chargée avant le clic suivant"] },
+  { icon: "✅", color: "text-green-600", title: "Parcours idéal", items: ["5 à 15 étapes", "Toutes les variables en vert ✅", "Champs clés couverts : NSS, nom, date prescription", "Chaque page bien chargée avant le clic suivant"] },
   { icon: "⚠️", color: "text-amber-600", title: "À retravailler", items: ["Moins de 3 étapes (trop partiel)", "Plus de 50% de champs en orange statique", "Étapes en doublon (même champ 2 fois)", "Soumission finale enregistrée"] },
 ];
 
@@ -178,10 +178,10 @@ export default function RecorderGuidePage() {
       <nav className="bg-slate-900 text-white px-6 py-5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
-              <Image src="/icon.png" alt="OptiBot" width={28} height={28} className="rounded-lg" priority />
+            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+              <Image src="/icon.png" alt="AudiBot" width={28} height={28} className="rounded-lg" priority />
             </div>
-            <span className="text-lg font-bold tracking-tight uppercase">OptiBot</span>
+            <span className="text-lg font-bold tracking-tight uppercase">AudiBot</span>
           </Link>
           <Link href="/extension" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-xs font-black uppercase tracking-widest transition-colors">
             <ArrowLeft className="w-4 h-4" /> Retour
@@ -193,14 +193,14 @@ export default function RecorderGuidePage() {
       <section className="py-20 px-6 bg-slate-50 border-b border-slate-100">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200 text-red-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-            <Video className="w-3.5 h-3.5" /> Recorder OptiBot
+            <Video className="w-3.5 h-3.5" /> Recorder AudiBot
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-6 leading-tight">
             Enregistrez n&apos;importe quel portail<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">en 5 minutes</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Effectuez le parcours manuellement une fois — OptiBot le rejoue automatiquement pour tous les dossiers suivants, et le partage à tous les opticiens.
+            Effectuez le parcours manuellement une fois — AudiBot le rejoue automatiquement pour tous les dossiers suivants, et le partage à tous les audioprothésistes.
           </p>
         </div>
       </section>
@@ -209,7 +209,7 @@ export default function RecorderGuidePage() {
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-3 mb-12">
-            <BookOpen className="w-5 h-5 text-blue-600" />
+            <BookOpen className="w-5 h-5 text-indigo-600" />
             <h2 className="text-2xl font-black tracking-tight">Guide pas à pas</h2>
           </div>
 
@@ -245,7 +245,7 @@ export default function RecorderGuidePage() {
       <section className="py-16 px-6 bg-slate-50 border-t border-slate-100">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-3 mb-10">
-            <Zap className="w-5 h-5 text-blue-600" />
+            <Zap className="w-5 h-5 text-indigo-600" />
             <h2 className="text-2xl font-black tracking-tight">Critères d&apos;un bon parcours</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -277,7 +277,7 @@ export default function RecorderGuidePage() {
               { icon: "📋", tip: "Pour les selects et dropdowns : sélectionnez l'option avec la vraie valeur patient, pas une valeur fictive" },
               { icon: "🗑️", tip: "Si vous faites une erreur, supprimez l'étape dans le wizard étape 2 avec le bouton 🗑️ avant d'envoyer" },
               { icon: "🔄", tip: "Un parcours peut être enregistré plusieurs fois — la version la plus récente validée est utilisée" },
-              { icon: "🌍", tip: "Votre parcours validé est partagé automatiquement à tous les opticiens OptiBot sur ce portail" },
+              { icon: "🌍", tip: "Votre parcours validé est partagé automatiquement à tous les audioprothésistes AudiBot sur ce portail" },
             ].map((t) => (
               <div key={t.tip} className="flex items-start gap-3 bg-slate-50 rounded-2xl p-4 border border-slate-100">
                 <span className="text-2xl shrink-0">{t.icon}</span>
@@ -294,7 +294,7 @@ export default function RecorderGuidePage() {
           <h2 className="text-2xl font-black tracking-tight mb-3">Prêt à enregistrer votre premier parcours ?</h2>
           <p className="text-slate-400 font-medium mb-8">Installez l&apos;extension, ouvrez votre portail mutuelle, et c&apos;est parti.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/extension" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all uppercase tracking-widest text-xs shadow-xl shadow-blue-600/20">
+            <Link href="/extension" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all uppercase tracking-widest text-xs shadow-xl shadow-indigo-600/20">
               Installer l&apos;extension
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -313,7 +313,7 @@ export default function RecorderGuidePage() {
             <Link href="/fonctionnalites" className="hover:text-white transition-colors">Fonctionnalités</Link>
             <Link href="/legal/confidentialite" className="hover:text-white transition-colors">Confidentialité</Link>
           </div>
-          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">© 2026 OptiBot</div>
+          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">© 2026 AudiBot</div>
         </div>
       </footer>
 

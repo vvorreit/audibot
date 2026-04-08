@@ -1,5 +1,5 @@
-/* ── OptiBot — Dictionnaires d'aliases pour ERP optique ──────────────── */
-/* Chaque cle est le nom canonique du champ OptiBot.                      */
+/* ── AudiBot — Dictionnaires d'aliases pour ERP optique ──────────────── */
+/* Chaque cle est le nom canonique du champ AudiBot.                      */
 /* Les valeurs sont les variations connues dans les ERP du marche.         */
 /*                                                                         */
 /* ERP couverts : Cosium, Optifid, Optimum (LBO), EasyVista, WinOptics,   */

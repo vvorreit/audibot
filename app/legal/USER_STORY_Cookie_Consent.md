@@ -9,7 +9,7 @@
 
 ## Story
 
-> **En tant que** visiteur du site optibot.fr,  
+> **En tant que** visiteur du site audibot.fr,  
 > **je veux** être informé des cookies utilisés et pouvoir choisir de les accepter ou les refuser,  
 > **afin que** mon consentement soit recueilli de manière libre, éclairée et explicite avant tout dépôt de cookie non essentiel.
 
@@ -32,7 +32,7 @@ La CNIL exige un consentement **préalable, libre, éclairé et non ambigu** ava
 **Comportement attendu :**
 - Afficher un bandeau en bas de page (ou modale centrée) avec :
   - Titre : *"Nous utilisons des cookies"*
-  - Texte court : *"OptiBot utilise Google Analytics pour mesurer l'audience du site. Aucun cookie n'est déposé sans votre accord."*
+  - Texte court : *"AudiBot utilise Google Analytics pour mesurer l'audience du site. Aucun cookie n'est déposé sans votre accord."*
   - Lien vers la politique de confidentialité : `/legal/confidentialite`
   - **Bouton "Accepter"** (style primaire)
   - **Bouton "Refuser"** (style secondaire — même visibilité qu'Accepter)
@@ -49,12 +49,12 @@ La CNIL exige un consentement **préalable, libre, éclairé et non ambigu** ava
 ### ✅ AC2 — Comportement selon le choix
 
 **Si Accepter :**
-- Stocker le consentement dans un cookie : `optibot_consent=granted` (durée : 13 mois max)
+- Stocker le consentement dans un cookie : `audibot_consent=granted` (durée : 13 mois max)
 - Charger Google Analytics (`gtag.js`) **après** le consentement
 - Ne plus afficher le bandeau lors des visites suivantes
 
 **Si Refuser :**
-- Stocker le refus : `optibot_consent=denied` (durée : 13 mois max)
+- Stocker le refus : `audibot_consent=denied` (durée : 13 mois max)
 - **Ne pas charger** Google Analytics
 - Ne plus afficher le bandeau lors des visites suivantes
 - L'utilisateur peut toujours accéder au site normalement
@@ -105,10 +105,10 @@ La CNIL exige un consentement **préalable, libre, éclairé et non ambigu** ava
 ### ✅ AC5 — Cookie de consentement
 
 ```
-Nom        : optibot_consent
+Nom        : audibot_consent
 Valeur     : "granted" | "denied"
 Durée      : 13 mois maximum (recommandation CNIL)
-Domaine    : .optibot.fr
+Domaine    : .audibot.fr
 SameSite   : Lax
 Secure     : true
 ```
@@ -122,7 +122,7 @@ Les cookies suivants sont **exemptés de consentement** (strictement nécessaire
 | Cookie | Finalité | Durée |
 |---|---|---|
 | Cookie de session / auth | Maintien de la connexion | Session |
-| `optibot_consent` | Mémorisation du choix cookies | 13 mois |
+| `audibot_consent` | Mémorisation du choix cookies | 13 mois |
 | CSRF token | Sécurité des formulaires | Session |
 
 Tout autre cookie doit être soumis à consentement.
@@ -145,7 +145,7 @@ Tout autre cookie doit être soumis à consentement.
 - [ ] Boutons "Accepter" et "Refuser" au même niveau de visibilité
 - [ ] Google Analytics **non chargé** avant consentement
 - [ ] Google Analytics chargé **uniquement** après "Accepter"
-- [ ] Cookie `optibot_consent` stocké avec durée 13 mois
+- [ ] Cookie `audibot_consent` stocké avec durée 13 mois
 - [ ] Lien "Gérer mes cookies" fonctionnel dans le footer
 - [ ] Retrait du consentement désactive GA immédiatement
 - [ ] Vérifier que GA n'est pas déjà chargé inconditionnellement dans le layout

@@ -96,7 +96,7 @@ export default function ScanLandingPage() {
         <div className="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mb-6">
           <Smartphone className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl font-black mb-3">OptiBot Scan</h1>
+        <h1 className="text-2xl font-black mb-3">AudiBot Scan</h1>
         <p className="text-slate-400 font-medium mb-8 max-w-xs">
           Connectez-vous pour scanner vos cartes mutuelles et ordonnances depuis votre téléphone.
         </p>
@@ -117,9 +117,9 @@ export default function ScanLandingPage() {
       <header className="px-6 py-5 flex items-center justify-between border-b border-white/10">
         <Link href="/dashboard" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
-            <Image src="/icon.png" alt="OptiBot" width={24} height={24} className="rounded-lg" />
+            <Image src="/icon.png" alt="AudiBot" width={24} height={24} className="rounded-lg" />
           </div>
-          <span className="text-sm font-black uppercase tracking-tight">OptiBot Scan</span>
+          <span className="text-sm font-black uppercase tracking-tight">AudiBot Scan</span>
         </Link>
         <Link href="/dashboard" className="text-xs font-bold text-slate-400 hover:text-white transition-colors">
           Dashboard →

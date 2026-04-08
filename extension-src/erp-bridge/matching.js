@@ -1,4 +1,4 @@
-/* ── OptiBot — ERP Bridge: Field matching ────────────────────────────── */
+/* ── AudiBot — ERP Bridge: Field matching ────────────────────────────── */
 /* Matches DOM elements against alias dictionaries.                       */
 
 import { normalizeAlias, collectSignals } from "./dom.js";

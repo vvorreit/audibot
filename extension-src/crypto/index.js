@@ -1,4 +1,4 @@
-/* OptiBot — Chiffrement AES-256-GCM des donnees patient dans chrome.storage */
+/* AudiBot — Chiffrement AES-256-GCM des donnees patient dans chrome.storage */
 /* Cle derivee d'un secret local (jamais transmis) via PBKDF2                */
 /* Salt aleatoire par device, genere une fois et stocke dans chrome.storage   */
 /* Le syncToken sert UNIQUEMENT a l'authentification API — jamais au chiffrement */
@@ -6,10 +6,10 @@
 /* Recuperer ou creer le salt aleatoire du device */
 function getOrCreateSalt() {
   return new Promise(function(resolve) {
-    chrome.storage.local.get(["optibot_crypto_salt"], function(result) {
-      if (result.optibot_crypto_salt) {
+    chrome.storage.local.get(["audibot_crypto_salt"], function(result) {
+      if (result.audibot_crypto_salt) {
         /* Reconvertir base64 → Uint8Array */
-        var raw = atob(result.optibot_crypto_salt);
+        var raw = atob(result.audibot_crypto_salt);
         var arr = new Uint8Array(raw.length);
         for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
         resolve(arr);
@@ -17,7 +17,7 @@ function getOrCreateSalt() {
         /* Generer un salt aleatoire de 32 bytes */
         var salt = crypto.getRandomValues(new Uint8Array(32));
         var b64 = btoa(String.fromCharCode.apply(null, salt));
-        chrome.storage.local.set({ optibot_crypto_salt: b64 });
+        chrome.storage.local.set({ audibot_crypto_salt: b64 });
         resolve(salt);
       }
     });
@@ -27,14 +27,14 @@ function getOrCreateSalt() {
 /* Secret local de chiffrement — genere une fois, ne quitte jamais le device */
 function getOrCreateEncryptionSecret() {
   return new Promise(function(resolve) {
-    chrome.storage.local.get(["optibot_encryption_secret"], function(result) {
-      if (result.optibot_encryption_secret) {
-        resolve(result.optibot_encryption_secret);
+    chrome.storage.local.get(["audibot_encryption_secret"], function(result) {
+      if (result.audibot_encryption_secret) {
+        resolve(result.audibot_encryption_secret);
       } else {
         /* Generer un secret aleatoire de 64 chars hex */
         var arr = crypto.getRandomValues(new Uint8Array(32));
         var hex = Array.from(arr).map(function(b) { return b.toString(16).padStart(2, "0"); }).join("");
-        chrome.storage.local.set({ optibot_encryption_secret: hex });
+        chrome.storage.local.set({ audibot_encryption_secret: hex });
         resolve(hex);
       }
     });
@@ -122,7 +122,7 @@ async function decryptData(encryptedStr) {
       /* Re-chiffrer avec le nouveau secret local */
       var reEncrypted = await encryptData(result);
       if (reEncrypted) {
-        chrome.storage.local.set({ optibot_cache: reEncrypted });
+        chrome.storage.local.set({ audibot_cache: reEncrypted });
       }
       return result;
     } catch(e2) {
@@ -134,19 +134,19 @@ async function decryptData(encryptedStr) {
 /* Helper : lire le syncToken depuis le storage */
 function getSyncToken() {
   return new Promise(function(resolve) {
-    chrome.storage.local.get(["optibot_auth", "optibot_cache"], function(result) {
-      /* Nouvelle cle optibot_auth */
-      if (result.optibot_auth && result.optibot_auth.syncToken) {
-        resolve(result.optibot_auth.syncToken);
+    chrome.storage.local.get(["audibot_auth", "audibot_cache"], function(result) {
+      /* Nouvelle cle audibot_auth */
+      if (result.audibot_auth && result.audibot_auth.syncToken) {
+        resolve(result.audibot_auth.syncToken);
         return;
       }
-      /* Migration : ancienne cle dans optibot_cache.current.syncToken */
-      var oldCache = result.optibot_cache;
+      /* Migration : ancienne cle dans audibot_cache.current.syncToken */
+      var oldCache = result.audibot_cache;
       if (oldCache && typeof oldCache === "object" && oldCache.current && oldCache.current.syncToken) {
         var token = oldCache.current.syncToken;
-        /* Migrer vers optibot_auth */
+        /* Migrer vers audibot_auth */
         chrome.storage.local.set({
-          optibot_auth: {
+          audibot_auth: {
             syncToken: token,
             plan: oldCache.current.plan || "FREE",
             isPro: oldCache.current.isPro || false,
@@ -162,11 +162,11 @@ function getSyncToken() {
   });
 }
 
-/* Helper : lire et dechiffrer optibot_cache */
+/* Helper : lire et dechiffrer audibot_cache */
 async function readEncryptedCache() {
   return new Promise(function(resolve) {
-    chrome.storage.local.get(["optibot_cache"], async function(result) {
-      var raw = result.optibot_cache;
+    chrome.storage.local.get(["audibot_cache"], async function(result) {
+      var raw = result.audibot_cache;
       if (!raw) { resolve(null); return; }
       if (typeof raw === "object" && raw.current) {
         /* Donnees non chiffrees (migration depuis ancien format) */
@@ -180,7 +180,7 @@ async function readEncryptedCache() {
         }
         /* Re-chiffrer avec le secret local */
         var encrypted = await encryptData(migrated);
-        if (encrypted) chrome.storage.local.set({ optibot_cache: encrypted });
+        if (encrypted) chrome.storage.local.set({ audibot_cache: encrypted });
         resolve(migrated);
         return;
       }
@@ -188,7 +188,7 @@ async function readEncryptedCache() {
         var decrypted = await decryptData(raw);
         if (decrypted) { resolve(decrypted); return; }
         /* Dechiffrement echoue — donnees corrompues ou cle changee */
-        chrome.storage.local.remove("optibot_cache");
+        chrome.storage.local.remove("audibot_cache");
         resolve(null);
         return;
       }
@@ -197,15 +197,15 @@ async function readEncryptedCache() {
   });
 }
 
-/* Helper : chiffrer et ecrire optibot_cache */
+/* Helper : chiffrer et ecrire audibot_cache */
 async function writeEncryptedCache(cacheObj) {
   var encrypted = await encryptData(cacheObj);
   if (encrypted === null) {
-    console.warn("[OptiBot] writeEncryptedCache: chiffrement échoué, données non sauvegardées.");
+    console.warn("[AudiBot] writeEncryptedCache: chiffrement échoué, données non sauvegardées.");
     return;
   }
   return new Promise(function(resolve) {
-    chrome.storage.local.set({ optibot_cache: encrypted }, resolve);
+    chrome.storage.local.set({ audibot_cache: encrypted }, resolve);
   });
 }
 

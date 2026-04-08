@@ -16,7 +16,7 @@ export function FaviconWithFallback({ name, favicon }: { name: string; favicon: 
           if (fallback) fallback.style.display = "flex";
         }}
       />
-      <span className="w-8 h-8 rounded bg-blue-100 text-blue-600 text-xs font-black items-center justify-center hidden">
+      <span className="w-8 h-8 rounded bg-indigo-100 text-indigo-600 text-xs font-black items-center justify-center hidden">
         {name.slice(0, 2).toUpperCase()}
       </span>
     </span>

@@ -12,7 +12,7 @@ function personalizeHtmlForTest(html: string, firstName: string): string {
   let result = html.replace(/\[Prénom\]/gi, greeting);
 
   result = result.replace(
-    /href="(https?:\/\/[^"]*(?:optibot|audibot)\.fr[^"]*)"/gi,
+    /href="(https?:\/\/[^"]*(?:audibot)\.fr[^"]*)"/gi,
     (_match, url) => `href="${getTrackingLink("TEST", url)}"`,
   );
 

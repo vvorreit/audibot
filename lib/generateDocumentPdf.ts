@@ -15,7 +15,7 @@ export async function generateDocumentPdf(data: {
   const lines: string[] = []
 
   // Header
-  lines.push('OPTIBOT — Compte-rendu bilan visuel')
+  lines.push('AUDIBOT — Compte-rendu bilan visuel')
   lines.push(`Date : ${dateStr}`)
   lines.push(`Bilan : ${shortId}`)
   lines.push('')
@@ -70,7 +70,7 @@ export async function generateDocumentPdf(data: {
 
   // Footer
   lines.push('---')
-  lines.push('Document confidentiel OptiBot — Donnees transmises de facon chiffree')
+  lines.push('Document confidentiel AudiBot — Donnees transmises de facon chiffree')
 
   return buildPdf(lines)
 }

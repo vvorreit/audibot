@@ -1,4 +1,4 @@
-# Règles de développement OptiBot
+# Règles de développement AudiBot
 
 ## ⛔ CHECKLIST OBLIGATOIRE AVANT TOUT CODE
 
@@ -11,7 +11,7 @@ Avant d'écrire ou modifier du code, je dois vérifier ces points dans l'ordre :
 5. **Modification du Dockerfile ?** → Format `ENV key=value` uniquement
 6. **Nouvelle migration Prisma ?** → Uniquement `ALTER TABLE` / `CREATE INDEX`, jamais `CREATE TABLE`
 7. **Bookmarklet / code inline minifié ?** → Zéro commentaire `//`, uniquement `/* */`
-8. **Adresse email dans le code ?** → Toujours `contact@optibot.fr`, jamais une autre adresse
+8. **Adresse email dans le code ?** → Toujours `contact@audibot.fr`, jamais une autre adresse
 
 ---
 
@@ -81,8 +81,8 @@ Les tables `User`, `Account`, `Session`, `Team`, `Invitation`, `VerificationToke
 
 ### Commandes utiles en cas de problème P3009
 ```bash
-docker exec optibot-app npx prisma migrate resolve --rolled-back <nom_migration>
-docker exec optibot-app npx prisma migrate resolve --applied <nom_migration>
+docker exec audibot-app npx prisma migrate resolve --rolled-back <nom_migration>
+docker exec audibot-app npx prisma migrate resolve --applied <nom_migration>
 ```
 
 ---
@@ -120,6 +120,6 @@ ENV NODE_ENV production
 - **Framework** : Next.js 16 (App Router, standalone output)
 - **Auth** : NextAuth v4 avec PrismaAdapter, Google OAuth + Credentials
 - **DB** : PostgreSQL via Prisma (docker service `db`)
-- **Mail** : Resend SDK — `contact@optibot.fr` — clé `RESEND_API_KEY`
+- **Mail** : Resend SDK — `contact@audibot.fr` — clé `RESEND_API_KEY`
 - **Paiement** : Stripe (checkout + portal)
 - **Infra** : CentOS + Docker Compose + GitHub Actions CI/CD

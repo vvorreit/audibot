@@ -1,12 +1,12 @@
-/* OptiBot — Rejet Detector v1.0
+/* AudiBot — Rejet Detector v1.0
    Content script for auto-detecting rejections on mutual insurance portals.
    Fetches selector config from remote API and scans pages for rejections.
-   RGPD: No sensitive data stored locally. Data sent to OptiBot API only. */
+   RGPD: No sensitive data stored locally. Data sent to AudiBot API only. */
 
 (function () {
   "use strict";
 
-  var API_BASE = "https://optibot.fr";
+  var API_BASE = "https://audibot.fr";
   var CONFIG_URL = API_BASE + "/api/extension/rejet-config";
   var REJET_URL = API_BASE + "/api/extension/rejet-detecte";
   var CHECK_INTERVAL = 10000; /* 10 seconds */
@@ -46,10 +46,10 @@
   function getSyncToken() {
     return new Promise(function (resolve) {
       if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
-        /* Lire depuis optibot_auth (clé principale depuis la migration chiffrement) */
-        chrome.storage.local.get(["optibot_auth"], function (result) {
-          if (result.optibot_auth && result.optibot_auth.syncToken) {
-            resolve(result.optibot_auth.syncToken);
+        /* Lire depuis audibot_auth (clé principale depuis la migration chiffrement) */
+        chrome.storage.local.get(["audibot_auth"], function (result) {
+          if (result.audibot_auth && result.audibot_auth.syncToken) {
+            resolve(result.audibot_auth.syncToken);
             return;
           }
           resolve(null);
@@ -68,7 +68,7 @@
         return data;
       })
       .catch(function (err) {
-        console.warn("[OptiBot Rejet] Config fetch failed:", err);
+        console.warn("[AudiBot Rejet] Config fetch failed:", err);
         return null;
       });
   }
@@ -148,21 +148,21 @@
 
   /* ── Historique local (pas cote serveur pour les techniques) ──────────── */
   function storeRejetLocally(rejet) {
-    chrome.storage.local.get(["optibot_rejet_history"], function(result) {
-      var history = result.optibot_rejet_history || [];
+    chrome.storage.local.get(["audibot_rejet_history"], function(result) {
+      var history = result.audibot_rejet_history || [];
       history.unshift({
         portail: rejet.portail, motif: rejet.motif, type: rejet.rejetType || "definitif",
         numeroDossier: rejet.numeroDossier, date: rejet.dateRejet, ts: Date.now()
       });
       if (history.length > 100) history = history.slice(0, 100);
-      chrome.storage.local.set({ optibot_rejet_history: history });
+      chrome.storage.local.set({ audibot_rejet_history: history });
     });
   }
 
   /* ── Badge rouge ──────────────────────────────────────────────────────── */
   function notifyBadgeRejet(rejet) {
     chrome.runtime.sendMessage({
-      type: "OPTIBOT_REJET_BADGE",
+      type: "AUDIBOT_REJET_BADGE",
       rejetType: rejet.rejetType || "definitif",
     });
   }
@@ -172,7 +172,7 @@
     var noteText = "REJET SECU — " + (rejet.motif || "Motif non precise").substring(0, 100) +
       (rejet.numeroDossier ? " | Dossier : " + rejet.numeroDossier : "") +
       " | " + new Date().toLocaleDateString("fr-FR");
-    chrome.runtime.sendMessage({ type: "OPTIBOT_COSIUM_INJECT_NOTE", note: noteText });
+    chrome.runtime.sendMessage({ type: "AUDIBOT_COSIUM_INJECT_NOTE", note: noteText });
   }
 
   function scanForRejets() {
@@ -220,7 +220,7 @@
   function sendRejets(rejets) {
     getSyncToken().then(function (syncToken) {
       if (!syncToken) {
-        console.warn("[OptiBot Rejet] Pas de syncToken, rejets non envoyes");
+        console.warn("[AudiBot Rejet] Pas de syncToken, rejets non envoyes");
         return;
       }
 
@@ -240,7 +240,7 @@
           .then(function (res) { return res.json(); })
           .then(function (data) {
             if (data.ok) {
-              console.info("[OptiBot Rejet] Rejet envoye:", rejet.numeroDossier, data.matched ? "(match)" : "(no match)");
+              console.info("[AudiBot Rejet] Rejet envoye:", rejet.numeroDossier, data.matched ? "(match)" : "(no match)");
             }
           })
           .catch(function () { /* silent */ });
@@ -252,9 +252,9 @@
     currentPortail = getPortailFromUrl(window.location.href);
 
     if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.get(["optibot_rejet_enabled", "optibot_rejet_consent"], function (result) {
-        if (result.optibot_rejet_enabled === false) { enabled = false; return; }
-        if (result.optibot_rejet_consent !== true) { enabled = false; return; }
+      chrome.storage.local.get(["audibot_rejet_enabled", "audibot_rejet_consent"], function (result) {
+        if (result.audibot_rejet_enabled === false) { enabled = false; return; }
+        if (result.audibot_rejet_consent !== true) { enabled = false; return; }
         startDetection();
       });
     } else {

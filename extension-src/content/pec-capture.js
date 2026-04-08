@@ -91,13 +91,13 @@ function capturePECIfPresent() {
         var encrypted = await encryptData(result);
         if (!encrypted) return;
         chrome.runtime.sendMessage({
-          type: "OPTIBOT_PEC_CAPTURED",
+          type: "AUDIBOT_PEC_CAPTURED",
           encryptedPayload: encrypted,
           source: window.location.hostname
         });
         showRPAToast("PEC capturee — basculez sur votre logiciel pour injecter", "success");
       } catch(e) {
-        console.warn("[OptiBot] PEC capture encryption failed:", e);
+        console.warn("[AudiBot] PEC capture encryption failed:", e);
       }
     })();
   }

@@ -13,31 +13,30 @@ export function JsonLd({ data }: { data: object }) {
 export const softwareAppSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "OptiBot",
+  name: "AudiBot",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   offers: {
     "@type": "Offer",
-    price: "69.90",
+    price: "32.90",
     priceCurrency: "EUR",
     priceSpecification: {
       "@type": "UnitPriceSpecification",
-      price: "69.90",
+      price: "32.90",
       priceCurrency: "EUR",
       billingIncrement: 1,
       unitCode: "MON",
     },
   },
   description:
-    "OptiBot automatise la saisie sur les portails mutuelles et ERP optiques. Zéro donnée patient stockée, compatible avec 47 portails mutuelles et ERP (Almerys, Wemind, Viamedis, Cosium et +).",
-  url: "https://optibot.fr",
-  screenshot: "https://optibot.fr/icon.png",
+    "AudiBot automatise la saisie sur les portails mutuelles et ERP audio. Z\u00e9ro donn\u00e9e patient stock\u00e9e, compatible avec Auditdata, Almerys, Viamedis, Ameli Pro et plus.",
+  url: "https://audibot.fr",
   featureList: [
-    "Aucune donnée patient envoyée sur nos serveurs",
-    "Autofill 47 portails mutuelles (Almerys, Wemind, Viamedis, Génération…)",
-    "Autofill 10 ERP optiques (Cosium, WinOptics, Optimum, PVO…)",
-    "Extension Chrome — remplissage en 1 clic",
-    "Essai gratuit 15 jours sans carte bancaire",
+    "Aucune donn\u00e9e patient envoy\u00e9e sur nos serveurs",
+    "Autofill portails mutuelles (Almerys, Viamedis, G\u00e9n\u00e9ration, Wemind\u2026)",
+    "Autofill ERP audio (Auditdata, Noah\u2026)",
+    "Extension Chrome \u2014 remplissage en 1 clic",
+    "Extraction automatique prescription ORL & audiogramme",
   ],
 };
 

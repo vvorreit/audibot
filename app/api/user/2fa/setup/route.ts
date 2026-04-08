@@ -12,7 +12,7 @@ export async function POST() {
 
   // Génère un nouveau secret
   const secretObj = speakeasy.generateSecret({
-    name: `OptiBot (${session.user.email})`,
+    name: `AudiBot (${session.user.email})`,
     length: 20,
   });
 

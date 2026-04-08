@@ -6,7 +6,7 @@ export function getCorsHeaders(origin?: string | null) {
   const brand = getBrand();
   const allowed =
     origin?.startsWith("chrome-extension://") ||
-    origin?.includes("optibot.fr") ||
+    origin?.includes("audibot.fr") ||
     origin?.includes("audibot.fr") ||
     (IS_DEV && origin?.includes("localhost"));
   return {
@@ -19,7 +19,7 @@ export function getCorsHeaders(origin?: string | null) {
 /**
  * CORS ouverts pour les routes appelées depuis les portails mutuelles tiers.
  * Utilisé par : /api/bookmarklet/ping, /api/extension/parcours/save, /api/extension/log-injection
- * L'extension envoie ces requêtes depuis le contexte du portail (pas depuis optibot.fr).
+ * L'extension envoie ces requêtes depuis le contexte du portail (pas depuis audibot.fr).
  */
 export function getPortalCorsHeaders(origin?: string | null) {
   // Autoriser toute origine pour ces routes spécifiques car elles viennent des portails mutuelles

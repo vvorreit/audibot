@@ -1,5 +1,5 @@
 # Procédure de Gestion d'Incident RGPD — Articles 33 et 34
-## OptiBot SAS — Version 1.0 — Mars 2026 — CONFIDENTIEL
+## AudiBot SAS — Version 1.0 — Mars 2026 — CONFIDENTIEL
 
 ---
 
@@ -9,7 +9,7 @@
 
 - [ ] Identifier la source et la nature de l'incident (fuite, accès non autorisé, perte, altération)
 - [ ] Isoler le système compromis (couper l'accès réseau, désactiver le service si nécessaire)
-- [ ] Notifier le responsable de traitement (contact@optibot.fr)
+- [ ] Notifier le responsable de traitement (contact@audibot.fr)
 - [ ] Ouvrir un ticket horodaté avec description détaillée de l'incident
 - [ ] **NE PAS supprimer les logs** — ils constituent des preuves essentielles
 
@@ -50,7 +50,7 @@
 ### Informations à fournir
 
 1. **Nature de la violation** : description de la violation, catégories et nombre approximatif de personnes concernées, catégories et nombre approximatif d'enregistrements de données concernés
-2. **Coordonnées du point de contact** : nom et coordonnées du DPO ou autre point de contact (contact@optibot.fr)
+2. **Coordonnées du point de contact** : nom et coordonnées du DPO ou autre point de contact (contact@audibot.fr)
 3. **Conséquences probables** : description des conséquences probables de la violation
 4. **Mesures prises** : description des mesures prises ou envisagées pour remédier à la violation, y compris les mesures pour en atténuer les effets négatifs
 
@@ -66,14 +66,14 @@ La notification aux personnes concernées est obligatoire lorsque la violation e
 
 ### Template email de notification
 
-**Objet** : [Important] Incident de sécurité — OptiBot
+**Objet** : [Important] Incident de sécurité — AudiBot
 
 **Corps** :
 
 ```
 Madame, Monsieur,
 
-Nous vous informons qu'un incident de sécurité a été détecté le [DATE DE L'INCIDENT] sur notre plateforme OptiBot.
+Nous vous informons qu'un incident de sécurité a été détecté le [DATE DE L'INCIDENT] sur notre plateforme AudiBot.
 
 **Données concernées :** [DESCRIPTION DES DONNÉES CONCERNÉES]
 
@@ -85,17 +85,17 @@ Nous vous informons qu'un incident de sécurité a été détecté le [DATE DE L
 - [MESURE 3]
 
 **Recommandations :**
-- Changez votre mot de passe OptiBot immédiatement
+- Changez votre mot de passe AudiBot immédiatement
 - Surveillez toute activité suspecte sur vos comptes
 - [AUTRES RECOMMANDATIONS SPÉCIFIQUES]
 
-Pour toute question, contactez-nous à contact@optibot.fr.
+Pour toute question, contactez-nous à contact@audibot.fr.
 
 La CNIL a été notifiée conformément à l'Article 33 du RGPD.
 
 Cordialement,
-L'équipe OptiBot
-contact@optibot.fr
+L'équipe AudiBot
+contact@audibot.fr
 ```
 
 ---
@@ -106,7 +106,7 @@ contact@optibot.fr
 |---|---|---|
 | **CNIL — Notifications** | notifications@cnil.fr | Formulaire : https://notifications.cnil.fr/notifications/index |
 | **CNIL — Standard** | 01 53 73 22 22 | Horaires ouvrables |
-| **Responsable de traitement** | contact@optibot.fr | Vincent Vorreiter |
+| **Responsable de traitement** | contact@audibot.fr | Vincent Vorreiter |
 | **Hébergeur — Scaleway** | support.scaleway.com | Support technique infrastructure |
 
 ---

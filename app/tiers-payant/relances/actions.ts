@@ -240,7 +240,7 @@ export async function executerRelance(dossierId: string, delaiJours: number, act
         dateEnvoi: dossier.dateEnvoi,
       },
       templateData,
-      admin.email ?? "contact@optibot.fr"
+      admin.email ?? "contact@audibot.fr"
     );
 
     emailSent = result.sent;

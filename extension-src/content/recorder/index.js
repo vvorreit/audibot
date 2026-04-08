@@ -12,13 +12,13 @@ export function startRecorder() {
 
   /* Badge enregistrement avec bouton pause */
   var badge = document.createElement("div");
-  badge.id = "optibot-recorder-badge";
+  badge.id = "audibot-recorder-badge";
   badge.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#ef4444;color:white;padding:8px 20px;border-radius:50px;font-family:sans-serif;font-size:13px;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;cursor:default;user-select:none;";
-  badge.innerHTML = '<span id="optibot-rec-dot" style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> <span id="optibot-rec-text">Enregistrement en cours</span> <button id="optibot-rec-pause" style="margin-left:8px;padding:2px 10px;border:1px solid rgba(255,255,255,0.5);border-radius:20px;background:transparent;color:white;font-size:11px;font-weight:600;cursor:pointer;">\u23F8 Pause</button>';
+  badge.innerHTML = '<span id="audibot-rec-dot" style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> <span id="audibot-rec-text">Enregistrement en cours</span> <button id="audibot-rec-pause" style="margin-left:8px;padding:2px 10px;border:1px solid rgba(255,255,255,0.5);border-radius:20px;background:transparent;color:white;font-size:11px;font-weight:600;cursor:pointer;">\u23F8 Pause</button>';
   document.body.appendChild(badge);
 
   /* Événement pause/reprise */
-  var pauseBtn = document.getElementById("optibot-rec-pause");
+  var pauseBtn = document.getElementById("audibot-rec-pause");
   if (pauseBtn) {
     pauseBtn.addEventListener("click", function(ev) {
       ev.stopPropagation();
@@ -27,10 +27,10 @@ export function startRecorder() {
   }
 
   /* Style animation */
-  if (!document.getElementById("optibot-recorder-style")) {
+  if (!document.getElementById("audibot-recorder-style")) {
     var style = document.createElement("style");
-    style.id = "optibot-recorder-style";
-    style.textContent = "@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} } .optibot-recorder-step-row:hover { background:#f9fafb; }";
+    style.id = "audibot-recorder-style";
+    style.textContent = "@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} } .audibot-recorder-step-row:hover { background:#f9fafb; }";
     document.head.appendChild(style);
   }
 
@@ -45,8 +45,8 @@ export function startRecorder() {
     for (var i = 0; i < iframes.length; i++) {
       try {
         var iDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
-        if (!iDoc || iDoc._optibotRecorder) continue;
-        iDoc._optibotRecorder = true;
+        if (!iDoc || iDoc._audibotRecorder) continue;
+        iDoc._audibotRecorder = true;
         iDoc.addEventListener("click", onRecorderClick, true);
         iDoc.addEventListener("change", onRecorderChange, true);
         iDoc.addEventListener("blur", onRecorderBlur, true);
@@ -63,7 +63,7 @@ export function startRecorder() {
   recorderState._iframeObserver = iframeObserver;
 
   /* Persister l'état dans chrome.storage pour survivre aux navigations */
-  chrome.storage.local.set({ optibot_recorder: { active: true, etapes: [], hostname: recorderState.hostname, startTime: recorderState.startTime } });
+  chrome.storage.local.set({ audibot_recorder: { active: true, etapes: [], hostname: recorderState.hostname, startTime: recorderState.startTime } });
 
   /* Afficher le panneau guidé latéral */
   showRecorderPanel();
@@ -77,10 +77,10 @@ export function toggleRecorderPause() {
   if (!recorderState) return;
   recorderState.paused = !recorderState.paused;
 
-  var dot = document.getElementById("optibot-rec-dot");
-  var text = document.getElementById("optibot-rec-text");
-  var pauseBtn = document.getElementById("optibot-rec-pause");
-  var badge = document.getElementById("optibot-recorder-badge");
+  var dot = document.getElementById("audibot-rec-dot");
+  var text = document.getElementById("audibot-rec-text");
+  var pauseBtn = document.getElementById("audibot-rec-pause");
+  var badge = document.getElementById("audibot-recorder-badge");
 
   if (recorderState.paused) {
     if (dot) dot.style.animation = "none";
@@ -117,7 +117,7 @@ export async function stopRecorder() {
       try {
         var iDoc = iframes[i].contentDocument || (iframes[i].contentWindow && iframes[i].contentWindow.document);
         if (!iDoc) continue;
-        iDoc._optibotRecorder = false;
+        iDoc._audibotRecorder = false;
         iDoc.removeEventListener("click", onRecorderClick, true);
         iDoc.removeEventListener("change", onRecorderChange, true);
         iDoc.removeEventListener("blur", onRecorderBlur, true);
@@ -125,11 +125,11 @@ export async function stopRecorder() {
     }
   } catch(e) {}
 
-  var badge = document.getElementById("optibot-recorder-badge");
+  var badge = document.getElementById("audibot-recorder-badge");
   if (badge) badge.remove();
 
   /* Retirer le panneau guidé et les highlights */
-  var panel = document.getElementById("optibot-recorder-panel");
+  var panel = document.getElementById("audibot-recorder-panel");
   if (panel) panel.remove();
   removeRecorderHighlights();
 
@@ -138,7 +138,7 @@ export async function stopRecorder() {
   recorderState = null;
 
   /* Nettoyer le storage */
-  chrome.storage.local.remove("optibot_recorder");
+  chrome.storage.local.remove("audibot_recorder");
 
   if (etapes.length === 0) {
     showRPAToast("Aucune \u00E9tape enregistr\u00E9e.", "info");
@@ -167,7 +167,7 @@ export async function sendRecorderParcours(etapes, hostname, nom) {
   }
 
   try {
-    var res = await fetch("https://optibot.fr/api/extension/parcours/save", {
+    var res = await fetch("https://audibot.fr/api/extension/parcours/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -190,8 +190,8 @@ export async function sendRecorderParcours(etapes, hostname, nom) {
 
 /* Restaurer le recorder si une navigation a eu lieu pendant l'enregistrement */
 export function restoreRecorderIfNeeded() {
-  chrome.storage.local.get(["optibot_recorder"], function(result) {
-    var saved = result.optibot_recorder;
+  chrome.storage.local.get(["audibot_recorder"], function(result) {
+    var saved = result.audibot_recorder;
     if (!saved || !saved.active) return;
 
     recorderState = {
@@ -201,9 +201,9 @@ export function restoreRecorderIfNeeded() {
     };
 
     /* Ré-afficher le badge */
-    if (!document.getElementById("optibot-recorder-badge")) {
+    if (!document.getElementById("audibot-recorder-badge")) {
       var badge = document.createElement("div");
-      badge.id = "optibot-recorder-badge";
+      badge.id = "audibot-recorder-badge";
       badge.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#ef4444;color:white;padding:8px 20px;border-radius:50px;font-family:sans-serif;font-size:13px;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;";
       badge.innerHTML = '<span style="width:10px;height:10px;background:white;border-radius:50%;display:inline-block;animation:pulse 1s infinite;"></span> Enregistrement (' + recorderState.etapes.length + ' \u00E9tapes) \u2014 continuez';
       document.body.appendChild(badge);

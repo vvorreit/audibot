@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 
   if (!user) {
     return NextResponse.json(
-      { ok: false, error: "Compte introuvable. Créez un compte sur optibot.fr" },
+      { ok: false, error: "Compte introuvable. Créez un compte sur audibot.fr" },
       { status: 401, headers: CORS },
     );
   }

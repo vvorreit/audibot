@@ -5,13 +5,13 @@ export function checkAndStartRPA() {
   var currentHostname = window.location.hostname;
 
   /* Vérifier que l'user a le plan PRO/EQUIPE/ADMIN avant de lancer */
-  chrome.storage.local.get(['optibot_auth', 'optibot_rpa'], function(result) {
-    var auth = result.optibot_auth || {};
+  chrome.storage.local.get(['audibot_auth', 'audibot_rpa'], function(result) {
+    var auth = result.audibot_auth || {};
     if (auth.rpaEnabled === false) {
       showRPAToast("RPA disponible \u00E0 partir du plan Pro", "info");
       return;
     }
-    var rpa = result.optibot_rpa;
+    var rpa = result.audibot_rpa;
     if (!rpa || !rpa.target) return;
 
     /* Verifier que le RPA cible correspond au domaine courant */
@@ -21,7 +21,7 @@ export function checkAndStartRPA() {
 
     /* N'exécuter que si les données ont moins de 5 minutes */
     if (Date.now() - rpa.ts > 300000) {
-      chrome.storage.local.remove('optibot_rpa');
+      chrome.storage.local.remove('audibot_rpa');
       return;
     }
 
@@ -30,7 +30,7 @@ export function checkAndStartRPA() {
       || (!!document.querySelector('input[type="password"]'));
 
     if (loginPage && !rpa.login_shown) {
-      chrome.storage.local.set({ optibot_rpa: Object.assign({}, rpa, { login_shown: true }) });
+      chrome.storage.local.set({ audibot_rpa: Object.assign({}, rpa, { login_shown: true }) });
       showRPAToast("\uD83D\uDD10 RPA : connectez-vous, le bot reprend automatiquement apr\u00E8s connexion", "info");
       var loginObs = new MutationObserver(function() {
         if (!document.querySelector('input[type="password"]')) {
@@ -44,7 +44,7 @@ export function checkAndStartRPA() {
 
     /* Lancer le replay dynamique si un parcours est attache aux donnees RPA */
     if (rpa.parcours && rpa.parcours.etapes) {
-      chrome.storage.local.remove('optibot_rpa');
+      chrome.storage.local.remove('audibot_rpa');
       showRPAToast("RPA " + (rpa.target || "portail") + " : d\u00E9marrage...", "info");
       if (typeof replayParcours === "function") {
         replayParcours(rpa.parcours, rpa.payload);
@@ -53,10 +53,10 @@ export function checkAndStartRPA() {
     }
 
     /* Fallback : tenter un Smart Fill avec les donnees RPA */
-    chrome.storage.local.remove('optibot_rpa');
+    chrome.storage.local.remove('audibot_rpa');
     showRPAToast("RPA " + (rpa.target || "portail") + " : remplissage automatique...", "info");
     if (typeof performSmartFill === "function") {
       performSmartFill();
     }
-  }); /* end chrome.storage.local.get optibot_auth + optibot_rpa */
+  }); /* end chrome.storage.local.get audibot_auth + audibot_rpa */
 }

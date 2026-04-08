@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const BASE_URL = process.env.NEXTAUTH_URL || "https://optibot.fr";
+  const BASE_URL = process.env.NEXTAUTH_URL || "https://audibot.fr";
   const now = new Date();
   // Users qui ont terminé l'onboarding dans la dernière heure et n'ont pas eu cet email
   const from = new Date(now.getTime() - 65 * 60 * 1000);
@@ -47,14 +47,14 @@ export async function GET(req: Request) {
 
       await sendMail({
         to: user.email,
-        subject: "🎉 Vous êtes prêt — OptiBot est configuré",
+        subject: "🎉 Vous êtes prêt — AudiBot est configuré",
         html: emailWrapper({
           content: `
-            ${h1(`${firstName ? `Bravo ${firstName} !` : "Bravo !"} OptiBot est prêt 🎉`)}
-            ${bodyText(`Vous venez de terminer la configuration complète d'OptiBot. Tout est en place pour que chaque dossier patient prenne <strong>10 secondes au lieu de 7 minutes</strong>.`)}
+            ${h1(`${firstName ? `Bravo ${firstName} !` : "Bravo !"} AudiBot est prêt 🎉`)}
+            ${bodyText(`Vous venez de terminer la configuration complète d'AudiBot. Tout est en place pour que chaque dossier patient prenne <strong>10 secondes au lieu de 7 minutes</strong>.`)}
             ${timeSaved > 0
               ? infoBox(`⏱ Vous avez déjà économisé <strong>${timeSavedStr}</strong> depuis votre inscription. Ce n'est que le début.`)
-              : infoBox(`⏱ Sur 15 dossiers par jour, OptiBot vous fait économiser <strong>1h45 par jour</strong>. Soit 9 heures par semaine.`)
+              : infoBox(`⏱ Sur 15 dossiers par jour, AudiBot vous fait économiser <strong>1h45 par jour</strong>. Soit 9 heures par semaine.`)
             }
             ${bodyText(`La prochaine fois qu'un patient arrive avec sa carte mutuelle, scannez-la depuis votre téléphone ou votre PC — et regardez le portail se remplir tout seul.`)}
             ${ctaButton("Ouvrir le tableau de bord", `${BASE_URL}/dashboard`)}

@@ -1,4 +1,4 @@
-/* ── OptiBot — ERP Bridge Core Engine ────────────────────────────────── */
+/* ── AudiBot — ERP Bridge Core Engine ────────────────────────────────── */
 
 import { buildScrapingAliases, buildPecAliases, REJET_NOTE_ALIASES } from "./aliases.js";
 
@@ -23,7 +23,7 @@ function querySelectorAllDeep(selector, root, depth) {
       try {
         var iDoc = iframes[fi].contentDocument || (iframes[fi].contentWindow && iframes[fi].contentWindow.document);
         if (iDoc) results = results.concat(querySelectorAllDeep(selector, iDoc, depth + 1));
-      } catch(e) { console.info("[OptiBot] iframe cross-origin ignorée :", iframes[fi].src || "(no src)"); }
+      } catch(e) { console.info("[AudiBot] iframe cross-origin ignorée :", iframes[fi].src || "(no src)"); }
     }
   }
   return results;
@@ -213,22 +213,22 @@ function mergeAdapterAliases(adapter) {
 
 export function loadLearnedAliases(adapter) {
   var hostname = window.location.hostname;
-  chrome.storage.local.get(["optibot_learned_aliases_erp"], function(result) {
-    var cached = result.optibot_learned_aliases_erp;
+  chrome.storage.local.get(["audibot_learned_aliases_erp"], function(result) {
+    var cached = result.audibot_learned_aliases_erp;
     if (cached && cached.ts && Date.now() - cached.ts < 60 * 60 * 1000) {
       mergeLearnedIntoDict(cached.aliases || {});
       return;
     }
     getSyncToken().then(function(token) {
       if (!token) return;
-      fetch("https://optibot.fr/api/extension/smart-fill/aliases?hostname=" + encodeURIComponent(hostname))
+      fetch("https://audibot.fr/api/extension/smart-fill/aliases?hostname=" + encodeURIComponent(hostname))
         .then(function(r) { return r.json(); })
         .then(function(data) {
           var aliases = data.aliases || {};
-          chrome.storage.local.set({ optibot_learned_aliases_erp: { aliases: aliases, ts: Date.now() } });
+          chrome.storage.local.set({ audibot_learned_aliases_erp: { aliases: aliases, ts: Date.now() } });
           mergeLearnedIntoDict(aliases);
         })
-        .catch(function(err) { console.warn("[OptiBot] learned aliases fetch failed:", err); });
+        .catch(function(err) { console.warn("[AudiBot] learned aliases fetch failed:", err); });
     });
   });
 }
@@ -246,11 +246,11 @@ function mergeLearnedIntoDict(learned) {
 export function sendLearnSignal(hostname, selector, label, oldVariable) {
   getSyncToken().then(function(syncToken) {
     if (!syncToken) return;
-    fetch("https://optibot.fr/api/extension/smart-fill/learn", {
+    fetch("https://audibot.fr/api/extension/smart-fill/learn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ syncToken: syncToken, hostname: hostname, selector: selector, label: label, oldVariable: oldVariable })
-    }).catch(function(err) { console.warn("[OptiBot] learn signal failed:", err); });
+    }).catch(function(err) { console.warn("[AudiBot] learn signal failed:", err); });
   });
 }
 
@@ -327,7 +327,7 @@ export async function smartScrape(adapter) {
 
   var scanDuration = Math.round(performance.now() - scanStart);
   if (scanDuration > 500) {
-    console.info("[OptiBot] ERP scan: " + inputs.length + " fields in " + scanDuration + "ms");
+    console.info("[AudiBot] ERP scan: " + inputs.length + " fields in " + scanDuration + "ms");
   }
 
   /* Hook post-scrape */
@@ -399,7 +399,7 @@ export async function performScrape(adapter) {
 
   await writeEncryptedCache(cacheObj);
 
-  chrome.runtime.sendMessage({ type: "OPTIBOT_COSIUM_SCRAPED", fields: check.fieldCount });
+  chrome.runtime.sendMessage({ type: "AUDIBOT_COSIUM_SCRAPED", fields: check.fieldCount });
   showToast("ERP \u2713 — " + check.fieldCount + " champs lus", "success", adapter);
 }
 
@@ -420,15 +420,15 @@ export async function injectPEC(encryptedPec, adapter) {
     var field = matchFieldAgainst(el, pecDict);
     if (field && pec[field]) {
       ultraFill(el, pec[field], adapter);
-      el.setAttribute("data-optibot-filled", field);
-      el.setAttribute("data-optibot-value", pec[field]);
+      el.setAttribute("data-audibot-filled", field);
+      el.setAttribute("data-audibot-value", pec[field]);
       filled++;
     }
   }
 
   if (filled > 0) {
     showToast("PEC inject\u00E9e \u2713 — " + filled + " champ(s)", "success", adapter);
-    chrome.storage.local.remove("optibot_pec_pending");
+    chrome.storage.local.remove("audibot_pec_pending");
     return { ok: true, filled: filled };
   }
   showToast("Aucun champ PEC d\u00E9tect\u00E9 sur cette page", "warn", adapter);
@@ -514,12 +514,12 @@ export function ultraFill(el, val, adapter) {
  * ══════════════════════════════════════════════════════════════════════ */
 
 export function showToast(message, type, adapter) {
-  var existing = document.getElementById("optibot-erp-toast");
+  var existing = document.getElementById("audibot-erp-toast");
   if (existing) existing.remove();
 
   var prefix = adapter && adapter.displayName ? adapter.displayName + " — " : "";
   var toast = document.createElement("div");
-  toast.id = "optibot-erp-toast";
+  toast.id = "audibot-erp-toast";
   toast.textContent = prefix + message;
   var bg = type === "success" ? "#059669" : type === "warn" ? "#d97706" : "#dc2626";
   toast.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:2147483647;background:" + bg + ";color:white;padding:12px 20px;border-radius:12px;font:700 13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.15);opacity:0;transition:opacity .3s ease;";
@@ -581,9 +581,9 @@ export function setupPassiveLearning(adapter) {
   document.addEventListener("change", function(e) {
     var el = e.target;
     if (!el || !el.tagName || ["INPUT", "SELECT", "TEXTAREA"].indexOf(el.tagName) === -1) return;
-    var filledVar = el.getAttribute("data-optibot-filled");
+    var filledVar = el.getAttribute("data-audibot-filled");
     if (!filledVar) return;
-    var oldValue = el.getAttribute("data-optibot-value");
+    var oldValue = el.getAttribute("data-audibot-value");
     if (el.value === oldValue) return;
 
     var signals = collectSignals(el);
@@ -599,11 +599,11 @@ export function setupPassiveLearning(adapter) {
 
 export function setupMessageListeners(adapter) {
   chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    if (msg && msg.type === "OPTIBOT_INJECT_PEC") {
+    if (msg && msg.type === "AUDIBOT_INJECT_PEC") {
       injectPEC(msg.pecData, adapter).then(function(result) { sendResponse(result); });
       return true;
     }
-    if (msg && msg.type === "OPTIBOT_INJECT_REJET_NOTE") {
+    if (msg && msg.type === "AUDIBOT_INJECT_REJET_NOTE") {
       injectRejetNote(msg.note, adapter);
     }
   });

@@ -153,7 +153,7 @@ export default function AdminInboxPage() {
 {`IMAP_HOST=imap.ionos.fr
 IMAP_PORT=993
 IMAP_SECURE=true
-IMAP_USER=contact@optibot.fr
+IMAP_USER=contact@audibot.fr
 IMAP_PASS=votre_mot_de_passe`}
           </pre>
         </div>

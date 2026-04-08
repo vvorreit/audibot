@@ -3,10 +3,10 @@ import PortailDetailPage from "@/components/PortailDetailPage";
 import type { PortailDetailData } from "@/components/PortailDetailPage";
 
 export const metadata: Metadata = {
-  title: "OptiBot × Almerys — Automatiser la saisie tiers payant optique sur Almerys",
+  title: "AudiBot × Almerys — Automatiser la saisie tiers payant optique sur Almerys",
   description:
-    "Remplissez automatiquement vos demandes de tiers payant sur le portail Almerys avec OptiBot. NSS, nom, prénom, date ordonnance, RPPS — en un clic.",
-  alternates: { canonical: "https://optibot.fr/mutuelles/almerys" },
+    "Remplissez automatiquement vos demandes de tiers payant sur le portail Almerys avec AudiBot. NSS, nom, prénom, date ordonnance, RPPS — en un clic.",
+  alternates: { canonical: "https://audibot.fr/mutuelles/almerys" },
 };
 
 const data: PortailDetailData = {
@@ -14,7 +14,7 @@ const data: PortailDetailData = {
   type: "mutuelle",
   domain: "mutuelle-almerys.com",
   networkDescription:
-    "Almerys est le réseau #1 en France avec 17 millions de bénéficiaires. OptiBot automatise la saisie sur le portail Almerys pour les opticiens.",
+    "Almerys est le réseau #1 en France avec 17 millions de bénéficiaires. AudiBot automatise la saisie sur le portail Almerys pour les opticiens.",
   portailUrl: "mutuelle-almerys.com",
   status: "Partiel",
   filledFields: [

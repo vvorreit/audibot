@@ -81,7 +81,7 @@ export async function sendFranchiseEmail(formData: FormData) {
       <div style="background:#0f172a;padding:24px 32px;border-radius:16px 16px 0 0">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:36px;height:36px;background:#2563eb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:18px">O</div>
-          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">OptiBot — Demande Franchise</span>
+          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">AudiBot — Demande Franchise</span>
         </div>
       </div>
       <div style="background:white;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 16px 16px">
@@ -109,7 +109,7 @@ export async function sendFranchiseEmail(formData: FormData) {
   try {
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
-      to: "contact@optibot.fr",
+      to: "contact@audibot.fr",
       replyTo: email,
       subject: `[Franchise] ${company} — ${stores} magasins — ${name}`,
       html,
@@ -124,7 +124,7 @@ export async function sendFranchiseEmail(formData: FormData) {
     const confirmHtml = `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
         <div style="background:#0f172a;padding:24px 32px;border-radius:16px 16px 0 0">
-          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">OptiBot</span>
+          <span style="color:white;font-weight:900;font-size:18px;letter-spacing:-0.5px">AudiBot</span>
         </div>
         <div style="background:white;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 16px 16px">
           <p style="color:#1e293b;font-size:16px;line-height:1.7;margin:0">
@@ -137,7 +137,7 @@ export async function sendFranchiseEmail(formData: FormData) {
     await getTransporter().sendMail({
       from: process.env.SMTP_FROM,
       to: emailRaw,
-      subject: "OptiBot — Votre demande a bien été reçue",
+      subject: "AudiBot — Votre demande a bien été reçue",
       html: confirmHtml,
     });
   } catch (err) {

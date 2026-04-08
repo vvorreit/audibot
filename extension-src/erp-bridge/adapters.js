@@ -1,4 +1,4 @@
-/* ── OptiBot — Adaptateurs ERP optique ───────────────────────────────── */
+/* ── AudiBot — Adaptateurs ERP optique ───────────────────────────────── */
 /* Chaque adaptateur configure le bridge pour un ERP specifique.          */
 /* L'auto-detection identifie l'ERP au chargement de la page.            */
 

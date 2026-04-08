@@ -28,7 +28,7 @@ export async function performFill() {
   /* Broadcast aux iframes cross-domain via postMessage */
   var frames = document.querySelectorAll("iframe");
   for (var fi = 0; fi < frames.length; fi++) {
-    try { if (frames[fi].src) { var frameOrigin = new URL(frames[fi].src).origin; frames[fi].contentWindow.postMessage({ type: "OPTIBOT_FILL_FRAME", payload: data }, frameOrigin); } } catch(e) {}
+    try { if (frames[fi].src) { var frameOrigin = new URL(frames[fi].src).origin; frames[fi].contentWindow.postMessage({ type: "AUDIBOT_FILL_FRAME", payload: data }, frameOrigin); } } catch(e) {}
   }
 
   const currentSite = Object.values(CONFIGS).find(cfg => cfg.isMatch());
@@ -44,8 +44,8 @@ export async function performFill() {
   const fieldsCount = Object.keys(data.cached || data.m || {}).length;
 
   /* Monitoring : log local + envoi API best-effort */
-  chrome.storage.local.get(["optibot_injection_log"], (logResult) => {
-    const log = logResult.optibot_injection_log || [];
+  chrome.storage.local.get(["audibot_injection_log"], (logResult) => {
+    const log = logResult.audibot_injection_log || [];
     log.unshift({
       ts: Date.now(),
       site,
@@ -53,7 +53,7 @@ export async function performFill() {
       fieldsCount,
       syncToken: data.syncToken || null
     });
-    chrome.storage.local.set({ optibot_injection_log: log.slice(0, 100) });
+    chrome.storage.local.set({ audibot_injection_log: log.slice(0, 100) });
   });
 
   /* Envoyer les pings via le background service worker pour éviter CORS */
@@ -63,19 +63,19 @@ export async function performFill() {
   var pingPayloads = [];
   const syncToken = data.syncToken || null;
   if (syncToken && success !== undefined) {
-    pingPayloads.push({ url: "https://optibot.fr/api/extension/log-injection", body: { syncToken, site, success, fieldsCount, ts: Date.now() } });
+    pingPayloads.push({ url: "https://audibot.fr/api/extension/log-injection", body: { syncToken, site, success, fieldsCount, ts: Date.now() } });
   }
-  pingPayloads.push({ url: "https://optibot.fr/api/bookmarklet/ping", body: {
+  pingPayloads.push({ url: "https://audibot.fr/api/bookmarklet/ping", body: {
     version: extVersion, portal: site || "unknown",
     status: success ? "ok" : (fieldsCount === 0 ? "broken" : "partial"),
     errorHint: success ? null : ("fields=" + fieldsCount)
   }});
   try {
-    chrome.runtime.sendMessage({ type: "OPTIBOT_PING", payloads: pingPayloads });
+    chrome.runtime.sendMessage({ type: "AUDIBOT_PING", payloads: pingPayloads });
   } catch(e) { /* jamais bloquer l'UI */ }
 
   if (success) {
-    const btn = document.getElementById('optibot-fill-btn');
+    const btn = document.getElementById('audibot-fill-btn');
     if (btn) {
       btn.innerText = `\u2713 Rempli !`;
       btn.style.background = '#10b981';
@@ -85,7 +85,7 @@ export async function performFill() {
       }, 2000);
     }
   } else {
-    alert(`OptiBot : Aucun formulaire d\u00E9tect\u00E9.`);
+    alert(`AudiBot : Aucun formulaire d\u00E9tect\u00E9.`);
   }
 }
 
