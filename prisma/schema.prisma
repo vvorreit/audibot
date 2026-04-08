@@ -46,19 +46,23 @@ model User {
 
   password      String?   // null pour les comptes OAuth (Google, etc.)
 
-  // --- OptiBot Core ---
+  // --- AudiBot Core ---
   clientCount   Int       @default(0)
   isPro         Boolean   @default(false)
   role          String    @default("USER") // Global role: USER or ADMIN (System Admin)
-  
+
   // --- Team ---
   teamId        String?
-  team          Team?     @relation(fields: [teamId], references: [id])
+  team          Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
   teamRole      String?   @default("MEMBER") // OWNER, ADMIN, MEMBER
+  storeId       String?
+  store         Store?    @relation(fields: [storeId], references: [id], onDelete: SetNull)
   invitationsSent Invitation[]
 
   syncToken     String?   @unique @default(cuid())
+  shopToken     String?   @unique @default(cuid())
   storeName     String?
+  mobileDevices MobileDevice[]
 
   passwordChangedAt DateTime?
 
@@ -90,6 +94,20 @@ model User {
   needsCgvAcceptance  Boolean @default(false)
   cgvVersion          String?
 
+  // --- RGPD ---
+  dpaAcceptedAt       DateTime?
+  marketingConsent    Boolean   @default(false)
+  marketingConsentAt  DateTime?
+  deletionRequest     DeletionRequest?
+  consentRecords      ConsentRecord[]
+  dataAccessLogs      DataAccessLog[]
+
+  // --- Ban ---
+  isBanned      Boolean   @default(false)
+  bannedAt      DateTime?
+  bannedReason  String?   @db.Text
+  bannedBy      String?   // Admin user ID who banned
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastActiveAt  DateTime  @default(now())
@@ -103,8 +121,28 @@ model User {
   notifications Notification[]
   adminAuditLogs AdminAuditLog[]
   churnReasons    ChurnReason[]
+  lignesReleve      LigneReleveBancaire[]
+  rapprochements    RapprochementBancaire[]
+  bankConnections   BankConnection[]
+  droitsVerifies  DroitsVerifies[]
+  bilanSessions   BilanSession[]
+  bilanConfig     BilanConfig?
+  diagnosticLogs  DiagnosticLog[]
+  userFeatures    UserFeatures?
+  patientDocuments PatientDocument[]
+  rejetsAutoDetectes RejetAutoDetecte[]
+  scanSessions    ScanSession[]
+
+  tpDossiers      TPDossier[]
+  devisCaptured   DevisCaptured[]
+  selectorRepairRequests SelectorRepairRequest[]
+  preSubmitLogs   PreSubmitLog[]
+  npsResponses    NpsResponse[]
+  fieldFeedbacks  FieldFeedback[]
+  rpaLogs         RpaLog[]
 
   @@index([teamId])
+  @@index([storeId])
   @@index([role])
   @@index([createdAt])
 }
@@ -113,19 +151,35 @@ model Team {
   id            String    @id @default(cuid())
   name          String
   ownerId       String    // References User.id (logic enforced, not FK to avoid cycle/complexity initially, or we can make it FK)
-  
+
   // --- Stripe (Team) ---
   stripeCustomerId       String?   @unique
   stripeSubscriptionId   String?   @unique
   plan                   String    @default("FREE") // FREE, ESSENTIEL, PRO, CABINET, RESEAU, EQUIPE
+  extraSeats             Int       @default(0)      // postes supplémentaires payés (RESEAU)
+
+  shopToken              String?   @unique @default(cuid())
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   users         User[]
   invitations   Invitation[]
+  stores        Store[]
 
   @@index([ownerId])
+}
+
+model Store {
+  id        String   @id @default(cuid())
+  name      String
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teamId])
 }
 
 model Invitation {
@@ -181,17 +235,18 @@ model OcrFeedback {
 }
 
 model OcrScanLog {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type          String
-  success       Boolean
-  ocrConfidence Float
-  dataScore     Float
-  globalScore   Float
-  level         String
-  fileName      String?
-  createdAt     DateTime @default(now())
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           String
+  success        Boolean
+  ocrConfidence  Float
+  dataScore      Float
+  globalScore    Float
+  level          String
+  fileName       String?
+  processingMeta Json?
+  createdAt      DateTime @default(now())
 
   @@index([createdAt])
   @@index([type])
@@ -211,6 +266,7 @@ enum StatutDossierTP {
   RECU
   REJETE
   EN_LITIGE
+  ENCAISSE
 }
 
 enum Mutuelle {
@@ -254,6 +310,7 @@ model DossierTiersPayant {
 
   historique      HistoriqueStatutTP[]
   relances        RelanceLog[]
+  rapprochements  RapprochementBancaire[]
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -261,6 +318,7 @@ model DossierTiersPayant {
   @@index([userId])
   @@index([statut])
   @@index([createdAt])
+  @@index([statut, relanceDesactivee, relanceCount])
 }
 
 model HistoriqueStatutTP {
@@ -336,6 +394,7 @@ model AlerteExpiration {
   createdAt         DateTime  @default(now())
 
   @@index([userId])
+  @@index([userId, dateOrdonnance, joursAvant])
   @@index([traitee])
   @@index([dateExpiration])
 }
@@ -352,6 +411,7 @@ model MutuelleEmailConfig {
 model RejetAutoDetecte {
   id              String    @id @default(cuid())
   userId          String?
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
   portail         String    // ALMERYS, VIAMEDIS, ITELIS, KALIXIA
   numeroDossier   String?
   motif           String?
@@ -360,6 +420,8 @@ model RejetAutoDetecte {
   dossierId       String?
   matched         Boolean   @default(false)
   traite          Boolean   @default(false)
+  resubmittedAt   DateTime? // date de re-soumission via le bouton "Re-soumettre"
+  resubmitCount   Int       @default(0)
   createdAt       DateTime  @default(now())
 
   @@index([userId])
@@ -425,6 +487,7 @@ model FranchiseLeadStatusHistory {
 model ScanSession {
   id          String   @id @default(cuid())
   userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   blob        String?  @db.Text
   delivered   Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -452,6 +515,7 @@ model BookmarkletPing {
 model RpaLog {
   id          String   @id @default(cuid())
   userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   syncToken   String?
   mutuelle    String   // "almerys", "wemind", "viamedis", etc.
   etape       String   // "navigation", "page1_beneficiaire", "page2_equipements", "saisir", etc.
@@ -544,9 +608,11 @@ model RejetGuidance {
   motifPattern String
   titre        String
   description  String   @db.Text
-  actionType   String   @default("info") // info, rescan, edit, contact
-  actionUrl    String?
-  priorite     Int      @default(0)
+  actionType      String   @default("info") // info, rescan, edit, contact, resubmit
+  actionUrl       String?
+  correctionField String?  // champ concerné : nss, rpps, dateOrdonnance, montant, codeActe
+  correctionHint  String?  // conseil de correction affiché dans le bandeau extension
+  priorite        Int      @default(0)
   actif        Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -646,6 +712,7 @@ model EmailCampaign {
   subject   String?
   subjectB  String?   // A/B test: alternative subject line
   htmlBody  String?
+  fromEmail String?   // expéditeur custom, null = défaut contact@audibot.fr
   sendingAt DateTime? // null = pas en cours, non-null = envoi en cours
   sentAt    DateTime? // date de fin d'envoi
   scheduledAt   DateTime? // date/heure d'envoi planifié
@@ -657,6 +724,9 @@ model EmailCampaign {
   reportSentAt     DateTime?
   createdAt DateTime  @default(now())
   emails    EmailTracking[]
+
+  @@index([sendingAt, sentAt])
+  @@index([scheduledAt])
 }
 
 model EmailTracking {
@@ -679,7 +749,9 @@ model EmailTracking {
   createdAt    DateTime  @default(now())
 
   @@index([campaignId])
-  @@index([token])
+  @@index([campaignId, status])
+  @@index([email, campaignId, status])
+  @@index([email])
 }
 
 // ── NPS ─────────────────────────────────────────────────────────────────────
@@ -687,6 +759,7 @@ model EmailTracking {
 model NpsResponse {
   id        String   @id @default(cuid())
   userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   email     String?
   score     Int      // 1-10 ou 1-5 selon la campagne
   message   String?  @db.Text
@@ -731,6 +804,7 @@ model ChurnReason {
 model SelectorRepairRequest {
   id           String   @id @default(cuid())
   userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   hostname     String
   skipRate     Float
   failedFields Json     @default("{}")
@@ -762,6 +836,7 @@ model SmartFillWeight {
 model TPDossier {
   id         String   @id @default(cuid())
   userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date       String?
   fse        String?
   organisme  String?
@@ -782,6 +857,7 @@ model TPDossier {
 model DevisCaptured {
   id        String   @id @default(cuid())
   userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   hostname  String
   url       String?
   devis     Json     @default("{}")
@@ -820,8 +896,6 @@ model EmailTemplate {
   html      String   @db.Text
   updatedAt DateTime @updatedAt
   updatedBy String?  // email de l'admin
-
-  @@index([emailId])
 }
 
 // ── US-8 : Field Feedback ────────────────────────────────────────────────────
@@ -829,6 +903,7 @@ model EmailTemplate {
 model FieldFeedback {
   id        String   @id @default(cuid())
   userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   selector  String
   fieldType String
   portal    String
@@ -855,4 +930,422 @@ model PortalMapping {
   updatedAt  DateTime @updatedAt
 
   @@index([enabled])
+}
+
+// ── Mobile Device Pairing ────────────────────────────────────────────────────
+
+model MobileDevice {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceToken String   @unique @default(cuid())
+  label       String?  // ex: "iPhone Vincent"
+  lastSeenAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ── Rapprochement Bancaire Tiers-Payant ──────────────────────────────────────
+
+model LigneReleveBancaire {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime
+  libelle          String   @db.Text
+  montant          Float
+  organisme        String?
+  reference        String?
+  statut           String   @default("NON_RAPPROCHE")
+  source           String   @default("csv") // "csv" | "bridge" | "powens"
+  externalId       String?  // ID transaction chez le provider (dédup)
+  bankConnectionId String?
+  bankConnection   BankConnection? @relation(fields: [bankConnectionId], references: [id], onDelete: SetNull)
+  importedAt       DateTime @default(now())
+  rapprochements   RapprochementBancaire[]
+
+  @@unique([externalId, bankConnectionId])
+  @@index([userId])
+  @@index([statut])
+}
+
+model RapprochementBancaire {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ligneId     String
+  ligne       LigneReleveBancaire @relation(fields: [ligneId], references: [id], onDelete: Cascade)
+  dossierId   String
+  dossier     DossierTiersPayant  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  score       Float
+  methode     String
+  confirme    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@unique([ligneId, dossierId])
+  @@index([userId])
+}
+
+// ── Connexion Bancaire DSP2 (Bridge / Powens) ──────────────────────────────
+
+model BankConnection {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          String   // "bridge" | "powens"
+  externalUserId    String   // ID utilisateur chez le provider
+  externalAccountId String   // ID du compte bancaire chez le provider
+  iban              String?
+  bankName          String?
+  label             String?  // Nom personnalisé par l'utilisateur
+  accessToken       String   @db.Text
+  refreshToken      String?  @db.Text
+  status            String   @default("ACTIVE") // ACTIVE | EXPIRED | ERROR
+  lastSyncAt        DateTime?
+  lastError         String?
+  createdAt         DateTime @default(now())
+
+  lignes            LigneReleveBancaire[]
+
+  @@unique([provider, externalAccountId])
+  @@index([userId])
+  @@index([status])
+}
+
+// ── Vérification Droits Almerys / Viamedis ──────────────────────────────────
+
+model DroitsVerifies {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portal         String
+  droitsOuverts  Boolean?
+  dateFinDroits  String?
+  tauxPEC        String?
+  organisme      String?
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ── Bilan Config (Branding audioprothésiste) ────────────────────────────────
+
+model BilanConfig {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nomMagasin      String?
+  logoUrl         String?  // URL ou base64 image (max 500KB)
+  accentColor     String?  @default("#059669") // hex color (emerald pour AudiBot)
+  welcomeTitle    String?  // ex: "Bienvenue chez Audio Martin"
+  welcomeMessage  String?  // message intro client
+  footerText      String?  // ex: "Audio Martin — 12 rue de la Paix, Paris"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ── Bilan Auditif Tablette ──────────────────────────────────────────────────
+
+model BilanSession {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payload           String?   @db.Text  // JSON anonymisé du bilan
+  delivered         Boolean   @default(false)
+  status            String    @default("WAITING") // WAITING | IN_PROGRESS | DONE
+  assignedToUserId  String?
+  assignedAt        DateTime?
+  teamId            String?
+  expiresAt         DateTime
+  createdAt         DateTime  @default(now())
+
+  // ── Feature send-link ──
+  clientEmail       String?
+  clientPhone       String?
+  sentAt            DateTime?
+  source            String?   @default("tablette") // "tablette" | "email" | "sms"
+
+  // ── Feature NPS ──
+  npsScore          Int?      // 0-10
+  npsComment        String?
+  npsAt             DateTime?
+
+  documents     DocumentBlob[]
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([status])
+  @@index([teamId])
+}
+
+model DocumentBlob {
+  id          String       @id @default(cuid())
+  bilanId     String
+  session     BilanSession @relation(fields: [bilanId], references: [id], onDelete: Cascade)
+  blob        String       @db.Text
+  expiresAt   DateTime
+  downloaded  Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+
+  @@index([bilanId])
+  @@index([expiresAt])
+}
+
+// ── Catalogue Appareils Auditifs ────────────────────────────────────────────
+
+model Appareil {
+  id                      String   @id @default(cuid())
+  marque                  String   // ex: Phonak, Oticon, Signia, Starkey, Widex
+  modele                  String
+  type                    String   // Contour, Intra-auriculaire, RIC, CIC, ITC, BTE
+  classe                  String   // Classe I, Classe II (100% Santé vs libre choix)
+  canaux                  Int?     // nombre de canaux de réglage
+  connectivite            String?  // Bluetooth, Télécommande, App, Aucune
+  rechargeable            Boolean  @default(false)
+  indiceProtection        String?  // IP68, IP67, etc.
+  gamme                   String   // Entrée, Moyen, Premium
+  style                   String   // Discret, Standard, Mini
+  targetAgeGroup          String   @default("Adulte") // Enfant, Adulte, Senior
+  imageUrl                String?
+  inStock                 Boolean  @default(true)
+  prixBase                Float?   // prix de base TTC
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([inStock])
+  @@index([gamme])
+  @@index([classe])
+}
+
+// ── Réponses inbox admin ────────────────────────────────────────────────── //
+
+model AdminInboxReply {
+  id          String   @id @default(cuid())
+  to          String
+  subject     String
+  body        String   @db.Text
+  inReplyTo   String?  // Message-ID original
+  sentAt      DateTime @default(now())
+  sentBy      String?  // email admin
+
+  @@index([sentAt])
+  @@index([to])
+}
+
+// ── Diagnostic Trace Logs ─────────────────────────────────────────────────────
+
+model DiagnosticLog {
+  id           String   @id @default(cuid())
+  userId       String
+  hostname     String               // portail/site sur lequel les logs ont été capturés
+  url          String?  @db.Text    // URL complète
+  trigger      String   @default("auto")  // "auto" (après fill), "manual" (bouton), "error"
+  entryCount   Int      @default(0) // nombre d'entrées dans les logs
+  summary      String?  @db.Text    // résumé court (filled/failed/skipped counts)
+  logs         String   @db.Text    // texte formaté complet des logs
+  htmlSnapshot String?  @db.Text    // HTML anonymisé de la page au moment du diagnostic
+  metadata     Json?                // données structurées additionnelles (version, UA, viewport...)
+  createdAt    DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([hostname, createdAt])
+  @@index([createdAt])
+  @@index([trigger])
+}
+
+// ── Super User Feature Flags ────────────────────────────────────────────────
+
+model UserFeatures {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Features granulaires
+  bilanAuditif    Boolean   @default(false)
+  rapprochement   Boolean   @default(false)
+
+  grantedBy       String?   // userId de l'admin qui a accordé
+  grantedAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ── Hot-Patches (corrections sans mise à jour extension) ──────────────────
+
+model HotPatch {
+  id          String   @id @default(cuid())
+  name        String                 // nom lisible ("Fix sélecteur Almerys nom")
+  type        String                 // "selector_override" | "alias_add" | "js"
+  hostnames   String[]               // portails ciblés (["almerys.com", "be-almerys.com"])
+  data        Json                   // contenu du patch (sélecteurs, aliases, ou code JS)
+  active      Boolean  @default(true)
+  priority    Int      @default(0)   // ordre d'exécution (plus haut = plus tôt)
+  description String?  @db.Text      // description détaillée / notes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?                // userId admin
+
+  @@index([active])
+  @@index([createdAt])
+}
+
+// ── Documents Patient (prescriptions ORL, cartes mutuelle) ──────────────────
+
+model PatientDocument {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamId        String?
+
+  type          String   // "prescription" | "carte_mutuelle"
+
+  fileName      String   // nom normalisé : nom_prenom_type_YYYY-MM-DD.pdf
+  originalName  String   // nom original du fichier uploadé
+  filePath      String   // chemin relatif sur le serveur
+  fileSize      Int      // taille en octets
+  mimeType      String   @default("application/pdf")
+
+  ocrScore      Float?   // score de qualité OCR
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([teamId])
+  @@index([createdAt])
+}
+
+// ── Rejection Patterns (pre-submit validation) ────────────────────────────────
+
+model RejetPattern {
+  id          String   @id @default(cuid())
+  portail     String               // hostname: almerys.com, viamedis.net, etc.
+  champ       String               // field name: codeActe, montant, nss, rpps, dateOrdo
+  pattern     String               // value pattern or regex
+  rejetCode   String?              // associated rejection code (B02, C01, etc.)
+  rejetLabel  String?              // human-readable label
+  rejetCount  Int      @default(0) // number of rejections observed
+  totalCount  Int      @default(0) // total submissions with this pattern
+  tauxRejet   Float    @default(0) // rejetCount / totalCount (0.0 to 1.0)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@unique([portail, champ, pattern])
+  @@index([portail, tauxRejet])
+}
+
+model PreSubmitLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portail   String
+  errors    Int      @default(0)
+  warnings  Int      @default(0)
+  action    String   // "corrected" | "submitted_anyway" | "submitted_clean"
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([portail, action])
+}
+
+// ── Mutuelle Intelligence — Benchmarks agrégés ─────────────────────────────
+
+model MutuelleBenchmark {
+  id              String    @id @default(cuid())
+  mutuelle        Mutuelle
+  period          String    // "2026-04" (YYYY-MM)
+
+  totalDossiers   Int       @default(0)
+  totalUsers      Int       @default(0)
+  delaiMoyen      Float?
+  tauxRejet       Float     @default(0)
+  tauxReception   Float     @default(0)
+  montantMoyen    Float     @default(0)
+  topMotifsRejet  String?   @db.Text // JSON: [{motif, count}]
+  rankingScore    Float     @default(0)
+
+  computedAt      DateTime  @default(now())
+
+  @@unique([mutuelle, period])
+  @@index([period])
+  @@index([mutuelle])
+}
+
+// ── RGPD — Consent Records (preuve serveur Art. 7) ─────────────────────────
+
+model ConsentRecord {
+  id            String   @id @default(cuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email         String?
+  category      String   // "analytics" | "marketing" | "essential"
+  granted       Boolean
+  bannerVersion String   @default("1.0")
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([category, granted])
+  @@index([createdAt])
+}
+
+// ── RGPD — Data Access Log (Art. 15 accountability) ────────────────────────
+
+model DataAccessLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String   // "export", "view_profile", "admin_view", "api_access"
+  accessor  String   // "self", "admin:<userId>", "api:<endpoint>"
+  ipAddress String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action])
+}
+
+// ── RGPD — Breach Notification (Art. 33-34) ────────────────────────────────
+
+model BreachNotification {
+  id              String    @id @default(cuid())
+  title           String
+  description     String    @db.Text
+  severity        String    // "low" | "medium" | "high" | "critical"
+  dataCategories  String    @db.Text   // comma-separated: "email,name,usage"
+  affectedUsers   Int       @default(0)
+  status          String    @default("detected") // "detected" | "notified_cnil" | "notified_users" | "resolved"
+  detectedAt      DateTime  @default(now())
+  cnilNotifiedAt  DateTime?
+  usersNotifiedAt DateTime?
+  resolvedAt      DateTime?
+  remediation     String?   @db.Text
+  notifiedBy      String?   // admin userId
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@index([detectedAt])
+}
+
+// ── RGPD — Account Deletion Grace Period (Art. 17) ─────────────────────────
+
+model DeletionRequest {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason        String?   @db.Text
+  scheduledAt   DateTime  // date effective de suppression (now + 30j)
+  cancelledAt   DateTime?
+  executedAt    DateTime?
+  confirmToken  String    @unique @default(cuid())
+  confirmedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([scheduledAt])
+  @@index([userId])
 }

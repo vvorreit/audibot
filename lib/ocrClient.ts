@@ -1,6 +1,7 @@
 /**
  * Client HTTP pour le microservice OCR PaddleOCR.
  * Utilisé côté serveur (API routes) pour communiquer avec le service Python.
+ * Supporte le doc_type hint pour optimiser le layout OCR.
  */
 
 export interface OcrServiceResult {
@@ -11,7 +12,24 @@ export interface OcrServiceResult {
   preprocessing: {
     deskew_angle: number;
     binarization: string;
+    sharpness_score: number;
+    sharpened: boolean;
+    colored_background: boolean;
     original_size: string;
+    processed_size: string;
+  };
+  zones?: {
+    layout: string;
+    h_lines?: number;
+    v_lines?: number;
+    density_top?: number;
+    density_mid?: number;
+    density_bot?: number;
+  };
+  timing: {
+    preprocess_ms: number;
+    ocr_ms: number;
+    postprocess_ms: number;
   };
 }
 
@@ -41,7 +59,8 @@ async function resolveOcrUrl(): Promise<string> {
 export async function callOcrService(
   fileBuffer: Buffer,
   filename: string,
-  contentType: string
+  contentType: string,
+  docType: "auto" | "mutuelle" | "ordonnance" = "auto"
 ): Promise<OcrServiceResult> {
   const base = await resolveOcrUrl();
   const url = `${base}/ocr`;
@@ -49,9 +68,10 @@ export async function callOcrService(
   const formData = new FormData();
   const blob = new Blob([new Uint8Array(fileBuffer)], { type: contentType });
   formData.append("file", blob, filename);
+  formData.append("doc_type", docType);
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30_000);
+  const timeout = setTimeout(() => controller.abort(), 45_000);
 
   try {
     const res = await fetch(url, {

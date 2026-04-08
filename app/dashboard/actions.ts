@@ -480,3 +480,65 @@ export async function getMonthlyStats() {
     montantTPThisMonth: montantTP,
   };
 }
+
+export async function getOcrScanHistory() {
+  const session = await getSession();
+  if (!session?.user?.email) return null;
+  const userId = getUserId(session);
+  if (!userId) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { plan: true, isPro: true },
+  });
+  if (!user) return null;
+
+  const isPlanLimite = !user.isPro && user.plan !== "PRO" && user.plan !== "EQUIPE";
+  const dateLimit = isPlanLimite ? new Date(Date.now() - 30 * 86_400_000) : undefined;
+
+  const scans = await prisma.ocrScanLog.findMany({
+    where: { userId, ...(dateLimit ? { createdAt: { gte: dateLimit } } : {}) },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true, type: true, success: true,
+      ocrConfidence: true, dataScore: true, globalScore: true,
+      level: true, fileName: true, createdAt: true,
+    },
+    take: 500,
+  });
+
+  return {
+    scans: scans.map(s => ({ ...s, createdAt: s.createdAt.toISOString() })),
+    isPlanLimite,
+    plan: user.plan,
+  };
+}
+
+export async function getWeeklyActivity() {
+  const session = await getSession();
+  if (!session?.user?.email) return null;
+  const userId = getUserId(session);
+  if (!userId) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { teamId: true },
+  });
+
+  const weekAgo = new Date(Date.now() - 7 * 86_400_000);
+
+  const [scansWeek, bilansWeek] = await Promise.all([
+    prisma.ocrScanLog.count({
+      where: { userId, createdAt: { gte: weekAgo } },
+    }),
+    prisma.bilanSession.count({
+      where: {
+        delivered: true,
+        createdAt: { gte: weekAgo },
+        ...(user?.teamId ? { teamId: user.teamId } : { userId }),
+      },
+    }),
+  ]);
+
+  return { scansWeek, bilansWeek };
+}
