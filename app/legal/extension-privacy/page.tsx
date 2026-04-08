@@ -165,6 +165,7 @@ export default function ExtensionPrivacyPage() {
               <li><strong>storage</strong> — Stockage chiffré local des données patient en cache</li>
               <li><strong>tabs</strong> — Ouverture d&apos;un nouvel onglet lors du lancement du RPA</li>
               <li><strong>alarms</strong> — Déclenchement du verrouillage automatique après 15 min d&apos;inactivité</li>
+              <li><strong>scripting</strong> — Injection dynamique de scripts sur les portails mutuelles pour adapter le remplissage aux mises à jour des sites</li>
             </ul>
           </section>
 

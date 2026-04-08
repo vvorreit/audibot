@@ -3,6 +3,8 @@
   "name": "AudiBot Multi-Site",
   "version": "1.3",
   "description": "Auto-saisie des formulaires mutuelles pour audioprothésistes. Données chiffrées, jamais transmises à des tiers.",
+  "minimum_chrome_version": "120",
+  "homepage_url": "https://audibot.fr/legal/extension-privacy",
   "browser_specific_settings": {
     "gecko": {
       "id": "audibot-extension@vvorreit.fr"
@@ -17,7 +19,16 @@
     "scripting"
   ],
   "optional_host_permissions": [
-    "*://*/*"
+    "https://*.santeclair.fr/*",
+    "https://*.generation.fr/*",
+    "https://*.oxantis.com/*",
+    "https://*.mutuelle-optique.fr/*",
+    "https://*.services-fm.net/*",
+    "https://*.mercernet.fr/*",
+    "https://*.solimut.fr/*",
+    "https://*.spsante.fr/*",
+    "https://*.wemind.io/*",
+    "https://*.apgis.com/*"
   ],
   "background": {
     "service_worker": "background.js"
